@@ -16,11 +16,6 @@ public class BufferingLogOutputStreamTest {
 	private static final int NUMBER_OF_THREADS = 10;
 	private static final int NUMBER_OF_TESTS = 1000;
 
-	/**
-	 * Test method for {@link org.dstadler.commons.exec.BufferingLogOutputStream#processLine(java.lang.String, int)}.
-	 *
-	 * @throws IOException
-	 */
 	@Test
 	public void test() throws IOException {
 		BufferingLogOutputStream stream = new BufferingLogOutputStream();

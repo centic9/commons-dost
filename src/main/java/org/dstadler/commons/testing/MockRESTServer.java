@@ -15,17 +15,16 @@ import org.dstadler.commons.http.NanoHTTPD;
  * Use it as follows
  *
  * <code>
- MockRESTServer server = new MockRESTServer();
+ try (MockRESTServer server = new MockRESTServer()) {
 
- // get the actually used port to use in the client code
- server.getPort();
+     // get the actually used port to use in the client code
+     server.getPort();
 
- // set the response that you want the server to send back
- server.setResponse("whatever you want to return");
+     // set the response that you want the server to send back
+     server.setResponse("whatever you want to return");
 
- ..
-
- server.stop();
+     ..
+ }
  </code>
  *
  * @author dominik.stadler

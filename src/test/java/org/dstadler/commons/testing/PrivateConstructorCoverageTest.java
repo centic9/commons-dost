@@ -11,10 +11,6 @@ import org.junit.Test;
  */
 public class PrivateConstructorCoverageTest {
 
-	/**
-	 * Test method for {@link org.dstadler.commons.testing.PrivateConstructorCoverage#executePrivateConstructor(java.lang.Class)}.
-	 * @throws Exception
-	 */
 	@Test
 	public void testExecutePrivateConstructor() throws Exception {
 		// run this on itself to cover it!

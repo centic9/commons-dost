@@ -27,10 +27,6 @@ public class ExecutionHelperTest {
 
 	public static final String SVN_CMD = "svn";
 
-	/**
-	 * Test method for {@link org.dstadler.commons.exec.ExecutionHelper#getCommandResult(org.apache.commons.exec.CommandLine, java.io.File, int, long)}.
-	 * @throws IOException
-	 */
 	@Test
 	public void testGetCommandResult() throws IOException {
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
