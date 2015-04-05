@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<log>
+<logentry
+   revision="1801">
+<author>somebody</author>
+<date>2015-03-31T20:54:03.413584Z</date>
+<msg>set a higher download rate by default</msg>
+</logentry>
+<logentry
+   revision="1800">
+<author>somebody</author>
+<date>2015-03-31T20:45:23.239260Z</date>
+<msg>Performance: Speed up splitting Blocks and detecting files with wanted extensions:
+* Extract constants
+* Remove stuff on byte-level before creating strings
+* Only look at the last 5 characters for extensions instead of the whole string.
+* Add test for class Extensions</msg>
+</logentry>
+<logentry
+   revision="1799">
+<author>somebody</author>
+<date>2015-03-31T18:19:36.959029Z</date>
+<msg>typos, /usbc, fix computing percent values when SKIP_BLOCKS is &gt; 0</msg>
+</logentry>
+<logentry
+   revision="1798">
+<author>somebody</author>
+<date>2015-03-31T11:03:42.600994Z</date>
+<msg>Add gradle-wrapper</msg>
+</logentry>
+<logentry
+   revision="1797">
+<author>somebody</author>
+<date>2015-03-31T08:32:39.244464Z</date>
+<msg>Add task to build source-zip together with dependencies</msg>
+</logentry>
+<logentry
+   revision="1796">
+<author>somebody</author>
+<date>2015-03-30T13:06:13.778362Z</date>
+<msg>Updated jenkins config, plugins</msg>
+</logentry>
+<logentry
+   revision="1795">
+<author>somebody</author>
+<date>2015-03-30T12:55:13.871504Z</date>
+<msg>Update JaCoCo to 0.7.4</msg>
+</logentry>
+<logentry
+   revision="1794">
+<author>somebody</author>
+<date>2015-03-30T09:23:47.251074Z</date>
+<msg>* Cut overlong file names
+* Correctly skip to block-start when reading blocks from file
+* Exclude two more incorrectly downloaded files</msg>
+</logentry>
+<logentry
+   revision="1793">
+<author>somebody</author>
+<date>2015-03-29T20:58:43.386612Z</date>
+<msg>Improve error handling when downloading files</msg>
+</logentry>
+<logentry
+   revision="1792">
+<author>somebody</author>
+<date>2015-03-29T20:36:59.248639Z</date>
+<msg>* Write failure reason into .failed file
+* Print percentage during reading data from file or network</msg>
+</logentry>
+<logentry
+   revision="1791">
+<author>somebody</author>
+<date>2015-03-29T20:19:54.130747Z</date>
+<msg>Adjust HTML snippet to look for failed downloads.</msg>
+</logentry>
+<logentry
+   revision="1790">
+<author>somebody</author>
+<date>2015-03-29T19:38:23.945987Z</date>
+<msg>* Adjust downloading files some more
+* Some more unit tests</msg>
+</logentry>
+<logentry
+   revision="1789">
+<author>somebody</author>
+<date>2015-03-29T15:11:39.311620Z</date>
+<msg>* Add download.sh and ReadFromFile to not depend on network during reading the file
+* Refactor into Utils class some more</msg>
+</logentry>
+<logentry
+   revision="1788">
+<author>somebody</author>
+<date>2015-03-29T09:25:54.510350Z</date>
+<msg>* Don't show items in the past
+* Add new entries</msg>
+</logentry>
+<logentry
+   revision="1787">
+<author>somebody</author>
+<date>2015-03-28T08:34:40.866824Z</date>
+<msg>Add download app
+Add some unit tests
+Move common stuff into utils-class
+Add moreunit prefs</msg>
+</logentry>
+<logentry
+   revision="1786">
+<author>somebody</author>
+<date>2015-03-28T06:16:25.464348Z</date>
+<msg>Add task to run from commandline
+Fix another integer-overflow
+Increase timeout some more</msg>
+</logentry>
+<logentry
+   revision="1785">
+<author>somebody</author>
+<date>2015-03-27T22:42:26.914227Z</date>
+<msg>Update purchased books</msg>
+</logentry>
+<logentry
+   revision="1784">
+<author>somebody</author>
+<date>2015-03-27T22:30:56.732090Z</date>
+<msg>* Restart at 0 once again because of previous int-overflow problem
+* Fix overflow in computing startPos</msg>
+</logentry>
+<logentry
+   revision="1783">
+<author>somebody</author>
+<date>2015-03-27T22:22:31.414109Z</date>
+<msg>* Re-add poi
+* Indicate if the main thread is blocked by the processor and fail after one hour of being blocked
+* Avoid exception if url plus data ends exactly at block-end
+* Avoid integer overflow</msg>
+</logentry>
+<logentry
+   revision="1782">
+<author>somebody</author>
+<date>2015-03-27T21:53:30.074587Z</date>
+<msg>Comment, remove outdated code, add indication when processing thread is very slow</msg>
+</logentry>
+<logentry
+   revision="1781">
+<author>somebody</author>
+<date>2015-03-27T21:35:34.816273Z</date>
+<msg>Move processing of blocks into a separate thread to use the full download bandwidth that we get</msg>
+</logentry>
+<logentry
+   revision="1780">
+<author>somebody</author>
+<date>2015-03-27T20:41:12.780031Z</date>
+<msg>Write all interesting file-types into a text-file</msg>
+</logentry>
+<logentry
+   revision="1779">
+<author>somebody</author>
+<date>2015-03-27T20:15:51.927381Z</date>
+<msg>Move to correct package</msg>
+</logentry>
+<logentry
+   revision="1778">
+<author>somebody</author>
+<date>2015-03-27T20:13:58.726115Z</date>
+<msg>Initial checkin</msg>
+</logentry>
+<logentry
+   revision="1777">
+<author>somebody</author>
+<date>2015-03-25T21:13:13.647553Z</date>
+<msg>Add a few new books found via scanning all numbers.</msg>
+</logentry>
+<logentry
+   revision="1776">
+<author>somebody</author>
+<date>2015-03-25T21:12:16.905834Z</date>
+<msg>Ensure in CompareToTest that equals() is implemented correctly as well.</msg>
+</logentry>
+<logentry
+   revision="1775">
+<author>somebody</author>
+<date>2015-03-22T23:00:27.957005Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1774">
+<author>somebody</author>
+<date>2015-03-22T22:58:03.656325Z</date>
+<msg>* Update comments and print out how many books/isbns were written to the CSV-files.</msg>
+</logentry>
+<logentry
+   revision="1773">
+<author>somebody</author>
+<date>2015-03-15T21:35:46.163031Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1772">
+<author>somebody</author>
+<date>2015-03-14T22:07:52.192875Z</date>
+<msg>Add one more split-Move</msg>
+</logentry>
+<logentry
+   revision="1771">
+<author>somebody</author>
+<date>2015-03-14T09:55:09.587505Z</date>
+<msg>New moves</msg>
+</logentry>
+<logentry
+   revision="1770">
+<author>somebody</author>
+<date>2015-03-11T20:35:19.463672Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1769">
+<author>somebody</author>
+<date>2015-03-10T16:26:55.338616Z</date>
+<msg>Set UTF-8 character encoding</msg>
+</logentry>
+<logentry
+   revision="1768">
+<author>somebody</author>
+<date>2015-03-10T16:26:21.762900Z</date>
+<msg>Add 2015-03, Set 2015-01 as default start date, fix parsing month-logs after UI changes, fix after change to XLSX file, add gradle-targets to run helpers</msg>
+</logentry>
+<logentry
+   revision="1767">
+<author>somebody</author>
+<date>2015-03-10T16:26:00.058482Z</date>
+<msg>Add 2015-03, Set 2015-01 as default start date, fix parsing month-logs after UI changes, fix after change to XLSX file, add gradle-targets to run helpers</msg>
+</logentry>
+<logentry
+   revision="1766">
+<author>somebody</author>
+<date>2015-03-10T06:24:03.451188Z</date>
+<msg>Update easymock, remove duplicate libs, sync</msg>
+</logentry>
+<logentry
+   revision="1765">
+<author>somebody</author>
+<date>2015-03-08T20:42:07.687992Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1764">
+<author>somebody</author>
+<date>2015-03-03T22:01:17.238908Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1763">
+<author>somebody</author>
+<date>2015-03-03T21:30:16.204320Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1762">
+<author>somebody</author>
+<date>2015-03-03T20:20:33.481069Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1761">
+<author>somebody</author>
+<date>2015-03-03T20:05:32.715307Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1760">
+<author>somebody</author>
+<date>2015-03-03T20:05:09.552942Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1759">
+<author>somebody</author>
+<date>2015-03-03T20:04:44.789593Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1758">
+<author>somebody</author>
+<date>2015-03-02T16:00:39.136315Z</date>
+<msg>Sync</msg>
+</logentry>
+<logentry
+   revision="1757">
+<author>somebody</author>
+<date>2015-03-01T15:38:33.215483Z</date>
+<msg>New Moves</msg>
+</logentry>
+<logentry
+   revision="1756">
+<author>somebody</author>
+<date>2015-03-01T15:37:31.853317Z</date>
+<msg>Re-generate classpath</msg>
+</logentry>
+<logentry
+   revision="1755">
+<author>somebody</author>
+<date>2015-03-01T15:36:54.330532Z</date>
+<msg>svn-ignore</msg>
+</logentry>
+<logentry
+   revision="1754">
+<author>somebody</author>
+<date>2015-03-01T14:57:38.151882Z</date>
+<msg>* Update to latest poi 3.12-beta1
+* Regenerate some Eclipse files with Gradle
+</msg>
+</logentry>
+<logentry
+   revision="1753">
+<author>somebody</author>
+<date>2015-02-26T12:41:15.578811Z</date>
+<msg>Gradle 2.3</msg>
+</logentry>
+<logentry
+   revision="1752">
+<author>somebody</author>
+<date>2015-02-26T12:40:04.891808Z</date>
+<msg>Add more splits, add split-line, add straintime</msg>
+</logentry>
+<logentry
+   revision="1751">
+<author>somebody</author>
+<date>2015-02-26T11:56:04.301266Z</date>
+<msg>Gradle 2.3</msg>
+</logentry>
+<logentry
+   revision="1750">
+<author>somebody</author>
+<date>2015-02-26T11:55:12.201058Z</date>
+<msg>Update gradle wrapper, Jacoco, ...</msg>
+</logentry>
+<logentry
+   revision="1749">
+<author>somebody</author>
+<date>2015-02-26T11:44:09.198167Z</date>
+<msg>new moves, fix tests, more Summables</msg>
+</logentry>
+<logentry
+   revision="1748">
+<author>somebody</author>
+<date>2015-02-24T20:22:43.235703Z</date>
+<msg>Updates, ...</msg>
+</logentry>
+<logentry
+   revision="1747">
+<author>somebody</author>
+<date>2015-02-24T20:21:08.198678Z</date>
+<msg>More renames, add files for 2014</msg>
+</logentry>
+<logentry
+   revision="1746">
+<author>somebody</author>
+<date>2015-02-24T20:16:58.759157Z</date>
+<msg>Add folder Abfertigung</msg>
+</logentry>
+<logentry
+   revision="1745">
+<author>somebody</author>
+<date>2015-02-24T20:16:25.138510Z</date>
+<msg>Sort more files into subdirs</msg>
+</logentry>
+<logentry
+   revision="1744">
+<author>somebody</author>
+<date>2015-02-24T20:09:19.227322Z</date>
+<msg>Move documents to subdir</msg>
+</logentry>
+<logentry
+   revision="1743">
+<author>somebody</author>
+<date>2015-02-23T22:13:03.955794Z</date>
+<msg>Add script to tail many different system-logfiles in one console</msg>
+</logentry>
+<logentry
+   revision="1742">
+<author>somebody</author>
+<date>2015-02-23T21:41:29.865901Z</date>
+<msg>Add add-ppa-repository script</msg>
+</logentry>
+<logentry
+   revision="1741">
+<author>somebody</author>
+<date>2015-02-23T21:41:01.197506Z</date>
+<msg>New Book</msg>
+</logentry>
+<logentry
+   revision="1740">
+<author>somebody</author>
+<date>2015-02-23T21:39:15.974747Z</date>
+<msg>Fix unit tests and location of test-sources</msg>
+</logentry>
+<logentry
+   revision="1739">
+<author>somebody</author>
+<date>2015-02-23T21:37:30.771542Z</date>
+<msg>Adjust master-build, fix HtmlUnit location, add distribution plugin</msg>
+</logentry>
+<logentry
+   revision="1738">
+<author>somebody</author>
+<date>2015-02-23T21:36:06.556776Z</date>
+<msg>Use LoggerFactory everywhere</msg>
+</logentry>
+<logentry
+   revision="1737">
+<author>somebody</author>
+<date>2015-02-23T13:57:53.786980Z</date>
+<msg>Sync gradle build files</msg>
+</logentry>
+<logentry
+   revision="1736">
+<author>somebody</author>
+<date>2015-02-23T13:56:10.268145Z</date>
+<msg>sync</msg>
+</logentry>
+<logentry
+   revision="1735">
+<author>somebody</author>
+<date>2015-02-21T10:47:48.253536Z</date>
+<msg>Add script to send a test-mail to verify java setup</msg>
+</logentry>
+<logentry
+   revision="1734">
+<author>somebody</author>
+<date>2015-02-21T10:14:14.407263Z</date>
+<msg>* Log full Exception when sending mail fails
+* Add test-app which allows to send a test-mail</msg>
+</logentry>
+<logentry
+   revision="1733">
+<author>somebody</author>
+<date>2015-02-20T18:23:56.886056Z</date>
+<msg>New Moves</msg>
+</logentry>
+<logentry
+   revision="1732">
+<author>somebody</author>
+<date>2015-02-19T07:52:40.072265Z</date>
+<msg>cd to current dir in scripts, remove ruxit-agent again</msg>
+</logentry>
+<logentry
+   revision="1731">
+<author>somebody</author>
+<date>2015-02-18T18:36:42.726248Z</date>
+<msg>* Add more fields to the Moves.txt file
+* Move Comparator out to separate class</msg>
+</logentry>
+<logentry
+   revision="1730">
+<author>somebody</author>
+<date>2015-02-11T22:31:21.519679Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1729">
+<author>somebody</author>
+<date>2015-02-11T22:29:23.580962Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1728">
+<author>somebody</author>
+<date>2015-02-10T12:24:56.397171Z</date>
+<msg>Adjust warning-settings, set to junit 4.+, fix some warnings</msg>
+</logentry>
+<logentry
+   revision="1727">
+<author>somebody</author>
+<date>2015-02-09T21:01:16.916987Z</date>
+<msg>updated/new scripts</msg>
+</logentry>
+<logentry
+   revision="1726">
+<author>somebody</author>
+<date>2015-02-09T21:00:44.574357Z</date>
+<msg>More appointments</msg>
+</logentry>
+<logentry
+   revision="1725">
+<author>somebody</author>
+<date>2015-02-09T20:46:53.477146Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1724">
+<author>somebody</author>
+<date>2015-02-09T20:45:49.757722Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1723">
+<author>somebody</author>
+<date>2015-02-09T20:44:31.186559Z</date>
+<msg>Move transaction-files to separate project</msg>
+</logentry>
+<logentry
+   revision="1722">
+<author>somebody</author>
+<date>2015-02-09T20:42:52.549097Z</date>
+<msg>Update categories
+</msg>
+</logentry>
+<logentry
+   revision="1721">
+<author>somebody</author>
+<date>2015-02-09T20:41:34.626542Z</date>
+<msg>New transactions</msg>
+</logentry>
+<logentry
+   revision="1720">
+<author>somebody</author>
+<date>2015-02-09T20:03:04.831717Z</date>
+<msg>Add EveryN</msg>
+</logentry>
+<logentry
+   revision="1719">
+<author>somebody</author>
+<date>2015-02-09T19:47:04.912520Z</date>
+<msg>* Play around with more appointments
+* Add sanity-checks
+* Add EveryYear for things like Birthsdays, ...</msg>
+</logentry>
+<logentry
+   revision="1718">
+<author>somebody</author>
+<date>2015-02-08T14:27:08.514847Z</date>
+<msg>Update Google Gson to 2.3.1 and update generated .settings</msg>
+</logentry>
+<logentry
+   revision="1717">
+<author>somebody</author>
+<date>2015-02-08T14:23:50.192285Z</date>
+<msg>Adjust localectl set-locale</msg>
+</logentry>
+<logentry
+   revision="1716">
+<author>somebody</author>
+<date>2015-02-08T14:23:12.031481Z</date>
+<msg>Add MyCalendar</msg>
+</logentry>
+<logentry
+   revision="1715">
+<author>somebody</author>
+<date>2015-02-08T14:22:55.078254Z</date>
+<msg>Initial experiments</msg>
+</logentry>
+<logentry
+   revision="1714">
+<author>somebody</author>
+<date>2015-02-08T13:07:07.719431Z</date>
+<msg>Allow sudo for user live, add more locale settings, keyboard-rate, ..., add wipe and secure-delete</msg>
+</logentry>
+<logentry
+   revision="1713">
+<author>somebody</author>
+<date>2015-02-03T21:59:38.413325Z</date>
+<msg>disable new test when JIRA is not available</msg>
+</logentry>
+<logentry
+   revision="1712">
+<author>somebody</author>
+<date>2015-02-03T20:21:06.783191Z</date>
+<msg>Update stats slightly, add Notes, Cal/Distance</msg>
+</logentry>
+<logentry
+   revision="1711">
+<author>somebody</author>
+<date>2015-02-03T20:11:43.046575Z</date>
+<msg>Split-Heartrate-Charts: Fix Activity-type and add subtitle with notes</msg>
+</logentry>
+<logentry
+   revision="1710">
+<author>somebody</author>
+<date>2015-02-03T19:57:48.488166Z</date>
+<msg>* New Moves
+* Exclude some more web-resources that are loaded now</msg>
+</logentry>
+<logentry
+   revision="1709">
+<author>somebody</author>
+<date>2015-02-01T21:24:08.418912Z</date>
+<msg>More packages, fix mksquashfs excludes, lower boot-timeout, more german settings, try to set password of normal user, calculate size for progress bar automatically</msg>
+</logentry>
+<logentry
+   revision="1708">
+<author>somebody</author>
+<date>2015-02-01T16:06:48.477804Z</date>
+<msg>svn-ignore</msg>
+</logentry>
+<logentry
+   revision="1707">
+<author>somebody</author>
+<date>2015-02-01T16:06:06.807271Z</date>
+<msg>add target to build/test all projects</msg>
+</logentry>
+<logentry
+   revision="1706">
+<author>somebody</author>
+<date>2015-02-01T11:41:41.963487Z</date>
+<msg>check for mounts before creating ISO, exclude /run, copy files to home/live, mount/umount mounts correctly, remove lightdm, add some UI packages</msg>
+</logentry>
+<logentry
+   revision="1705">
+<author>somebody</author>
+<date>2015-01-31T11:30:17.612739Z</date>
+<msg>Add user 'live', add german locale, disable lightdm startup</msg>
+</logentry>
+<logentry
+   revision="1704">
+<author>somebody</author>
+<date>2015-01-29T21:47:32.850743Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1703">
+<author>somebody</author>
+<date>2015-01-29T21:46:42.884737Z</date>
+<msg>Update readme</msg>
+</logentry>
+<logentry
+   revision="1702">
+<author>somebody</author>
+<date>2015-01-29T21:44:09.518609Z</date>
+<msg>Unmount in chroot even if password is unchanged, adjust expected size of iso</msg>
+</logentry>
+<logentry
+   revision="1701">
+<author>somebody</author>
+<date>2015-01-29T21:14:00.646571Z</date>
+<msg>Adjust access rights for copied files, fix copying, add testdisk, vim, ant, build-essential grub lynx, cmake, lightdm, check in writeISO.sh to avoid writing to a mounted disk</msg>
+</logentry>
+<logentry
+   revision="1700">
+<author>somebody</author>
+<date>2015-01-28T22:34:34.580568Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1699">
+<author>somebody</author>
+<date>2015-01-28T14:33:00.580438Z</date>
+<msg>Sync, new gradle build, adjust</msg>
+</logentry>
+<logentry
+   revision="1698">
+<author>somebody</author>
+<date>2015-01-25T18:54:10.946292Z</date>
+<msg>Remove unnecessary directory .gradle</msg>
+</logentry>
+<logentry
+   revision="1697">
+<author>somebody</author>
+<date>2015-01-25T17:46:32.408071Z</date>
+<msg>Use at-miror for debootstrap, fix copying known_hosts, build simple fstab, auto-password, add mate-core</msg>
+</logentry>
+<logentry
+   revision="1696">
+<author>somebody</author>
+<date>2015-01-24T10:28:58.334154Z</date>
+<msg>Add initial version of scripts</msg>
+</logentry>
+<logentry
+   revision="1695">
+<author>somebody</author>
+<date>2015-01-24T00:22:31.350104Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1694">
+<author>somebody</author>
+<date>2015-01-24T00:20:08.912943Z</date>
+<msg>Add more scripts</msg>
+</logentry>
+<logentry
+   revision="1693">
+<author>somebody</author>
+<date>2015-01-24T00:17:40.930436Z</date>
+<msg>Updated scripts</msg>
+</logentry>
+<logentry
+   revision="1692">
+<author>somebody</author>
+<date>2015-01-24T00:08:12.870312Z</date>
+<msg>Ignore a unit test which fails now because google returns empty data sometimes</msg>
+</logentry>
+<logentry
+   revision="1691">
+<author>somebody</author>
+<date>2015-01-24T00:04:29.048914Z</date>
+<msg>add first ant tasks, add workaround for jacoco</msg>
+</logentry>
+<logentry
+   revision="1690">
+<author>somebody</author>
+<date>2015-01-23T23:14:44.818613Z</date>
+<msg>More changes for master-build.gradle
+</msg>
+</logentry>
+<logentry
+   revision="1689">
+<author>somebody</author>
+<date>2015-01-23T23:13:37.521385Z</date>
+<msg>Exclude generated eclipse files</msg>
+</logentry>
+<logentry
+   revision="1688">
+<author>somebody</author>
+<date>2015-01-23T23:12:07.669890Z</date>
+<msg>Adjust some more for gradle</msg>
+</logentry>
+<logentry
+   revision="1687">
+<author>somebody</author>
+<date>2015-01-23T23:09:55.411951Z</date>
+<msg>Adjust to build again</msg>
+</logentry>
+<logentry
+   revision="1686">
+<author>somebody</author>
+<date>2015-01-23T22:48:46.311272Z</date>
+<msg>Add master gradle project</msg>
+</logentry>
+<logentry
+   revision="1685">
+<author>somebody</author>
+<date>2015-01-23T22:46:24.668464Z</date>
+<msg>Switch to gradle build</msg>
+</logentry>
+<logentry
+   revision="1684">
+<author>somebody</author>
+<date>2015-01-15T11:08:06.316799Z</date>
+<msg>Adjust test to use one date to not fail on second-switch at the same time as the test is run</msg>
+</logentry>
+<logentry
+   revision="1683">
+<author>somebody</author>
+<date>2015-01-14T09:36:53.571051Z</date>
+<msg>Add new moves</msg>
+</logentry>
+<logentry
+   revision="1682">
+<author>somebody</author>
+<date>2015-01-13T17:05:47.540540Z</date>
+<msg>Adjust babyoutlet24.de, speed up test by skipping offline products</msg>
+</logentry>
+<logentry
+   revision="1681">
+<author>somebody</author>
+<date>2015-01-12T22:02:19.924881Z</date>
+<msg>* Slightly update Skandic.de and babyoutlet24.de
+* Add new in 2015 to these last two ones that are still managed manually
+</msg>
+</logentry>
+<logentry
+   revision="1680">
+<author>somebody</author>
+<date>2015-01-12T20:11:54.384044Z</date>
+<msg>* Fix reading last row in excel-preislist
+* Add new produkte for 2015</msg>
+</logentry>
+<logentry
+   revision="1679">
+<author>somebody</author>
+<date>2015-01-11T22:18:52.181433Z</date>
+<msg>* New pricelist
+* Adjust ConvertExcel to better generate the code
+* update yellow/red price in Stammdaten
+* Add explicit test against empty database</msg>
+</logentry>
+<logentry
+   revision="1678">
+<author>somebody</author>
+<date>2015-01-09T18:15:36.158085Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1677">
+<author>somebody</author>
+<date>2015-01-07T07:52:14.922464Z</date>
+<msg>sync</msg>
+</logentry>
+<logentry
+   revision="1676">
+<author>somebody</author>
+<date>2015-01-03T08:53:55.059228Z</date>
+<msg>Update to junit-4.12</msg>
+</logentry>
+<logentry
+   revision="1675">
+<author>somebody</author>
+<date>2015-01-02T17:38:47.506741Z</date>
+<msg>Add support for rotating the logfile for JDK Logging as well
+</msg>
+</logentry>
+<logentry
+   revision="1674">
+<author>somebody</author>
+<date>2015-01-01T21:12:53.025562Z</date>
+<msg>Also add files for new Moves</msg>
+</logentry>
+<logentry
+   revision="1673">
+<author>somebody</author>
+<date>2015-01-01T21:11:37.782107Z</date>
+<msg>More excludes</msg>
+</logentry>
+<logentry
+   revision="1672">
+<author>somebody</author>
+<date>2015-01-01T21:11:18.740937Z</date>
+<msg>New Moves
+Close streams
+Adjust for changes on Website</msg>
+</logentry>
+<logentry
+   revision="1671">
+<author>somebody</author>
+<date>2015-01-01T18:36:12.154669Z</date>
+<msg>adjust path, a bit more memory, set options to dump heap</msg>
+</logentry>
+<logentry
+   revision="1670">
+<author>somebody</author>
+<date>2014-12-28T21:50:37.413839Z</date>
+<msg></msg>
+</logentry>
+<logentry
+   revision="1669">
+<author>somebody</author>
+<date>2014-12-24T21:09:12.569426Z</date>
+<msg>Adjust some more, refactor, add dominik</msg>
+</logentry>
+<logentry
+   revision="1668">
+<author>somebody</author>
+<date>2014-12-24T10:12:08.425109Z</date>
+<msg>Update POI to 3.11 and junit to 4.12</msg>
+</logentry>
+<logentry
+   revision="1667">
+<author>somebody</author>
+<date>2014-12-23T22:10:25.310881Z</date>
+<msg>Refactor, adjust some more, links, fixes, ...</msg>
+</logentry>
+</log>

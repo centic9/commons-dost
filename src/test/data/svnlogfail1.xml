@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<log>
+<logentry
+   revision="267726">
+<logentry
+   revision="267726">
+<author>somebody</author>
+<date>2012-09-20T12:17:11.738107Z</date>
+<msg>- rename Versions
+- allow to set instances to "disabled"
+- add error-tooltip
+- add a top-row for overall version
+- fix tooltip-style</msg>
+</logentry>
+</logentry>
+</log>

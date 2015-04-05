@@ -1,0 +1,34 @@
+# Logging
+org.apache.log4j.FileAppender.setFile
+java.util.logging.Level.getLocalizedLevelName
+java.util.logging.Logger$1.run
+java.util.logging.LogManager$4.run
+
+# Security 
+javax.crypto.JceSecurity.setupJurisdictionPolicies
+sun.security.jca.ProviderConfig.doLoadProvider
+com.sun.org.apache.xerces.internal.utils.SecuritySupport$7.run
+sun.security.jca.ProviderConfig$2.run
+
+# Java Mail
+javax.mail.internet.MimeUtility.
+
+# XML Parsing
+org.xml.sax.helpers.XMLReaderFactory.createXMLReader
+org.apache.xml.dtm.SecuritySupport12$6.run
+javax.xml.transform.FactoryFinder.findJarServiceProvider
+org.apache.xalan.templates.OutputProperties.<init>
+javax.xml.parsers.FactoryFinder.findJarServiceProvider
+
+# Others/3rd party libraries
+com.sun.jersey.spi.service.ServiceFinder.getJerseyModuleVersion
+javax.ws.rs.ext.FactoryFinder.find
+org.cyberneko.html.HTMLEntities.<clinit>
+org.apache.http.impl.client.HttpClientBuilder.<clinit>
+java.net.IDN.<clinit>
+net.sourceforge.htmlunit.corejs.javascript.ScriptRuntime$DefaultMessageProvider.getMessage
+org.apache.velocity.runtime.RuntimeInstance.setDefaultProperties
+org.apache.poi.openxml4j.opc.internal.marshallers.PackagePropertiesMarshaller.<clinit>
+org.apache.xmlbeans.impl.regex.RegexParser.setLocale
+org.apache.xmlbeans.impl.schema.ClassLoaderResourceLoader.getResourceAsStream
+java.awt.font.TextLayout.<init>

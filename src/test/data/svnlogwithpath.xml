@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<log>
+<logentry
+   revision="1801">
+<author>somebody</author>
+<date>2015-03-31T20:54:03.413584Z</date>
+<paths>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CommonCrawl/download.sh</path>
+</paths>
+<msg>set a higher download rate by default</msg>
+</logentry>
+<logentry
+   revision="1800">
+<author>somebody</author>
+<date>2015-03-31T20:45:23.239260Z</date>
+<paths>
+<path
+   kind="file"
+   action="M"
+   prop-mods="false"
+   text-mods="true">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Process.java</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/ReadFromFile.java</path>
+<path
+   action="A"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/test/java/org/dstadler/commoncrawl/ExtensionsTest.java</path>
+</paths>
+<msg>Performance: Speed up splitting Blocks and detecting files with wanted extensions:
+* Extract constants
+* Remove stuff on byte-level before creating strings
+* Only look at the last 5 characters for extensions instead of the whole string.
+* Add test for class Extensions</msg>
+</logentry>
+<logentry
+   revision="1799">
+<author>somebody</author>
+<date>2015-03-31T18:19:36.959029Z</date>
+<paths>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Read.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/ReadFromFile.java</path>
+<path
+   prop-mods="false"
+   text-mods="true"
+   kind="file"
+   action="M">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Utils.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/test/java/org/dstadler/commoncrawl/UtilsTest.java</path>
+</paths>
+<msg>typos, /usbc, fix computing percent values when SKIP_BLOCKS is &gt; 0</msg>
+</logentry>
+<logentry
+   revision="1798">
+<author>somebody</author>
+<date>2015-03-31T11:03:42.600994Z</date>
+<paths>
+<path
+   text-mods="false"
+   kind="dir"
+   action="A"
+   prop-mods="false">/trunk/CommonCrawl/gradle</path>
+<path
+   action="A"
+   prop-mods="false"
+   text-mods="false"
+   kind="dir">/trunk/CommonCrawl/gradle/wrapper</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="A"
+   prop-mods="true">/trunk/CommonCrawl/gradle/wrapper/gradle-wrapper.jar</path>
+<path
+   prop-mods="false"
+   text-mods="true"
+   kind="file"
+   action="A">/trunk/CommonCrawl/gradle/wrapper/gradle-wrapper.properties</path>
+<path
+   action="A"
+   prop-mods="true"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/gradlew</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="A"
+   prop-mods="false">/trunk/CommonCrawl/gradlew.bat</path>
+</paths>
+<msg>Add gradle-wrapper</msg>
+</logentry>
+<logentry
+   revision="1797">
+<author>somebody</author>
+<date>2015-03-31T08:32:39.244464Z</date>
+<paths>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/build.gradle</path>
+</paths>
+<msg>Add task to build source-zip together with dependencies</msg>
+</logentry>
+<logentry
+   revision="1796">
+<author>somebody</author>
+<date>2015-03-30T13:06:13.778362Z</date>
+<paths>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/hudson.plugins.sonar.SonarPublisher.xml</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CI/JenkinsConfig/jobs/JaCoCo-Plugin-local/disk-usage.xml</path>
+<path
+   prop-mods="false"
+   text-mods="true"
+   kind="file"
+   action="M">/trunk/CI/JenkinsConfig/jobs/Preismonitor-test-stage/disk-usage.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/commons-dost-default-jacoco/config.xml</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CI/JenkinsConfig/jobs/commons-dost-lokal/config.xml</path>
+<path
+   prop-mods="false"
+   text-mods="true"
+   kind="file"
+   action="M">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.all.feature/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.api/config.xml</path>
+<path
+   prop-mods="false"
+   text-mods="true"
+   kind="file"
+   action="M">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.chart/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.chart.feature/config.xml</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.chart.ui/config.xml</path>
+<path
+   prop-mods="false"
+   text-mods="true"
+   kind="file"
+   action="M">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.dtfj/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.ibmdumps/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.parser/config.xml</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.product/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.report/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.targetdef/config.xml</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.tests/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.tests.junit/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.ui/config.xml</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.ui.rcp/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.ui.rcp.feature/config.xml</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CI/JenkinsConfig/jobs/mat-default-maven/modules/org.eclipse.mat$org.eclipse.mat.updatesite/config.xml</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CI/JenkinsConfig/queue.xml</path>
+</paths>
+<msg>Updated jenkins config, plugins</msg>
+</logentry>
+<logentry
+   revision="1795">
+<author>somebody</author>
+<date>2015-03-30T12:55:13.871504Z</date>
+<paths>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/SuuntoHarvest/build.gradle</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/master/build.gradle</path>
+</paths>
+<msg>Update JaCoCo to 0.7.4</msg>
+</logentry>
+<logentry
+   revision="1794">
+<author>somebody</author>
+<date>2015-03-30T09:23:47.251074Z</date>
+<paths>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Download.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Read.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/ReadFromFile.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Utils.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/test/java/org/dstadler/commoncrawl/UtilsTest.java</path>
+</paths>
+<msg>* Cut overlong file names
+* Correctly skip to block-start when reading blocks from file
+* Exclude two more incorrectly downloaded files</msg>
+</logentry>
+<logentry
+   revision="1793">
+<author>somebody</author>
+<date>2015-03-29T20:58:43.386612Z</date>
+<paths>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Download.java</path>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Utils.java</path>
+<path
+   prop-mods="false"
+   text-mods="true"
+   kind="file"
+   action="M">/trunk/CommonCrawl/src/test/java/org/dstadler/commoncrawl/UtilsTest.java</path>
+</paths>
+<msg>Improve error handling when downloading files</msg>
+</logentry>
+<logentry
+   revision="1792">
+<author>somebody</author>
+<date>2015-03-29T20:36:59.248639Z</date>
+<paths>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Download.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Read.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/ReadFromFile.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Utils.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/test/java/org/dstadler/commoncrawl/UtilsTest.java</path>
+</paths>
+<msg>* Write failure reason into .failed file
+* Print percentage during reading data from file or network</msg>
+</logentry>
+<logentry
+   revision="1791">
+<author>somebody</author>
+<date>2015-03-29T20:19:54.130747Z</date>
+<paths>
+</paths>
+<msg>Adjust HTML snippet to look for failed downloads.</msg>
+</logentry>
+<logentry
+   revision="1790">
+<author>somebody</author>
+<date>2015-03-29T19:38:23.945987Z</date>
+<paths>
+<path
+   text-mods="true"
+   kind="file"
+   action="M"
+   prop-mods="false">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Download.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Process.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/ReadFromFile.java</path>
+<path
+   prop-mods="false"
+   text-mods="true"
+   kind="file"
+   action="M">/trunk/CommonCrawl/src/main/java/org/dstadler/commoncrawl/Utils.java</path>
+<path
+   action="M"
+   prop-mods="false"
+   text-mods="true"
+   kind="file">/trunk/CommonCrawl/src/test/java/org/dstadler/commoncrawl/UtilsTest.java</path>
+</paths>
+<msg>* Adjust downloading files some more
+* Some more unit tests</msg>
+</logentry>
+</log>
