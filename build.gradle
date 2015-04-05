@@ -4,8 +4,8 @@ apply plugin: 'jacoco'
 // too chatty apply plugin: 'checkstyle'
 apply plugin: 'codenarc'
 // does not observe excludes: apply plugin: 'findbugs'
-// apply plugin: 'pmd'
-apply plugin: 'jdepend'
+// did not provide useful warnings: apply plugin: 'pmd'
+// not used currently: apply plugin: 'jdepend'
 apply plugin: 'maven-publish'
 apply plugin: 'distribution'
 
@@ -70,8 +70,7 @@ publishing {
 	}
 	
 	repositories {
-		maven {
-		}
+		mavenCentral()
 	}
 }
 

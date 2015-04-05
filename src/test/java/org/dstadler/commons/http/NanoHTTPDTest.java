@@ -67,7 +67,7 @@ public class NanoHTTPDTest {
 
         assertEquals("File is found",
                 NanoHTTPD.HTTP_OK,
-                httpd.serveFile(".classpath", new Properties(), new File("."), true).status);
+                httpd.serveFile(".gitignore", new Properties(), new File("."), true).status);
 
         assertEquals("File is found",
                 NanoHTTPD.HTTP_OK,
