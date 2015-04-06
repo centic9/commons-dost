@@ -12,7 +12,7 @@ apply plugin: 'signing'
 sourceCompatibility = 1.7
 group = "org.dstadler"
 archivesBaseName = "commons-dost"
-version = "1.0.0.0"
+version = "1.0.0.0-SNAPSHOT"
 
 repositories {
 	mavenCentral()
@@ -57,6 +57,7 @@ task wrapper(type: Wrapper) {
 }
 
 task sourcesJar(type: Jar) {
+    classifier = 'sources'
     from sourceSets.main.allJava
 }
 
@@ -72,6 +73,8 @@ artifacts {
 signing {
     sign configurations.archives
 }
+
+def ossrhUsername, ossrhPassword
 
 uploadArchives {
   repositories {
