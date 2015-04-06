@@ -6,10 +6,13 @@ apply plugin: 'codenarc'
 // does not observe excludes: apply plugin: 'findbugs'
 // did not provide useful warnings: apply plugin: 'pmd'
 // not used currently: apply plugin: 'jdepend'
-apply plugin: 'maven-publish'
-apply plugin: 'distribution'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 sourceCompatibility = 1.7
+group = "org.dstadler"
+archivesBaseName = "commons-dost"
+version = "1.0.0.0"
 
 repositories {
 	mavenCentral()
@@ -49,31 +52,68 @@ jacoco {
 	toolVersion = "0.7.4.201502262128"
 }
 
-task sourceJar(type: Jar) {
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.3'
+}
+
+task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-publishing {
-	publications {	
-		commonsDost(MavenPublication) {						
-			// Target description
-			groupId 	'org.dstadler'
-			artifactId 	'commons-dost'
-			version 	'1.0.0.0-SNAPSHOT'
-
-			from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-		}	
-	}
-	
-	repositories {
-		mavenCentral()
-	}
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
 }
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '2.3'
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'Common Utilities'
+        packaging 'jar'
+        // optionally artifactId can be defined here 
+        description 'Common utilities I find useful in many of my projects.'
+        url 'https://github.com/centic9/commons-dost'
+
+        scm {
+          connection 'scm:git:https://github.com/centic9/commons-dost.git'
+          developerConnection 'scm:git:https://github.com/centic9/commons-dost.git'
+          url 'https://github.com/centic9/commons-dost'
+        }
+
+        licenses {
+          license {
+            name 'BSD 2-Clause License'
+            url 'http://www.opensource.org/licenses/bsd-license.php'
+          }
+        }
+
+        developers {
+          developer {
+            id 'centic9	'
+            name 'Dominik Stadler'
+            email 'dominik.stadler@gmx.at'
+          }
+        }
+      }
+    }
+  }
 }
