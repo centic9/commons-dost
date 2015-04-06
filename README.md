@@ -9,7 +9,7 @@ as well as helpers for testing.
 
 ### Gradle
 
-TODO, Maven publishing is not done yet...
+    compile 'org.dstadler:commons-dost:1.+'
 
 ## Change it
 
