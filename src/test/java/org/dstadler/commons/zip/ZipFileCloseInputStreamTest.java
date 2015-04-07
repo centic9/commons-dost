@@ -28,28 +28,24 @@ public class ZipFileCloseInputStreamTest {
 
 	@Test
 	public void testZipFileCloseInputStream() throws Exception {
-		ZipFile zipfile = prepareZip();
-
-		try {
+		String name = null;
+		try (ZipFile zipfile = prepareZip()) {
+			name = zipfile.getName();
 			assertNotNull("Should get some entries now", zipfile.entries());
 
 			File file = File.createTempFile("ZipFileClose", ".test");
 			try {
 				FileUtils.writeStringToFile(file,
 						"somedata to have something to read...");
-				InputStream input = new FileInputStream(file);
-
-				try {
+				try (InputStream input = new FileInputStream(file)) {
 					assertTrue(input.available() > 0);
 
-					ZipFileCloseInputStream stream = new ZipFileCloseInputStream(input, zipfile);
+					try (ZipFileCloseInputStream stream = new ZipFileCloseInputStream(input, zipfile)) {
+						assertTrue(stream.available() > 0);
 
-					assertTrue(stream.available() > 0);
-
-					List<String> lines = IOUtils.readLines(stream);
-					assertEquals(1, lines.size());
-
-					stream.close();
+						List<String> lines = IOUtils.readLines(stream);
+						assertEquals(1, lines.size());
+					}
 
 					try {
 						zipfile.entries();
@@ -57,34 +53,27 @@ public class ZipFileCloseInputStreamTest {
 					} catch (IllegalStateException e) {
 						TestHelpers.assertContains(e, "zip file closed");
 					}
-				} finally {
-					input.close();
 				}
 			} finally {
 				assertTrue(file.delete());
 			}
 		} finally {
-			zipfile.close();
-			assertTrue(new File(zipfile.getName()).delete());
+			assertTrue(new File(name).delete());
 		}
 
 	}
 
 	@Test
 	public void testCoverMethods() throws Exception {
-		ZipFile zipfile = prepareZip();
-
-		try {
+		String name = null;
+		try (ZipFile zipfile = prepareZip()) {
+			name = zipfile.getName();
 			File file = File.createTempFile("ZipFileClose", ".test");
 			try {
 				FileUtils.writeStringToFile(file,
 						"somedata to have something to read...");
-				InputStream input = new FileInputStream(file);
-
-				try {
-					ZipFileCloseInputStream stream = new ZipFileCloseInputStream(input, zipfile);
-
-					try {
+				try (InputStream input = new FileInputStream(file)) {
+					try (ZipFileCloseInputStream stream = new ZipFileCloseInputStream(input, zipfile)) {
 						assertTrue(stream.available() > 0);
 
 						assertTrue(file.exists());
@@ -111,8 +100,6 @@ public class ZipFileCloseInputStreamTest {
 							TestHelpers.assertContains(e, "mark/reset not supported");
 						}
 						assertFalse(stream.markSupported());
-					} finally {
-						stream.close();
 					}
 
 					try {
@@ -121,43 +108,34 @@ public class ZipFileCloseInputStreamTest {
 					} catch (IllegalStateException e) {
 						TestHelpers.assertContains(e, "zip file closed");
 					}
-				} finally {
-					input.close();
 				}
 			} finally {
 				assertTrue(file.delete());
 			}
 		} finally {
-			zipfile.close();
-			assertTrue(new File(zipfile.getName()).delete());
+			assertTrue(new File(name).delete());
 		}
 	}
 
 	@Test
 	public void testReset() throws Exception {
-		ZipFile zipfile = prepareZip();
-
-		try {
+		String name = null;
+		try (ZipFile zipfile = prepareZip()) {
+			name = zipfile.getName();
 			File file = File.createTempFile("ZipFileClose", ".test");
 			try {
 				FileUtils.writeStringToFile(file,
 						"somedata to have something to read...");
-				InputStream input = new FileInputStream(file) {
+				try (InputStream input = new FileInputStream(file) {
 
 					@Override
 					public synchronized void reset() throws IOException {
 						// just do nothing to make reset() supported here
 					}
-				};
-
-				try {
-					ZipFileCloseInputStream stream = new ZipFileCloseInputStream(input, zipfile);
-
-					stream.reset();
-
-					stream.close();
-				} finally {
-					input.close();
+				}) {
+					try (ZipFileCloseInputStream stream = new ZipFileCloseInputStream(input, zipfile)) {
+						stream.reset();
+					}
 				}
 
 				try {
@@ -170,8 +148,7 @@ public class ZipFileCloseInputStreamTest {
 				assertTrue(file.delete());
 			}
 		} finally {
-			zipfile.close();
-			assertTrue(new File(zipfile.getName()).delete());
+			assertTrue(new File(name).delete());
 		}
 	}
 
@@ -182,12 +159,9 @@ public class ZipFileCloseInputStreamTest {
 		// ZipFile zip = new ZipFile(zipfile);
 		ZipEntry entry = new ZipEntry("filename");
 
-		ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile));
-		try {
+		try (ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile))) {
 			zipout.putNextEntry(entry);
 			zipout.write("somedata".getBytes());
-		} finally {
-			zipout.close();
 		}
 
 		zipfile.deleteOnExit();
@@ -199,11 +173,8 @@ public class ZipFileCloseInputStreamTest {
 	public void testNullDelegate() throws IOException {
 		try {
 			// fail-fast with an NPE in the constructor already, not later when we do not see any more where it was coming from
-			ZipFile prepareZip = prepareZip();
-			try {
+			try (ZipFile prepareZip = prepareZip()) {
 				assertNotNull(new ZipFileCloseInputStream(null, prepareZip));
-			} finally {
-				prepareZip.close();
 			}
 			fail("Should catch exception here");
 		} catch (NullPointerException e) {

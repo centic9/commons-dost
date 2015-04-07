@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -110,40 +111,28 @@ public class TailInputStreamTest {
 
 			assertEquals(1100, file.length());
 
-			TailInputStream stream = new TailInputStream(file, 20);
-			try {
+			try (InputStream stream = new TailInputStream(file, 20)) {
 				assertEquals(11, stream.read(new byte[1000], 0, 1000));
-			} finally {
-				stream.close();
 			}
 
-			stream = new TailInputStream(file, 20);
-			try {
+			try (InputStream stream = new TailInputStream(file, 20)) {
 				assertEquals(10, stream.skip(10));
 				assertEquals(1, stream.read(new byte[1000], 0, 1000));
 
 				assertEquals(-1, stream.read());
-			} finally {
-				stream.close();
 			}
 		} finally {
 			assertTrue(file.delete());
 		}
 	}
 	protected void assertCount(File file, int expected, int read) throws IOException {
-		TailInputStream stream = new TailInputStream(file, read);
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			try {
+		try (InputStream stream = new TailInputStream(file, read)) {
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				IOUtils.copy(stream, out);
-			} finally {
-				out.close();
-			}
 
-			assertEquals("Had: " + new String(out.toByteArray()),
-					expected, out.toByteArray().length);
-		} finally {
-			stream.close();
+				assertEquals("Had: " + new String(out.toByteArray()),
+						expected, out.toByteArray().length);
+			}
 		}
 	}
 }

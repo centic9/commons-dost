@@ -66,17 +66,16 @@ public class ExecutionHelper {
 	public static InputStream getCommandResult(CommandLine cmdLine, File dir, int expectedExit, long timeout, InputStream input) throws IOException {
 		DefaultExecutor executor = getDefaultExecutor(dir, expectedExit, timeout);
 
-		ByteArrayOutputStream outStr = new ByteArrayOutputStream();
-		executor.setStreamHandler(new PumpStreamHandler(outStr, outStr, input));
-		try {
-			execute(cmdLine, dir, executor, null);
+		try (ByteArrayOutputStream outStr = new ByteArrayOutputStream()) {
+			executor.setStreamHandler(new PumpStreamHandler(outStr, outStr, input));
+			try {
+				execute(cmdLine, dir, executor, null);
 
-			return new ByteArrayInputStream(outStr.toByteArray());
-		} catch (IOException e) {
-			log.warning("Had output before error: " + new String(outStr.toByteArray()));
-			throw new IOException(e);
-		} finally {
-			outStr.close();
+				return new ByteArrayInputStream(outStr.toByteArray());
+			} catch (IOException e) {
+				log.warning("Had output before error: " + new String(outStr.toByteArray()));
+				throw new IOException(e);
+			}
 		}
 	}
 

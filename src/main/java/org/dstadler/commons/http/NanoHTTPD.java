@@ -532,38 +532,39 @@ public class NanoHTTPD
 					throw new Error( "sendResponse(): Status can't be null." ); // NOPMD - imported code
 				}
 
-				OutputStream out = mySocket.getOutputStream();
-				PrintWriter pw = new PrintWriter( out );       // NOSONAR - test class works only locally anyway
-				pw.print("HTTP/1.0 " + status + " \r\n");
+				try (OutputStream out = mySocket.getOutputStream()) {
+					try (PrintWriter pw = new PrintWriter( out )) {
+						pw.print("HTTP/1.0 " + status + " \r\n");
 
-				if ( mime != null ) {
-					pw.print("Content-Type: " + mime + "\r\n");
-				}
+						if ( mime != null ) {
+							pw.print("Content-Type: " + mime + "\r\n");
+						}
 
-				if ( header == null || header.getProperty( "Date" ) == null ) {
-					pw.print( "Date: " + gmtFrmt.format( new Date()) + "\r\n");
-				}
+						if ( header == null || header.getProperty( "Date" ) == null ) {
+							pw.print( "Date: " + gmtFrmt.format( new Date()) + "\r\n");
+						}
 
-				if ( header != null )
-				{
-					Enumeration<?> e = header.keys();
-					while ( e.hasMoreElements())
-					{
-						String key = (String)e.nextElement();
-						String value = header.getProperty( key );
-						pw.print( key + ": " + value + "\r\n");
+						if ( header != null )
+						{
+							Enumeration<?> e = header.keys();
+							while ( e.hasMoreElements())
+							{
+								String key = (String)e.nextElement();
+								String value = header.getProperty( key );
+								pw.print( key + ": " + value + "\r\n");
+							}
+						}
+
+						pw.print("\r\n");
+						pw.flush();
+
+						if ( data != null )
+						{
+							IOUtils.copy(data, out);
+						}
+						out.flush();
 					}
 				}
-
-				pw.print("\r\n");
-				pw.flush();
-
-				if ( data != null )
-				{
-					IOUtils.copy(data, out);
-				}
-				out.flush();
-				out.close();
 				if ( data != null ) {
 					data.close();
 				}
@@ -679,8 +680,7 @@ public class NanoHTTPD
 			// Support (simple) skipping:
 			long startFrom = getRange(header);
 
-			FileInputStream fis = new FileInputStream( f );
-			try {
+			try (InputStream fis = new FileInputStream( f )) {
 				if(fis.skip( startFrom ) != startFrom) {
 					logger.info("Skipped less bytes than expected: " + startFrom);
 				}
@@ -689,8 +689,6 @@ public class NanoHTTPD
 				r.addHeader( "Content-range", "" + startFrom + "-" +
 							(f.length()-1) + '/' + f.length());
 				return r;
-			} finally {
-				fis.close();
 			}
 		}
 		catch( IOException ioe )

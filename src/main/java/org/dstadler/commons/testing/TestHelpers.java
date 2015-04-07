@@ -178,9 +178,13 @@ public class TestHelpers {
 			assertTrue("Item 'notequal' should be higher than item 'equal' in CompareToTest, but compare was: " + obj.compareTo(notequal),
 					obj.compareTo(notequal) < 0);
 		}
-		
-		assertTrue("Findbugs: Comparable objects should implement equals() as well.", obj.equals(equal)); 
-        assertFalse("Findbugs: Comparable objects should implement equals() as well.", obj.equals(notequal)); 
+
+		// ensure equals() and hashCode() are implemented as well here
+		assertTrue("Findbugs: Comparable objects should implement equals() the same way as compareTo().", obj.equals(equal));
+        assertFalse("Findbugs: Comparable objects should implement equals() the same way as compareTo().", obj.equals(notequal));
+        EqualsTest(obj, equal, notequal);
+        assertEquals("Findbugs: Comparable objects should implement hashCode() the same way as compareTo().", obj.hashCode(), equal.hashCode());
+        HashCodeTest(obj, equal);
 	}
 
 	/**

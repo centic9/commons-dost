@@ -46,11 +46,8 @@ public class ZipUtilsTest {
 		try {
 			FileUtils.writeStringToFile(file, "somedata");
 
-			InputStream zipContents = ZipUtils.getZipContentsRecursive(file.getAbsolutePath());
-			try {
+			try (InputStream zipContents = ZipUtils.getZipContentsRecursive(file.getAbsolutePath())) {
 				assertEquals("somedata", IOUtils.toString(zipContents));
-			} finally {
-				zipContents.close();
 			}
 		} finally {
 			assertTrue(file.exists());
@@ -71,19 +68,13 @@ public class ZipUtilsTest {
 			// ZipFile zip = new ZipFile(zipfile);
 			ZipEntry entry = new ZipEntry("filename");
 
-			ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile));
-			try {
+			try (ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile))) {
 				zipout.putNextEntry(entry);
 				zipout.write("somedata".getBytes());
-			} finally {
-				zipout.close();
 			}
 
-			InputStream zipContents = ZipUtils.getZipContentsRecursive(zipfile.getAbsolutePath() + "!filename");
-			try {
+			try (InputStream zipContents = ZipUtils.getZipContentsRecursive(zipfile.getAbsolutePath() + "!filename")) {
 				assertEquals("somedata", IOUtils.toString(zipContents));
-			} finally {
-				zipContents.close();
 			}
 		} finally {
 			assertTrue(zipfile.exists());
@@ -101,12 +92,9 @@ public class ZipUtilsTest {
 		File zipfile2 = createNestedZip();
 
 		try {
-    		InputStream zipContents = ZipUtils.getZipContentsRecursive(zipfile2.getAbsolutePath() + "!nested.zip!filename");
-    		try {
+    		try (InputStream zipContents = ZipUtils.getZipContentsRecursive(zipfile2.getAbsolutePath() + "!nested.zip!filename")) {
     			assertEquals("somedata",
     					IOUtils.toString(zipContents));
-    		} finally {
-    			zipContents.close();
     		}
 		} finally {
 		    assertTrue(zipfile2.exists());
@@ -218,20 +206,14 @@ public class ZipUtilsTest {
 
 		try {
     		ArrayList<String> results = new ArrayList<>();
-    		FileInputStream zipInput = new FileInputStream(zipfile);
-    		try {
+    		try (InputStream zipInput = new FileInputStream(zipfile)) {
     			ZipUtils.findZip("zipfile", zipInput, FileFilterUtils.falseFileFilter(), results);
-    		} finally {
-    			zipInput.close();
     		}
     		assertEquals("look for files with no-accept filter and expect to accept none", 0, results.size());
 
     		results.clear();
-    		zipInput = new FileInputStream(zipfile);
-    		try {
+    		try (InputStream zipInput = new FileInputStream(zipfile)) {
     			ZipUtils.findZip("zipfile", zipInput, FileFilterUtils.trueFileFilter(), results);
-    		} finally {
-    			zipInput.close();
     		}
     		assertEquals(
     				"look for files with all-accept filter and expect one entry for the nested zip and one entry for the deeply nested file as well as a dir and a file underneath",
@@ -274,20 +256,16 @@ public class ZipUtilsTest {
 				// ZipFile zip = new ZipFile(zipfile);
 				ZipEntry entry = new ZipEntry("filename");
 
-				ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile));
-				try {
+				try (ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile))) {
 					zipout.putNextEntry(entry);
 					zipout.write("somedata".getBytes());
-				} finally {
-					zipout.close();
 				}
 			}
 
 			File zipfile2 = File.createTempFile("zipfile2", ".zip");
 			{ // write outer zip file
 				ZipEntry entry2 = new ZipEntry("nested.zip");
-				ZipOutputStream zipout2 = new ZipOutputStream(new FileOutputStream(zipfile2));
-				try {
+				try (ZipOutputStream zipout2 = new ZipOutputStream(new FileOutputStream(zipfile2))) {
 					zipout2.putNextEntry(entry2);
 					zipout2.write(FileUtils.readFileToByteArray(zipfile));
 					zipout2.closeEntry();
@@ -299,8 +277,6 @@ public class ZipUtilsTest {
 					ZipEntry fileEntry = new ZipEntry("dir/file");
 					zipout2.putNextEntry(fileEntry);
 					zipout2.closeEntry();
-				} finally {
-					zipout2.close();
 				}
 			}
 			return zipfile2;
@@ -389,10 +365,10 @@ public class ZipUtilsTest {
 			// ZipFile zip = new ZipFile(zipfile);
 			ZipEntry entry = new ZipEntry("filename");
 
-			ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile));
-			zipout.putNextEntry(entry);
-			zipout.write("somedata".getBytes());
-			zipout.close();
+			try (ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile))) {
+				zipout.putNextEntry(entry);
+				zipout.write("somedata".getBytes());
+			}
 
 			assertEquals("somedata", ZipUtils.getZipStringContentsRecursive(zipfile.getAbsolutePath() + "!filename"));
 		} finally {
@@ -499,9 +475,7 @@ public class ZipUtilsTest {
 	@Test
 	public void testIcefaces() throws Exception {
 		List<String> r = new ArrayList<>();
-		FileInputStream zipInput = new FileInputStream("C:\\data\\easyTravel\\ThirdPartyLibraries\\IceFaces\\ICEfaces-2.0.0-bin\\icefaces\\lib\\jsf-impl.jar");
-
-		try {
+		try (InputStream zipInput = new FileInputStream("C:\\data\\easyTravel\\ThirdPartyLibraries\\IceFaces\\ICEfaces-2.0.0-bin\\icefaces\\lib\\jsf-impl.jar")) {
 			ZipUtils.findZip("C:\\data\\easyTravel\\ThirdPartyLibraries\\IceFaces\\ICEfaces-2.0.0-bin\\icefaces\\lib\\jsf-impl.jar",
 					zipInput,
 					new FileFilter() {
@@ -512,8 +486,6 @@ public class ZipUtilsTest {
 				}
 			}, r);
 			assertEquals("List: " + r, 1, r.size());
-		} finally {
-			zipInput.close();
 		}
 	}
 
@@ -609,17 +581,11 @@ public class ZipUtilsTest {
 		try {
     		ZipUtils.replaceInZip(zipfile.getAbsolutePath() + "!nested.zip", "somenewdata", null);
 
-    		ZipFile checkZip = new ZipFile(zipfile);
-    		try {
+    		try (ZipFile checkZip = new ZipFile(zipfile)) {
     			assertNotNull(checkZip.getEntry("nested.zip"));
-    			InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"));
-    			try {
+    			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
     				assertEquals("somenewdata", IOUtils.toString(stream));
-    			} finally {
-    				stream.close();
     			}
-    		} finally {
-    			checkZip.close();
     		}
 		} finally {
 		    assertTrue(zipfile.exists());
@@ -634,27 +600,18 @@ public class ZipUtilsTest {
 		try {
     		ZipUtils.replaceInZip(zipfile.getAbsolutePath() + "!nested.zip", "somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF", "ISO-8859-1");
 
-    		ZipFile checkZip = new ZipFile(zipfile);
-    		try {
+    		try (ZipFile checkZip = new ZipFile(zipfile)) {
     			assertNotNull(checkZip.getEntry("nested.zip"));
 
-    			InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"));
-    			try {
+    			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
     				String data = IOUtils.toString(stream, "UTF-8");
     				assertFalse("Should be different without encoding, expected: somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\nhad: " + data,
     					"somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF".equals(data));
-    			} finally {
-    				stream.close();
     			}
 
-    			stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"));
-    			try {
+    			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
     				assertEquals("Should be equal with same encoding", "somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF", IOUtils.toString(stream, "ISO-8859-1"));
-    			} finally {
-    				stream.close();
     			}
-    		} finally {
-    			checkZip.close();
     		}
 		} finally {
 		    assertTrue(zipfile.exists());
@@ -669,17 +626,11 @@ public class ZipUtilsTest {
 		try {
     		ZipUtils.replaceInZip(zipfile.getAbsolutePath() + "!newfile.zip", "somemorenewdata", null);
 
-    		ZipFile checkZip = new ZipFile(zipfile);
-    		try {
+    		try (ZipFile checkZip = new ZipFile(zipfile)) {
     			assertNotNull(checkZip.getEntry("newfile.zip"));
-    			InputStream stream = checkZip.getInputStream(checkZip.getEntry("newfile.zip"));
-    			try {
+    			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("newfile.zip"))) {
     				assertEquals("somemorenewdata", IOUtils.toString(stream));
-    			} finally {
-    				stream.close();
     			}
-    		} finally {
-    			checkZip.close();
     		}
         } finally {
             assertTrue(zipfile.exists());
@@ -701,11 +652,8 @@ public class ZipUtilsTest {
     			}
     		};
 
-    		FileInputStream zipFile2 = new FileInputStream(zipfile);
-    		try {
+    		try (InputStream zipFile2 = new FileInputStream(zipfile)) {
     			visitor.walk(zipFile2);
-    		} finally {
-    			zipFile2.close();
     		}
 
     		assertTrue("Expect to have found at least some files", found.get());
@@ -729,20 +677,17 @@ public class ZipUtilsTest {
     			}
     		};
 
-    		FileInputStream zipFile2 = new FileInputStream(zipfile) {
+    		try (InputStream zipFile2 = new FileInputStream(zipfile) {
 
     			@Override
     			public int read(byte[] b, int off, int len) throws IOException {
     				throw new IOException("testexception");
     			}
-    		};
-    		try {
+    		}) {
     			visitor.walk(zipFile2);
     			fail("Should catch IOException here");
     		} catch (IOException e) {
     			TestHelpers.assertContains(e, "testexception");
-    		} finally {
-    			zipFile2.close();
     		}
 
     		assertFalse("Expect to have found at least some files", found.get());

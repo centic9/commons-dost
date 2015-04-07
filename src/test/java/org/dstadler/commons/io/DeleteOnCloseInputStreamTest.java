@@ -21,34 +21,28 @@ public class DeleteOnCloseInputStreamTest {
 		File file = File.createTempFile("deleteOnClose1_", ".test");
 		FileUtils.writeStringToFile(file,
 				"somedata to have something to read...");
-		InputStream input = new FileInputStream(file);
-
-		try {
+		try (InputStream input = new FileInputStream(file)) {
 			assertTrue(file.exists());
 			assertTrue(file.length() > 0);
 
 			assertTrue(input.available() > 0);
 
-			DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input,
-					file);
+			try (DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input,
+					file)) {
+				assertTrue(stream.available() > 0);
 
-			assertTrue(stream.available() > 0);
+				assertTrue(file.exists());
+				assertTrue(file.length() > 0);
 
-			assertTrue(file.exists());
-			assertTrue(file.length() > 0);
+				List<String> lines = IOUtils.readLines(stream);
+				assertEquals(1, lines.size());
 
-			List<String> lines = IOUtils.readLines(stream);
-			assertEquals(1, lines.size());
-
-			assertTrue(file.exists());
-			assertTrue(file.length() > 0);
-
-			stream.close();
+				assertTrue(file.exists());
+				assertTrue(file.length() > 0);
+			}
 
 			assertFalse("After closing, the file should be deleted from disk.",
 					file.exists());
-		} finally {
-			input.close();
 		}
 	}
 
@@ -57,45 +51,39 @@ public class DeleteOnCloseInputStreamTest {
 		File file = File.createTempFile("deleteOnClose2_", ".test");
 		FileUtils.writeStringToFile(file,
 				"somedata to have something to read...");
-		InputStream input = new FileInputStream(file);
+		try (InputStream input = new FileInputStream(file)) {
+			try (DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input,
+					file)) {
+				assertTrue(stream.available() > 0);
 
-		try {
-			DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input,
-					file);
+				assertTrue(file.exists());
+				assertTrue(file.length() > 0);
 
-			assertTrue(stream.available() > 0);
+				try {
+					stream.reset();
+					fail("Mark/Reset not supported");
+				} catch (IOException e) {
+					TestHelpers.assertContains(e, "mark/reset not supported");
+				}
 
-			assertTrue(file.exists());
-			assertTrue(file.length() > 0);
+				// cover the overwritten methods
+				assertEquals('s', stream.read());
+				assertEquals(2, stream.read(new byte[2]));
 
-			try {
-				stream.reset();
-				fail("Mark/Reset not supported");
-			} catch (IOException e) {
-				TestHelpers.assertContains(e, "mark/reset not supported");
+				stream.mark(2);
+
+				stream.skip(1);
+				try {
+					stream.reset();
+					fail("Mark/Reset not supported");
+				} catch (IOException e) {
+					TestHelpers.assertContains(e, "mark/reset not supported");
+				}
+				assertFalse(stream.markSupported());
 			}
-
-			// cover the overwritten methods
-			assertEquals('s', stream.read());
-			assertEquals(2, stream.read(new byte[2]));
-
-			stream.mark(2);
-
-			stream.skip(1);
-			try {
-				stream.reset();
-				fail("Mark/Reset not supported");
-			} catch (IOException e) {
-				TestHelpers.assertContains(e, "mark/reset not supported");
-			}
-			assertFalse(stream.markSupported());
-
-			stream.close();
 
 			assertFalse("After closing, the file should be deleted from disk.",
 					file.exists());
-		} finally {
-			input.close();
 		}
 	}
 
@@ -104,25 +92,19 @@ public class DeleteOnCloseInputStreamTest {
 		File file = File.createTempFile("deleteOnClose3_", ".test");
 		FileUtils.writeStringToFile(file,
 				"somedata to have something to read...");
-		InputStream input = new FileInputStream(file) {
+		try (InputStream input = new FileInputStream(file) {
 			@Override
 			public synchronized void reset() throws IOException {
 				// just do nothing to make reset() supported here
 			}
-		};
-
-		try {
-			DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input,
-					file);
-
-			stream.reset();
-
-			stream.close();
+		}) {
+			try (DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input,
+					file)) {
+				stream.reset();
+			}
 
 			assertFalse("After closing, the file should be deleted from disk.",
 					file.exists());
-		} finally {
-			input.close();
 		}
 	}
 
@@ -134,18 +116,14 @@ public class DeleteOnCloseInputStreamTest {
 
 		File file = File.createTempFile("deleteOnClose5_", ".test", dir);
 
-		InputStream input = new FileInputStream(file);
-
-		try {
-			DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input, dir);
-
-			stream.close();
+		try (InputStream input = new FileInputStream(file)) {
+			try (DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input, dir)) {
+				stream.close();
+			}
 
 			// try to clean up, file was not removed as we passed the dir to the stream!
 			assertTrue(file.delete());
 			assertTrue(dir.delete());
-		} finally {
-			input.close();
 		}
 	}
 

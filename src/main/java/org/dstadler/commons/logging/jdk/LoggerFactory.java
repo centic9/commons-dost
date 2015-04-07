@@ -48,30 +48,30 @@ public class LoggerFactory {
 	 * Note: Call this method at the very first after main
 	 *
 	 * @throws IOException If the file "logging.properties" is not found in the classpath.
-	 * @author dominik.stadler
+	 * @author dstadler
 	 */
 	public static void initLogging() throws IOException {
 		sendCommonsLogToJDKLog();
 
-		InputStream resource = Thread.currentThread().getContextClassLoader().getResourceAsStream("logging.properties");
-
-		// apply configuration
-		if(resource != null) {
-			try {
-				LogManager.getLogManager().readConfiguration(resource);
-			} finally {
-				resource.close();
+		try (InputStream resource = Thread.currentThread().getContextClassLoader().getResourceAsStream("logging.properties")) {
+			// apply configuration
+			if(resource != null) {
+				try {
+					LogManager.getLogManager().readConfiguration(resource);
+				} finally {
+					resource.close();
+				}
 			}
-		}
 
-		// apply a default format to the log handlers here before throwing an exception further down
-		Logger log = Logger.getLogger("");    // NOSONAR - local logger used on purpose here
-        for (Handler handler : log.getHandlers()) {
-            handler.setFormatter(new DefaultFormatter());
-        }
+			// apply a default format to the log handlers here before throwing an exception further down
+			Logger log = Logger.getLogger("");    // NOSONAR - local logger used on purpose here
+			for (Handler handler : log.getHandlers()) {
+				handler.setFormatter(new DefaultFormatter());
+			}
 
-		if(resource == null) {
-			throw new IOException("Did not find a file 'logging.properties' in the classpath");
+			if(resource == null) {
+				throw new IOException("Did not find a file 'logging.properties' in the classpath");
+			}
 		}
 	}
 
@@ -83,12 +83,12 @@ public class LoggerFactory {
 		// set a property which instructs Commons Logging to use JDK Logging instead of Log4j
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.Jdk14Logger");
 	}
-	
+
 	/**
-	 * Resort to reflection to make any FileHandler that is currently active roll-over 
-	 * the current logfile and start a new one, e.g. this may be useful before a big 
+	 * Resort to reflection to make any FileHandler that is currently active roll-over
+	 * the current logfile and start a new one, e.g. this may be useful before a big
 	 * batch-job starts to have a clean start of log-entries.
-	 * 
+	 *
 	 * @throws IllegalStateException If there is a problem calling the rotate-method of the {@link FileHandler}
 	 */
     public static void rolloverLogfile() {
@@ -100,8 +100,8 @@ public class LoggerFactory {
                     m.setAccessible(true);
                     if (!Level.OFF.equals(handler.getLevel())) { //Assume not closed.
                             m.invoke(handler);
-                    }                
-                } catch (IllegalAccessException | IllegalArgumentException | 
+                    }
+                } catch (IllegalAccessException | IllegalArgumentException |
                         InvocationTargetException | NoSuchMethodException | SecurityException e) {
                     throw new IllegalStateException(e);
                 }

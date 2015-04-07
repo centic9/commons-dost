@@ -221,11 +221,8 @@ public class ZipUtils {
 		ZipEntry entry = openInnerZip(pos, zip, subfile, zipfile);
 
 		// read the zipfile into a temporary file
-		InputStream zipstr = zipfile.getInputStream(entry);
-		try {
+		try (InputStream zipstr = zipfile.getInputStream(entry)) {
 			FileUtils.copyInputStreamToFile(zipstr, subzipfile);
-		} finally {
-			zipstr.close();
 		}
 	}
 
@@ -267,15 +264,12 @@ public class ZipUtils {
 			}
 
 			try {
-				InputStream str = new FileInputStream(file);
-				try {
+				try (InputStream str = new FileInputStream(file)) {
 					if (str.available() > 0) {
 						return IOUtils.toString(str);
 					}
 
 					return "";
-				} finally {
-					str.close();
 				}
 			} catch (IOException e) {
 				// filter out locked errors
@@ -300,8 +294,7 @@ public class ZipUtils {
 			throw new IOException("ZIP file: " + zip + " does not exist or is empty or not a readable file.");
 		}
 
-		ZipFile zipfile = new ZipFile(zip);
-		try {
+		try (ZipFile zipfile = new ZipFile(zip)) {
 			// is the target file in yet another ZIP file?
 			pos = subfile.indexOf('!');
 			if (pos != -1) {
@@ -323,18 +316,13 @@ public class ZipUtils {
 
 			ZipEntry entry = zipfile.getEntry(subfile);
 
-			InputStream str = zipfile.getInputStream(entry);
-			try {
+			try (InputStream str = zipfile.getInputStream(entry)) {
 				if (str.available() > 0) {
 					return IOUtils.toString(str);
 				}
 
 				return "";
-			} finally {
-				str.close();
 			}
-		} finally {
-			zipfile.close();
 		}
 	}
 
@@ -356,8 +344,7 @@ public class ZipUtils {
 			throw new IOException("Directory '" + toDir + "' does not exist.");
 		}
 
-		ZipFile zipFile = new ZipFile(zip);
-		try {
+		try (ZipFile zipFile = new ZipFile(zip)) {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
 			while (entries.hasMoreElements()) {
@@ -374,21 +361,13 @@ public class ZipUtils {
 				}
 
 				logger.info("Extracting file: " + entry.getName());
-				InputStream inputStream = zipFile.getInputStream(entry);
-				try {
-					BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(new File(toDir,
-							entry.getName())));
-					try {
+				try (InputStream inputStream = zipFile.getInputStream(entry)) {
+					try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(new File(toDir,
+							entry.getName())))) {
 						IOUtils.copy(inputStream, outputStream);
-					} finally {
-						outputStream.close();
 					}
-				} finally {
-					inputStream.close();
 				}
 			}
-		} finally {
-			zipFile.close();
 		}
 	}
 
@@ -431,11 +410,9 @@ public class ZipUtils {
 		File zipOutFile = File.createTempFile("ZipReplace", ".zip");
 		try {
 			FileOutputStream fos = new FileOutputStream(zipOutFile);
-			ZipOutputStream zos = new ZipOutputStream(fos);
-			try {
+			try (ZipOutputStream zos = new ZipOutputStream(fos)) {
 				// open the input side
-				ZipFile zipFile = new ZipFile(zip);
-				try {
+				try (ZipFile zipFile = new ZipFile(zip)) {
 					boolean found = false;
 
 					// walk all entries and copy them into the new file
@@ -465,11 +442,7 @@ public class ZipUtils {
 							zos.closeEntry();
 						}
 					}
-				} finally {
-					zipFile.close();
 				}
-			} finally {
-				zos.close();
 			}
 
 			// copy over the data
@@ -494,8 +467,7 @@ public class ZipUtils {
 	 */
 	public static abstract class ZipFileVisitor {
 		public void walk(InputStream zipFile) throws IOException {
-			ZipInputStream stream = new ZipInputStream(zipFile);
-			try {
+			try (ZipInputStream stream = new ZipInputStream(zipFile)) {
 	            // while there are entries I process them
 		        while (true)
 		        {
@@ -506,9 +478,6 @@ public class ZipUtils {
 
 		        	visit(entry, stream);
 		        }
-
-			} finally {
-				stream.close();
 			}
 		}
 
