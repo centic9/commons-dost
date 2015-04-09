@@ -1,5 +1,6 @@
 [![Build Status](https://buildhive.cloudbees.com/job/centic9/job/commons-dost/badge/icon)](https://buildhive.cloudbees.com/job/centic9/job/commons-dost/) 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost/badge.svg?style=fla)t](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost)
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost)
 
 This is a small library of code-pieces that I find useful in many of my projects. 
 
