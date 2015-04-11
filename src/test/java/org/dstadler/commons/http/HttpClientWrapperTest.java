@@ -4,18 +4,22 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-import org.junit.Assume;
-import org.junit.Test;
-
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
+import org.dstadler.commons.net.UrlUtils;
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
-import org.dstadler.commons.net.UrlUtils;
+import org.junit.Assume;
+import org.junit.Test;
 
 
 public class HttpClientWrapperTest {
 
 	@Test
-	public void testHttpClientWrapper() throws Exception {
+	public void testHttpClientWrapperSimpleGet() throws Exception {
 		try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
 			assertNotNull(wrapper.getHttpClient());
 
@@ -25,6 +29,31 @@ public class HttpClientWrapperTest {
 		}
 	}
 
+    @Test
+    public void testHttpClientWrapperNormalGet() throws Exception {
+        try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
+            assertNotNull(wrapper.getHttpClient());
+
+            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
+                assertEquals("ok", wrapper.simpleGet("http://localhost:" + server.getPort()));
+
+                final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
+                try (CloseableHttpResponse response = wrapper.getHttpClient().execute(httpGet)) {
+                    HttpClientWrapper.checkAndFetch(response, "http://localhost:" + server.getPort());
+
+                    HttpEntity entity = response.getEntity();
+
+                    try {
+                        IOUtils.toString(entity.getContent());
+                    } finally {
+                        // ensure all content is taken out to free resources
+                        EntityUtils.consume(entity);
+                    }
+                }
+            }
+        }
+    }
+    
 	@Test
 	public void testHttpClientWrapperBytes() throws Exception {
 		try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
@@ -72,7 +101,24 @@ public class HttpClientWrapperTest {
 		}
 	}
 
-	@Test
+    @Test
+    public void testCheckAndFetchFails() throws Exception {
+        try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
+            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "ok")) {
+                try {
+                    final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
+                    try (CloseableHttpResponse response = wrapper.getHttpClient().execute(httpGet)) {
+                        HttpClientWrapper.checkAndFetch(response, "http://localhost:" + server.getPort());
+                    }
+                    fail("Should throw an exception");
+                } catch (IOException e) {
+                    TestHelpers.assertContains(e, "500");
+                }
+            }
+        }
+    }
+
+    @Test
 	public void testSimpleGetBytesFails() throws Exception {
 		try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
 			try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "ok")) {

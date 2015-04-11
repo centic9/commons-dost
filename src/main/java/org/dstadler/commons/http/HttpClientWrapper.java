@@ -20,6 +20,7 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
@@ -265,4 +266,25 @@ public class HttpClientWrapper implements Closeable {
 			return wrapper.simpleGet(url);
 		}
 	}
+
+	/**
+	 * Helper method to check the status code of the response and throw an IOException if it is
+	 * an error or moved state.
+	 * 
+	 * @param response A HttpResponse that is resulting from executing a HttpMethod.
+	 * @param url The url, only used for building the error message of the exception.
+	 * 
+	 * @throws IOException if the HTTP status code is higher than 206.
+	 */
+    public static HttpEntity checkAndFetch(HttpResponse response, String url) throws IOException {
+        int statusCode = response.getStatusLine().getStatusCode();
+        if(statusCode > 206) {
+            String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " + 
+                    response.getStatusLine().getReasonPhrase();
+            log.warning(msg);
+   
+            throw new IOException(msg);
+        }
+        return response.getEntity();
+    }
 }
