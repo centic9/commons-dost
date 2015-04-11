@@ -19,7 +19,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-
 import org.dstadler.commons.io.DeleteOnCloseInputStream;
 
 
@@ -56,15 +55,15 @@ public class ZipUtils {
 	 * Determines if the file has an extension known to be a ZIP file,
 	 * currently this includes .zip, .jar, .war, .ear, .aar
 	 *
-	 * @param t
-	 * @return
+	 * @param fileName The name of the file to check.
+	 * @return True if the filename is of an extension that is a known zip file, false otherwise.
 	 */
-	public static boolean isZip(String t) {
-		if (t == null) {
+	public static boolean isZip(String fileName) {
+		if (fileName == null) {
 			return false;
 		}
 
-		String tl = t.toLowerCase();
+		String tl = fileName.toLowerCase();
 		for (String element : ZIP_EXTENSIONS) {
 			if (tl.endsWith(element)) {
 				return true;
@@ -77,17 +76,16 @@ public class ZipUtils {
 	 * Checks if the string denotes a file inside a ZIP file using the notation
 	 * used for getZipContentsRecursive().
 	 *
-	 * @param t
-	 * @return
-	 * @author dominik.stadler
+	 * @param name The name to check
+	 * @return true if the name denotes a file inside a known zip file format.
 	 */
-	public static boolean isFileInZip(String t) {
-		if (t == null) {
+	public static boolean isFileInZip(String name) {
+		if (name == null) {
 			return false;
 		}
 
 		for (String element : ZIP_EXTENSIONS) {
-			if (t.toLowerCase().contains(element + ZIP_DELIMITER)) {
+			if (name.toLowerCase().contains(element + ZIP_DELIMITER)) {
 				return true;
 			}
 		}

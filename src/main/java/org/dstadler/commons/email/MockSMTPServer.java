@@ -57,7 +57,7 @@ public class MockSMTPServer {
 	/**
 	 * Returns if the server is currently running, i.e. start() was called and stop() was not yet called.
 	 *
-	 * @return
+	 * @return True, if the server is currently running, false otherwise.
 	 */
 	public boolean isRunning() {
 		return server != null && !server.isStopped();
@@ -79,7 +79,7 @@ public class MockSMTPServer {
 	 *
 	 * The port is chosen automatically in the range of {@value #PORT_RANGE_START} and {@value #PORT_RANGE_END}.
 	 *
-	 * @return
+	 * @return The server-port that is used by this instance.
 	 */
 	public int getPort() {
 		return port;
@@ -91,7 +91,7 @@ public class MockSMTPServer {
 	 *
 	 * Note: calling start() again on this instance resets this counter.
 	 *
-	 * @return
+	 * @return The number of messages that were received by this server.
 	 */
 	public int getMessageCount() {
 		return server.getReceivedEmailSize();
@@ -104,7 +104,7 @@ public class MockSMTPServer {
 	 *
 	 * Note: calling start() again on this instance resets this list.
 	 *
-	 * @return
+	 * @return An iterator of the messages that were received.
 	 */
 	public Iterator<String> getMessages() {
 		Iterator<SmtpMessage> it = server.getReceivedEmail();
