@@ -419,11 +419,8 @@ public class UrlUtils {
 
             /* dotNet processes require a first request to be sent to initialize the application */
             if (fireRequest) {
-                InputStream is = null;
-                try {
-                    is = conn.getInputStream();
-                } finally {
-                	IOUtils.closeQuietly(is);
+                try (InputStream is = conn.getInputStream()) {
+                    // nothing to do here, closing is handled by try
                 }
 
             }

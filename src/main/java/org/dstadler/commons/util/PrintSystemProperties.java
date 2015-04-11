@@ -13,11 +13,8 @@ public class PrintSystemProperties {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws IOException  {
-		FileOutputStream out = new FileOutputStream("SystemProperties.log");
-		try {
+		try (FileOutputStream out = new FileOutputStream("SystemProperties.log")) {
 			System.getProperties().store(out, "Current System Properties");
-		} finally {
-			out.close();
 		}
 	}
 }

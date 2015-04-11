@@ -18,16 +18,15 @@ public class BufferingLogOutputStreamTest {
 
 	@Test
 	public void test() throws IOException {
-		BufferingLogOutputStream stream = new BufferingLogOutputStream();
-
-		// sends everything to Level.INFO
-		stream.processLine("someline", 0);
-
-		// test null and empty string
-		stream.processLine(null, 0);
-		stream.processLine("", 0);
-
-		stream.close();
+		try (BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
+    
+    		// sends everything to Level.INFO
+    		stream.processLine("someline", 0);
+    
+    		// test null and empty string
+    		stream.processLine(null, 0);
+    		stream.processLine("", 0);
+		}
 
 		// TODO: test if the data actually is buffered and reaches the log output at some point.
 	}
@@ -37,21 +36,20 @@ public class BufferingLogOutputStreamTest {
 		TestHelpers.runTestWithDifferentLogLevel(new Runnable() {
 			@Override
 			public void run() {
-				BufferingLogOutputStream stream = new BufferingLogOutputStream();
-
-				// sends everything to Level.INFO
-				for (int i = 0; i < 1000; i++) {
-					stream.processLine("someline", 0);
-				}
-
-				try {
+				try (BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
+    
+    				// sends everything to Level.INFO
+    				for (int i = 0; i < 1000; i++) {
+    					stream.processLine("someline", 0);
+    				}
+    
 					stream.close();
 
 					// try closing again, should not fail
 					stream.close();
 				} catch (IOException e) {
-					throw new IllegalStateException(e);
-				}
+				    throw new IllegalStateException(e);
+                }
 			}
 		}, BufferingLogOutputStream.class.getName(), Level.WARNING);
 	}
@@ -65,8 +63,7 @@ public class BufferingLogOutputStreamTest {
 					ThreadTestHelper helper =
 							new ThreadTestHelper(NUMBER_OF_THREADS, NUMBER_OF_TESTS);
 
-					final BufferingLogOutputStream stream = new BufferingLogOutputStream();
-					try {
+					try (final BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
 						helper.executeTest(new ThreadTestHelper.TestRunnable() {
 
 							@Override
@@ -81,8 +78,6 @@ public class BufferingLogOutputStreamTest {
 								}
 							}
 						});
-					} finally {
-						stream.close();
 					}
 				} catch (Throwable e) {
 					throw new IllegalStateException(e);
