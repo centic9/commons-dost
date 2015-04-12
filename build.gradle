@@ -118,7 +118,7 @@ uploadArchives {
   }
 }
 
-# https://github.com/researchgate/gradle-release
+// https://github.com/researchgate/gradle-release
 plugins {
   id 'net.researchgate.release' version '2.0.2'
 }
