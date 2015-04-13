@@ -53,11 +53,11 @@ public class DateParser {
 		// SimpleDateFormat will use a fairly matching format as well, so we
 		// need to put the most complex formats in front to avoid wrong parsing.
 		FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.S" /* Z */, Locale.GERMANY),
-		FastDateFormat.getInstance("yyyy-MM-dd"),
-		FastDateFormat.getInstance("yyyyMMdd"),
-		FastDateFormat.getInstance("HH:mm yyyyMMdd"),
-		FastDateFormat.getInstance("HH:mm yyMMdd"),
-		FastDateFormat.getInstance("MM/dd/yy"),
+		FastDateFormat.getInstance("yyyy-MM-dd", Locale.GERMANY),
+		FastDateFormat.getInstance("yyyyMMdd", Locale.GERMANY),
+		FastDateFormat.getInstance("HH:mm yyyyMMdd", Locale.GERMANY),
+		FastDateFormat.getInstance("HH:mm yyMMdd", Locale.GERMANY),
+		FastDateFormat.getInstance("MM/dd/yy", Locale.GERMANY),
 	};
 
 	public final static long ONE_SECOND = 1000;
