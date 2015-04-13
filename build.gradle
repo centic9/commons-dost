@@ -17,7 +17,6 @@ apply plugin: 'signing'
 sourceCompatibility = 1.7
 group = "org.dstadler"
 archivesBaseName = "commons-dost"
-version = "1.0.0.4"
 
 repositories {
 	mavenCentral()
