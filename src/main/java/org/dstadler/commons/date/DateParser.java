@@ -1,7 +1,6 @@
 package org.dstadler.commons.date;
 
 import java.text.ParseException;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -25,7 +24,7 @@ import com.google.common.base.Preconditions;
  * @author cwat-dstadler
  */
 public class DateParser {
-	private static final TimeZone TIME_ZONE = TimeZone.getTimeZone(ZoneId.of("Europe/Paris"));
+	private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT+2");
 
 	private final static Pattern RELATIVE_TIME_PATTERN = Pattern.compile("([0-9]+)(s|second|seconds|min|minute|minutes|h|hour|hours|d|day|days|w|week|weeks|mon|month|months|y|year|years)");
 
