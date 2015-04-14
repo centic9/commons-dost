@@ -4,8 +4,26 @@
 
 This is a small library of code-pieces that I find useful in many of my projects. 
 
-It covers areas like things that I miss in the JDK itself e.g. for arrays and collections, logging, networking stuff, 
+It covers areas that I miss in the JDK itself e.g. for arrays and collections, logging, networking stuff, 
 as well as helpers for testing.
+
+## Contents
+
+Here an (incomplete) list of bits and pieces in this lib:
+* MappedCounter - counting things easily
+* DateParser - print out things like "1h 2min ago" instead of "at 2015-04-01 16:23:23"
+* ExecutionHelper - More easily run external processes and collect their output using Apache commons-exec underneath
+* DeleteOnCloseInputStream - Delete a file as soon as the stream is closed
+* SVNLogFileParser - Parse the XML output of 'svn log --xml ...'
+* ZipFileCloseInputStream - Close a ZipFile as soon as the related InputStream (usually returned by the ZipFile) is closed
+* ZipUtils - utilities for accessing content in Zip files recursively, i.e. access a file in a zip file inside a zip file.
+ 
+## Test-Helpers
+
+* MockSMTPServer - simluate an SMTP Server for testing code which sends emails
+* MockRESTServer - simluate a HTTP Server for testing code which accesses other systems, e.g. to mock REST interfaces in tests
+* TestHelpers - small utilities for testing things like equals(), hashCode(), toString(), compare() and implementations of Comparator, they ensure some things that the Java spec mandates
+* ThreadTestHelpers - easily run unit tests multiple times in parallel to ensure the code does not contain hidden race conditions
 
 ## Use it
 
