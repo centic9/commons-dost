@@ -1,10 +1,12 @@
 package org.dstadler.commons.date;
 
 import java.text.ParseException;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,9 +20,13 @@ import com.google.common.base.Preconditions;
 /**
  * Modelled after http://graphite.readthedocs.org/en/latest/render_api.html#from-until
  *
+ * Note: Passing in absolute time is expected to be stated in the European timezone!
+ *
  * @author cwat-dstadler
  */
 public class DateParser {
+	private static final TimeZone TIME_ZONE = TimeZone.getTimeZone(ZoneId.of("Europe/Paris"));
+
 	private final static Pattern RELATIVE_TIME_PATTERN = Pattern.compile("([0-9]+)(s|second|seconds|min|minute|minutes|h|hour|hours|d|day|days|w|week|weeks|mon|month|months|y|year|years)");
 
 	private final static Map<String, Integer> UNIT_CONVERSION_TABLE = new HashMap<>();
@@ -52,12 +58,12 @@ public class DateParser {
 		// note: the order here is important to not parse things incorrectly!
 		// SimpleDateFormat will use a fairly matching format as well, so we
 		// need to put the most complex formats in front to avoid wrong parsing.
-		FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.S" /* Z */, Locale.GERMANY),
-		FastDateFormat.getInstance("yyyy-MM-dd", Locale.GERMANY),
-		FastDateFormat.getInstance("yyyyMMdd", Locale.GERMANY),
-		FastDateFormat.getInstance("HH:mm yyyyMMdd", Locale.GERMANY),
-		FastDateFormat.getInstance("HH:mm yyMMdd", Locale.GERMANY),
-		FastDateFormat.getInstance("MM/dd/yy", Locale.GERMANY),
+		FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.S" /* Z */, TIME_ZONE, Locale.GERMANY),
+		FastDateFormat.getInstance("yyyy-MM-dd", TIME_ZONE),
+		FastDateFormat.getInstance("yyyyMMdd", TIME_ZONE),
+		FastDateFormat.getInstance("HH:mm yyyyMMdd", TIME_ZONE),
+		FastDateFormat.getInstance("HH:mm yyMMdd", TIME_ZONE),
+		FastDateFormat.getInstance("MM/dd/yy", TIME_ZONE),
 	};
 
 	public final static long ONE_SECOND = 1000;
