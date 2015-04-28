@@ -55,7 +55,11 @@ task adjustEclipseSettingsFile << {
       fileset(dir: project.projectDir, includes: '.settings/org.eclipse.jdt.core.prefs')
    }
 }
+task sortEclipseSettingsFile << {
+   new File(project.projectDir, '.settings/org.eclipse.jdt.core.prefs').with { it.text = it.readLines().findAll { it }.sort().join('\n') }
+}
 eclipseJdt.finalizedBy adjustEclipseSettingsFile
+eclipseJdt.finalizedBy sortEclipseSettingsFile
 
 test {
 	systemProperties = System.properties
@@ -91,6 +95,14 @@ artifacts {
 
 signing {
     sign configurations.archives
+}
+
+//provide defaults so we do not need to specify them always
+if (!project.hasProperty("ossrhUsername")) {
+    ext.ossrhUsername = ""
+}
+if (!project.hasProperty("ossrhPassword")) {
+    ext.ossrhPassword = ""
 }
 
 uploadArchives {
