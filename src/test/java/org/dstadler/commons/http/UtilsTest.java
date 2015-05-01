@@ -1,17 +1,22 @@
 package org.dstadler.commons.http;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Test;
-
-import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.net.SocketUtils;
+import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import org.junit.Assume;
+import org.junit.Test;
 
 
 /**
@@ -72,9 +77,13 @@ public class UtilsTest {
 
 	/**
 	 * Test method for {@link org.dstadler.commons.http.Utils#getURL(java.lang.String, java.util.concurrent.atomic.AtomicInteger, long)}.
+	 * @throws IOException
 	 */
 	@Test
-	public void testGetURL() {
+	public void testGetURL() throws IOException {
+	    Assume.assumeTrue("Could not access http://dstadler.org/",
+	            checkURL(new URL("http://dstadler.org/")));
+
 		assertTrue("Expect URL http://dstadler.org to work, but didn't",
 				Utils.getURL("http://dstadler.org", new AtomicInteger(), 2));
 		assertTrue("Expect URL http://dstadler.org to work, but didn't",
@@ -85,6 +94,20 @@ public class UtilsTest {
 				Utils.getURL("invalidurl", new AtomicInteger(100), 2));
 		assertFalse("Expect URL http://dstadler.org to not work, but did",
 				Utils.getURL("http://notexistingsomestrangeurlwhichshouldnotexist.com", new AtomicInteger(100), 2));
+	}
+
+	private boolean checkURL(URL url) {
+       final URLConnection con;
+        try {
+            con = url.openConnection();
+            con.setConnectTimeout(10000);
+            con.setReadTimeout(10000);
+            con.getInputStream().read();
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
 	}
 
 	@Test
