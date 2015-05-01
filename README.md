@@ -17,13 +17,9 @@ Here an (incomplete) list of bits and pieces in this lib:
 * SVNLogFileParser - Parse the XML output of 'svn log --xml ...'
 * ZipFileCloseInputStream - Close a ZipFile as soon as the related InputStream (usually returned by the ZipFile) is closed
 * ZipUtils - utilities for accessing content in Zip files recursively, i.e. access a file in a zip file inside a zip file.
- 
-## Test-Helpers
 
-* MockSMTPServer - simluate an SMTP Server for testing code which sends emails
-* MockRESTServer - simluate a HTTP Server for testing code which accesses other systems, e.g. to mock REST interfaces in tests
-* TestHelpers - small utilities for testing things like equals(), hashCode(), toString(), compare() and implementations of Comparator, they ensure some things that the Java spec mandates
-* ThreadTestHelpers - easily run unit tests multiple times in parallel to ensure the code does not contain hidden race conditions
+Please note that some testing related pieces were moved into their own library to better separate these things. Look at
+http://github.com/centic9/commons-test for more details.
 
 ## Use it
 

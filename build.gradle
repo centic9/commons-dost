@@ -46,6 +46,7 @@ dependencies {
 	compile "junit:junit:[4.12,)"
 	
 	testCompile 'org.apache.commons:commons-email:1.3.1'
+	testCompile 'org.dstadler:commons-test:1.0.0.3'
 }
 
 // work around unnecessary timestamp in generated file which always causes dirty files in version control
