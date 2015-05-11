@@ -2,9 +2,8 @@ package org.dstadler.commons.arrays;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
-
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import org.junit.Test;
 
 public class ArrayUtilsTest {
 
