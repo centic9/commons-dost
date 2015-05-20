@@ -36,10 +36,13 @@ public class DotUtils {
 		CommandLine cmdLine = new CommandLine(DOT_EXE);
 		cmdLine.addArgument("-T" + PNG_TYPE);
 		cmdLine.addArgument(dotfile.getAbsolutePath());
+		
 		DefaultExecutor executor = new DefaultExecutor();
 		executor.setExitValue(0);
+		
 		ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
 		executor.setWatchdog(watchdog);
+		
 		try (FileOutputStream out2 = new FileOutputStream(out)) {
 			executor.setStreamHandler(new PumpStreamHandler(out2, System.err));
 			executor.execute(cmdLine);

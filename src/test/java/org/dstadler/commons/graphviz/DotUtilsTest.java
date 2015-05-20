@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,11 @@ public class DotUtilsTest {
 
 			try {
 				DotUtils.renderGraph(file);
-				fail("Should catch exception");
+				
+				// on linux dot does not set the exit code to 1 here...
+				if(SystemUtils.IS_OS_WINDOWS) {
+					fail("Should catch exception");
+				}
 			} catch (IOException e) {
 				// expected here
 			}
