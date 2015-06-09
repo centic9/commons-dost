@@ -32,3 +32,4 @@ org.apache.poi.openxml4j.opc.internal.marshallers.PackagePropertiesMarshaller.<c
 org.apache.xmlbeans.impl.regex.RegexParser.setLocale
 org.apache.xmlbeans.impl.schema.ClassLoaderResourceLoader.getResourceAsStream
 java.awt.font.TextLayout.<init>
+sun.util.resources.LocaleData.getNumberFormatData
