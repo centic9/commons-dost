@@ -455,7 +455,7 @@ public class ZipUtils {
 	/**
 		new ZipUtils.ZipFileVisitor() {
 
-			@Override
+			{@literal @}Override
 			public void visit(ZipEntry entry, InputStream data) throws IOException {
 				// process file data
 			}

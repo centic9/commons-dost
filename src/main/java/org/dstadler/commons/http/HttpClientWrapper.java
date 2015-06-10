@@ -94,7 +94,7 @@ public class HttpClientWrapper implements Closeable {
 	/**
 	 * Return the current {@link HttpClient} instance.
 	 *
-	 * @return
+	 * @return The internally used instance of the {@link HttpClient} 
 	 */
 	public CloseableHttpClient getHttpClient() {
 		return httpClient;
@@ -106,7 +106,7 @@ public class HttpClientWrapper implements Closeable {
 	 * Throws an IOException if the HTTP status code is not 200.
 	 *
 	 * @param url
-	 * @return
+	 * @return The data returned when retrieving the data from the given url, converted to a String.
 	 * @throws IOException
 	 */
 	public String simpleGet(String url) throws IOException {
@@ -255,8 +255,8 @@ public class HttpClientWrapper implements Closeable {
 	 *
 	 * @param url The URL to query data from.
 	 * @param user The username to send
-	 * @param pwd The password to send
-	 * @param timeoutMs How long in millliseconds to wait for the request
+	 * @param password The password to send
+	 * @param timeoutMs How long in milliseconds to wait for the request
 	 * @return The resulting data read from the URL
 	 * @throws IOException If the URL is not accessible or the query returns
 	 * 		a HTTP code other than 200.
