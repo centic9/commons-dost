@@ -461,7 +461,6 @@ public class ZipUtils {
 			}
 		}.walk(new ByteArrayInputStream(zip));
 	 *
-	 * @author dominik.stadler
 	 */
 	public static abstract class ZipFileVisitor {
 		public void walk(InputStream zipFile) throws IOException {
