@@ -1,15 +1,6 @@
 package org.dstadler.commons.http;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -238,8 +229,9 @@ public class NanoHTTPD
 						httpSession.start();
 					}
 				}
-				catch ( IOException ioe ) // NOPMD - imported code
-				{}
+				catch ( IOException e ) {
+					logger.log(Level.WARNING, "Failed while accepting socket connections.", e);
+				}
 			}
 		};
 		myThread.setDaemon( true );
@@ -256,10 +248,7 @@ public class NanoHTTPD
 			myServerSocket.close();
 			myThread.join();
 		}
-		catch ( IOException ioe ) {
-			logger.log(Level.WARNING, "Had unexpected exception during stop", ioe);
-		}
-		catch ( InterruptedException e ) {
+		catch ( IOException | InterruptedException e ) {
 			logger.log(Level.WARNING, "Had unexpected exception during stop", e);
 		}
 	}

@@ -12,6 +12,7 @@ import org.dstadler.commons.http.NanoHTTPD.Response;
 import org.dstadler.commons.net.SocketUtils;
 import org.dstadler.commons.net.UrlUtils;
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class NanoHTTPDTest {
@@ -156,5 +157,27 @@ public class NanoHTTPDTest {
 
 		response.addHeader("somename", "othervalue");
 		assertEquals("othervalue", response.header.getProperty("somename"));
+	}
+
+	@Test
+	public void testPortOutOfRange() throws IOException {
+		try {
+			NanoHTTPD server = new NanoHTTPD(128000);
+			assertNotNull(server);
+			fail("Should not be possible to assign port out of range");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+	}
+
+	@Ignore("may not work on all machines")
+	@Test
+	public void testPortPreismonitor() throws IOException {
+		NanoHTTPD server = new NanoHTTPD(10080);
+		try {
+			assertNotNull(server);
+		} finally {
+			server.stop();
+		}
 	}
 }
