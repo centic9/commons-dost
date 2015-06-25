@@ -72,16 +72,20 @@ public class DotUtilsTest {
 
 			try {
 				File out = File.createTempFile("DotUtilsTest", ".png");
-				assertTrue(out.delete());
+				try {
+					assertTrue(out.delete());
 
-				DotUtils.renderGraph(file, out);
+					DotUtils.renderGraph(file, out);
 
-				// on linux dot does not set the exit code to 1 here...
-				if(SystemUtils.IS_OS_WINDOWS) {
-					fail("Should catch exception");
+					// on linux dot does not set the exit code to 1 here...
+					if(SystemUtils.IS_OS_WINDOWS) {
+						fail("Should catch exception");
+					}
+					assertNotNull(out);
+					assertTrue(out.exists());
+				} finally {
+					assertTrue(!out.exists() || out.delete());
 				}
-				assertNotNull(out);
-				assertTrue(out.exists());
 			} catch (IOException e) {
 				// expected here
 			}
@@ -117,63 +121,65 @@ public class DotUtilsTest {
     public void testWriteHeaderContent() throws Exception {
         File temp = File.createTempFile("dot_header_test", ".txt");
 
-        // Basic header
-        try (FileWriter fileWriter = new FileWriter(temp, false)) {
-            DotUtils.writeHeader(fileWriter, 0, null, "G", null);
-            fileWriter.flush();
-            assertEquals(FileUtils.readFileToString(temp),
-                            "digraph G {\n" +
-                            "rankdir=LR;\n" +
-                            "node [shape=box];\n\n");
+        try {
+	        // Basic header
+	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
+	            DotUtils.writeHeader(fileWriter, 0, null, "G", null);
+	            fileWriter.flush();
+	            assertEquals(FileUtils.readFileToString(temp),
+	                            "digraph G {\n" +
+	                            "rankdir=LR;\n" +
+	                            "node [shape=box];\n\n");
+	        }
+
+	        // DPI set
+	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
+	            DotUtils.writeHeader(fileWriter, 200, null, "G", null);
+	            fileWriter.flush();
+	            assertEquals(FileUtils.readFileToString(temp),
+	                            "digraph G {\n" +
+	                            "dpi=200;\n" +
+	                            "rankdir=LR;\n" +
+	                            "node [shape=box];\n\n");
+	        }
+
+	        // Another rankdir
+	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
+	            DotUtils.writeHeader(fileWriter, 0, "AB", "G", null);
+	            fileWriter.flush();
+	            assertEquals(FileUtils.readFileToString(temp),
+	                            "digraph G {\n" +
+	                            "rankdir=AB;\n" +
+	                            "node [shape=box];\n\n");
+	        }
+
+	        // Extra lines
+	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
+	            List<String> lines = new ArrayList<>();
+	            lines.add("someline");
+	            lines.add("someotherline;");
+
+	            DotUtils.writeHeader(fileWriter, 0, null, "G", lines);
+	            fileWriter.flush();
+	            assertEquals(FileUtils.readFileToString(temp),
+	                            "digraph G {\n" +
+	                            "rankdir=LR;\n" +
+	                            "someline;\n" +
+	                            "someotherline;\n" +
+	                            "node [shape=box];\n\n");
+	        }
+
+	        // different titlke
+	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
+	            DotUtils.writeHeader(fileWriter, 0, null, "mygraph", null);
+	            fileWriter.flush();
+	            assertEquals(FileUtils.readFileToString(temp),
+	                            "digraph mygraph {\n" +
+	                            "rankdir=LR;\n" +
+	                            "node [shape=box];\n\n");
+	        }
+        } finally {
+        	assertTrue(temp.delete());
         }
-
-        // DPI set
-        try (FileWriter fileWriter = new FileWriter(temp, false)) {
-            DotUtils.writeHeader(fileWriter, 200, null, "G", null);
-            fileWriter.flush();
-            assertEquals(FileUtils.readFileToString(temp),
-                            "digraph G {\n" +
-                            "dpi=200;\n" +
-                            "rankdir=LR;\n" +
-                            "node [shape=box];\n\n");
-        }
-
-        // Another rankdir
-        try (FileWriter fileWriter = new FileWriter(temp, false)) {
-            DotUtils.writeHeader(fileWriter, 0, "AB", "G", null);
-            fileWriter.flush();
-            assertEquals(FileUtils.readFileToString(temp),
-                            "digraph G {\n" +
-                            "rankdir=AB;\n" +
-                            "node [shape=box];\n\n");
-        }
-
-        // Extra lines
-        try (FileWriter fileWriter = new FileWriter(temp, false)) {
-            List<String> lines = new ArrayList<>();
-            lines.add("someline");
-            lines.add("someotherline;");
-
-            DotUtils.writeHeader(fileWriter, 0, null, "G", lines);
-            fileWriter.flush();
-            assertEquals(FileUtils.readFileToString(temp),
-                            "digraph G {\n" +
-                            "rankdir=LR;\n" +
-                            "someline;\n" +
-                            "someotherline;\n" +
-                            "node [shape=box];\n\n");
-        }
-
-        // different titlke
-        try (FileWriter fileWriter = new FileWriter(temp, false)) {
-            DotUtils.writeHeader(fileWriter, 0, null, "mygraph", null);
-            fileWriter.flush();
-            assertEquals(FileUtils.readFileToString(temp),
-                            "digraph mygraph {\n" +
-                            "rankdir=LR;\n" +
-                            "node [shape=box];\n\n");
-        }
-
-        assertTrue(temp.delete());
     }
 }
