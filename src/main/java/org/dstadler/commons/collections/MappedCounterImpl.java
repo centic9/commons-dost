@@ -58,7 +58,12 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
 			@Override
 			public int compare(Map.Entry<T, Integer> o1, Map.Entry<T, Integer> o2) {
 				// reverse ordering to get highest values first
-				return (-1) * o1.getValue().compareTo(o2.getValue());
+				int ret = (-1) * o1.getValue().compareTo(o2.getValue());
+				if(ret != 0) {
+					return ret;
+				}
+
+				return o1.getKey().toString().compareTo(o2.getKey().toString());
 			}
 		});
 

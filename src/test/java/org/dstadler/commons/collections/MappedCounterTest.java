@@ -44,6 +44,26 @@ public class MappedCounterTest {
 	}
 
 	@Test
+	public void testSortedMapSorted() {
+		MappedCounter<String> counter = new MappedCounterImpl<>();
+
+		counter.addInt("test", 1);
+		assertEquals(1, counter.get("test"));
+		counter.addInt("other", 1);
+		counter.addInt("third", 1);
+		counter.addInt("fourth", 1);
+		counter.addInt("fifth", 1);
+		assertEquals(1, counter.get("test"));
+		assertEquals(1, counter.get("other"));
+		assertEquals(1, counter.get("third"));
+		assertEquals(1, counter.get("fourth"));
+		assertEquals(1, counter.get("fifth"));
+
+		assertEquals("{fifth=1, fourth=1, other=1, test=1, third=1}", counter.sortedMap().toString());
+		assertEquals(5, counter.sum());
+	}
+
+	@Test
 	public void testGeneric() {
 		MappedCounter<Integer> counter = new MappedCounterImpl<>();
 		assertEquals(0, counter.get(24));
