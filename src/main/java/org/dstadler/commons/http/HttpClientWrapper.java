@@ -30,6 +30,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
@@ -94,7 +95,7 @@ public class HttpClientWrapper implements Closeable {
 	/**
 	 * Return the current {@link HttpClient} instance.
 	 *
-	 * @return The internally used instance of the {@link HttpClient} 
+	 * @return The internally used instance of the {@link HttpClient}
 	 */
 	public CloseableHttpClient getHttpClient() {
 		return httpClient;
@@ -205,7 +206,7 @@ public class HttpClientWrapper implements Closeable {
 
 	        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
 	                sslcontext,
-	                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER) {
+	                NoopHostnameVerifier.INSTANCE) {
 
 						@Override
 						protected void prepareSocket(SSLSocket socket) throws IOException {
@@ -270,19 +271,19 @@ public class HttpClientWrapper implements Closeable {
 	/**
 	 * Helper method to check the status code of the response and throw an IOException if it is
 	 * an error or moved state.
-	 * 
+	 *
 	 * @param response A HttpResponse that is resulting from executing a HttpMethod.
 	 * @param url The url, only used for building the error message of the exception.
-	 * 
+	 *
 	 * @throws IOException if the HTTP status code is higher than 206.
 	 */
     public static HttpEntity checkAndFetch(HttpResponse response, String url) throws IOException {
         int statusCode = response.getStatusLine().getStatusCode();
         if(statusCode > 206) {
-            String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " + 
+            String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " +
                     response.getStatusLine().getReasonPhrase();
             log.warning(msg);
-   
+
             throw new IOException(msg);
         }
         return response.getEntity();
