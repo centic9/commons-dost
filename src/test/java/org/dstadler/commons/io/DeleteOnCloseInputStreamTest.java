@@ -128,10 +128,12 @@ public class DeleteOnCloseInputStreamTest {
 	}
 
 	@Test
-	public void testNullDelegate() {
+	public void testNullDelegate() throws IOException {
 		try {
 			// fail-fast with an NPE in the constructor already, not later when we do not see any more where it was coming from
-			assertNotNull(new DeleteOnCloseInputStream(null, new File(".")));
+			try (InputStream stream = new DeleteOnCloseInputStream(null, new File("."))) {
+				assertNotNull(stream);
+			}
 			fail("Should catch exception here");
 		} catch (NullPointerException e) {
 			// expected here

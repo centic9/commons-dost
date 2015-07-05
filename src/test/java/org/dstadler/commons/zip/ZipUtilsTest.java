@@ -220,8 +220,8 @@ public class ZipUtilsTest {
     				4, results.size());
 
     		results.clear();
-    		try {
-    			ZipUtils.findZip("myownzipfile", new ExceptionInputStream(new IOException("testexception")),
+    		try (InputStream stream = new ExceptionInputStream(new IOException("testexception"))) {
+    			ZipUtils.findZip("myownzipfile", stream,
     					FileFilterUtils.trueFileFilter(), results);
     		} catch (IOException e) {
     			TestHelpers.assertContains(e.getCause(), "testexception");
@@ -231,8 +231,8 @@ public class ZipUtilsTest {
     				0, results.size());
 
     		results.clear();
-    		try {
-    			ZipUtils.findZip("myownzipfile", new ExceptionInputStream(new IllegalArgumentException("testexception")),
+    		try (InputStream stream = new ExceptionInputStream(new IllegalArgumentException("testexception"))) {
+    			ZipUtils.findZip("myownzipfile", stream,
     					FileFilterUtils.trueFileFilter(), results);
     		} catch (IOException e) {
     			TestHelpers.assertContains(e.getCause(), "testexception");
