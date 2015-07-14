@@ -180,4 +180,11 @@ public class NanoHTTPDTest {
 			server.stop();
 		}
 	}
+
+    @Test
+    public void testNoErrorLogDuringShutdown() throws IOException {
+    	// port 9004 is hardcoded in Instance.Test
+    	NanoHTTPD server = new NanoHTTPD(SocketUtils.getNextFreePort(9000, 9010));
+		server.stop();
+    }
 }

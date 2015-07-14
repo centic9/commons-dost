@@ -230,7 +230,11 @@ public class NanoHTTPD
 					}
 				}
 				catch ( IOException e ) {
-					logger.log(Level.WARNING, "Failed while accepting socket connections.", e);
+					if(stopping) {
+						logger.log(Level.INFO, "Stopping socket connections: " + e);
+					} else {
+						logger.log(Level.WARNING, "Failed while accepting socket connections.", e);
+					}
 				}
 			}
 		};
@@ -245,6 +249,7 @@ public class NanoHTTPD
 	{
 		try
 		{
+			stopping = true;
 			myServerSocket.close();
 			myThread.join();
 		}
@@ -604,6 +609,8 @@ public class NanoHTTPD
 
 	private final ServerSocket myServerSocket;
 	private Thread myThread;
+	// helper to not log exceptions during shutdown
+	private volatile boolean stopping = false;
 
 	// ==================================================
 	// File server code
