@@ -176,7 +176,9 @@ CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
 	/**
 	 * Test URL and report if it can be read.
 	 *
-	 * @return
+	 * @return true if the URL is valid and can be read, false if an error occurs when reading from
+	 * it.
+	 * 
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */

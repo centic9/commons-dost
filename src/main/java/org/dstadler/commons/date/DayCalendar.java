@@ -37,7 +37,7 @@ public class DayCalendar extends GregorianCalendar {
      * Note: Since the unix Day number is the same from local midnight to local midnight adding
      * JULIAN_DAY_OFFSET to that value results in the chronologist, historians, or calenderists
      * Julian Day number.
-     * @see http://www.hermetic.ch/cal_stud/jdn.htm
+     * @see <a href="http://www.hermetic.ch/cal_stud/jdn.htm">here</a>
      */
     public static final long EPOCH_UNIX_ERA_DAY = 2440588L;
 
@@ -80,7 +80,7 @@ public class DayCalendar extends GregorianCalendar {
 
     /**
      * @return LOCAL Chronologists Julian day number each day starting from midnight LOCAL TIME.
-     * @see http://tycho.usno.navy.mil/mjd.html for more information about local C-JDN
+     * @see <a href="http://tycho.usno.navy.mil/mjd.html">here</a> for more information about local C-JDN
      */
     public long getJulianDay() {
         return getUnixDay() + EPOCH_UNIX_ERA_DAY;
