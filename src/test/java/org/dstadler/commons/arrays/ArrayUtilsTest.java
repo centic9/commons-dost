@@ -23,6 +23,12 @@ public class ArrayUtilsTest {
 		assertEquals("str1, str2", ArrayUtils.toString(new Object[]{"str1", "str2"}, ", ", "", ""));
 		assertEquals("str1/str2", ArrayUtils.toString(new Object[]{"str1", "str2"}, "/", "", ""));
 		assertEquals("somestartstr1/str2someend", ArrayUtils.toString(new Object[]{"str1", "str2"}, "/", "somestart", "someend"));
+
+		// verify things mentioned in the javadoc
+		assertEquals("null", ArrayUtils.toString(null, null, null, null));
+		assertEquals("()", ArrayUtils.toString(new Object[0], null, "(", ")"));
+		assertEquals("(a)", ArrayUtils.toString(new Object[] {"a"}, null, "(", ")"));
+		assertEquals("(a,b)", ArrayUtils.toString(new Object[] {"a", "b"}, ",", "(", ")"));
 	}
 
 	// helper method to get coverage of the unused constructor
