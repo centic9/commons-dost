@@ -4,11 +4,9 @@ import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-
-/**
+/*
  * Data object for one SVN changelog
  *
  * @author dominik.stadler
@@ -48,6 +46,6 @@ public class LogEntry {
 				}
 			});
 		}
-		paths.add(ImmutablePair.of(path, action));
+		paths.add(Pair.of(path, action));
 	}
 }
