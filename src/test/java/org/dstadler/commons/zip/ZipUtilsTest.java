@@ -20,12 +20,11 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.zip.ZipUtils.ZipFileVisitor;
+import org.junit.Ignore;
+import org.junit.Test;
 
 
 /**
@@ -217,7 +216,7 @@ public class ZipUtilsTest {
     		}
     		assertEquals(
     				"look for files with all-accept filter and expect one entry for the nested zip and one entry for the deeply nested file as well as a dir and a file underneath",
-    				4, results.size());
+    				5, results.size());
 
     		results.clear();
     		try (InputStream stream = new ExceptionInputStream(new IOException("testexception"))) {
@@ -276,6 +275,11 @@ public class ZipUtilsTest {
 
 					ZipEntry fileEntry = new ZipEntry("dir/file");
 					zipout2.putNextEntry(fileEntry);
+					zipout2.closeEntry();
+
+					ZipEntry fileEntry2 = new ZipEntry("dir/file2");
+					zipout2.putNextEntry(fileEntry2);
+					zipout2.write("testcontent".getBytes());
 					zipout2.closeEntry();
 				}
 			}
@@ -531,6 +535,40 @@ public class ZipUtilsTest {
 
         		assertTrue("File not found: " + new File(toDir, "zpifile.zip"),
         				new File(toDir, "nested.zip").exists());
+    		} finally {
+    		    FileUtils.deleteDirectory(toDir);
+    		}
+		} finally {
+		    assertTrue(zipfile2.exists());
+		    assertTrue(zipfile2.delete());
+		}
+	}
+
+	@Test
+	public void testExtractZipFromStream() throws FileNotFoundException, IOException {
+		File zipfile2 = createNestedZip();
+
+		try (InputStream stream = new FileInputStream(zipfile2)){
+    		try {
+    			ZipUtils.extractZip(stream, new File("notexists"));
+    			fail("Should catch exception here");
+    		} catch (IOException e) {
+    			TestHelpers.assertContains(e, "notexists", "does not exist");
+    		}
+
+    		File toDir = File.createTempFile("toDir", "");
+    		assertTrue(toDir.delete());
+    		assertTrue(toDir.mkdir());
+
+    		try {
+        		ZipUtils.extractZip(stream, toDir);
+
+        		assertTrue("File not found: " + new File(toDir, "zpifile.zip"),
+        				new File(toDir, "nested.zip").exists());
+        		assertTrue("Dir not found: " + new File(toDir, "dir"),
+        				new File(toDir, "dir").exists());
+        		assertTrue("Dir/File not found: " + new File(toDir, "dir/file"),
+        				new File(toDir, "dir/file").exists());
     		} finally {
     		    FileUtils.deleteDirectory(toDir);
     		}

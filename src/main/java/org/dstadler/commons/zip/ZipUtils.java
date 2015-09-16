@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
@@ -334,8 +335,6 @@ public class ZipUtils {
 	 * @param toDir Target directory, should already exist.
 	 *
 	 * @throws IOException
-	 *
-	 * @author dominik.stadler
 	 */
 	public static final void extractZip(File zip, File toDir) throws IOException{
 		if(!toDir.exists()) {
@@ -370,6 +369,42 @@ public class ZipUtils {
 	}
 
 	/**
+	 * Extracts all files in the ZIP file passed as InputStream and stores them in the
+	 * denoted directory. The directory needs to exist before running this method.
+	 *
+	 * Note: nested ZIP files are not extracted here.
+	 *
+	 * @param zip
+	 * @param toDir Target directory, should already exist.
+	 *
+	 * @throws IOException
+	 */
+	public static final void extractZip(InputStream zip, final File toDir) throws IOException{
+		if(!toDir.exists()) {
+			throw new IOException("Directory '" + toDir + "' does not exist.");
+		}
+
+		// Use the ZipFileVisitor to walk all the entries in the Zip-Stream and create
+		// directories and files accordingly
+		new ZipFileVisitor() {
+			@Override
+			public void visit(ZipEntry entry, InputStream data) throws IOException {
+				File targetFile = new File(toDir, entry.getName());
+				if(entry.isDirectory()) {
+					targetFile.mkdir();
+				} else {
+					// cannot use IOUtils/FileUtils to copy as they close the stream
+					try (OutputStream fout = new FileOutputStream(targetFile)) {
+						for (int c = data.read(); c != -1; c = data.read()) {
+							fout.write(c);
+						}
+					}
+				}
+			}
+		}.walk(zip);
+	}
+
+	/**
 	 * Replace the file denoted by the zipFile with the provided data. The zipFile specifies
 	 * both the zip and the file inside the zip using '!' as separator.
 	 *
@@ -377,7 +412,6 @@ public class ZipUtils {
 	 * @param data
 	 * @param encoding
 	 * @throws IOException
-	 * @author dominik.stadler
 	 */
 	public static void replaceInZip(String zipFile, String data, String encoding) throws IOException {
 		if(zipFile == null || !isFileInZip(zipFile)) {
@@ -401,7 +435,6 @@ public class ZipUtils {
 	 * @param data
 	 * @param encoding
 	 * @throws IOException
-	 * @author dominik.stadler
 	 */
 	public static void replaceInZip(File zip, String file, String data, String encoding) throws IOException {
 		// open the output side
@@ -453,6 +486,12 @@ public class ZipUtils {
 	}
 
 	/**
+	 * A simple walker which will visit all Zip-entries in the given InputStream.
+	 * The passed stream can be a normal InputStream, the Visitor will enclose it
+	 * in a ZipInputStream itself.
+	 *
+	 * The stream will be closed after all entries are visited.
+	 *
 		new ZipUtils.ZipFileVisitor() {
 
 			{@literal @}Override
@@ -466,18 +505,30 @@ public class ZipUtils {
 		public void walk(InputStream zipFile) throws IOException {
 			try (ZipInputStream stream = new ZipInputStream(zipFile)) {
 	            // while there are entries I process them
-		        while (true)
-		        {
+		        while (true) {
 		        	ZipEntry entry = stream.getNextEntry();
 		        	if(entry == null) {
 		        		break;
 		        	}
 
-		        	visit(entry, stream);
+		        	try {
+		        		visit(entry, stream);
+		        	} finally {
+		        		stream.closeEntry();
+		        	}
 		        }
 			}
 		}
 
+		/**
+		 * This method is called for each entry in the Zipfile, this includes
+		 * directorys, use ZipEntry.isDirectory() to check which type of entry
+		 * you see.
+		 *
+		 * @param entry The current {@link ZipEntry}
+		 * @param data The InputStream which can be used to read the entry-data.
+		 * @throws IOException If extracting the data fails.
+		 */
 		public abstract void visit(ZipEntry entry, InputStream data) throws IOException;
 	}
 }
