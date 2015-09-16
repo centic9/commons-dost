@@ -216,7 +216,7 @@ public class ZipUtilsTest {
     		}
     		assertEquals(
     				"look for files with all-accept filter and expect one entry for the nested zip and one entry for the deeply nested file as well as a dir and a file underneath",
-    				5, results.size());
+    				6, results.size());
 
     		results.clear();
     		try (InputStream stream = new ExceptionInputStream(new IOException("testexception"))) {
@@ -279,6 +279,11 @@ public class ZipUtilsTest {
 
 					ZipEntry fileEntry2 = new ZipEntry("dir/file2");
 					zipout2.putNextEntry(fileEntry2);
+					zipout2.write("testcontent".getBytes());
+					zipout2.closeEntry();
+
+					ZipEntry fileEntry3 = new ZipEntry("subdir/subdir/file3");
+					zipout2.putNextEntry(fileEntry3);
 					zipout2.write("testcontent".getBytes());
 					zipout2.closeEntry();
 				}

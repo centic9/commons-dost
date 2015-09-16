@@ -347,20 +347,25 @@ public class ZipUtils {
 			while (entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
 
+				File target = new File(toDir, entry.getName());
 				if (entry.isDirectory()) {
 					// Assume directories are stored parents first then children.
-					logger.info("Extracting directory: " + entry.getName());
+					//logger.info("Extracting directory: " + entry.getName());
 					// This is not robust, just for demonstration purposes.
-					if(!(new File(toDir, entry.getName())).mkdir()) {
-						logger.warning("Could not create directory " + new File(toDir, entry.getName()));
+					if(!target.mkdirs()) {
+						logger.warning("Could not create directory " + target);
 					}
 					continue;
 				}
 
-				logger.info("Extracting file: " + entry.getName());
+				// zips can contain nested files in sub-dirs without separate entries for the directories
+				if(!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
+					logger.warning("Could not create directory " + target.getParentFile());
+				}
+
+				//logger.info("Extracting file: " + entry.getName());
 				try (InputStream inputStream = zipFile.getInputStream(entry)) {
-					try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(new File(toDir,
-							entry.getName())))) {
+					try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target))) {
 						IOUtils.copy(inputStream, outputStream);
 					}
 				}
@@ -389,15 +394,26 @@ public class ZipUtils {
 		new ZipFileVisitor() {
 			@Override
 			public void visit(ZipEntry entry, InputStream data) throws IOException {
-				File targetFile = new File(toDir, entry.getName());
-				if(entry.isDirectory()) {
-					targetFile.mkdir();
-				} else {
-					// cannot use IOUtils/FileUtils to copy as they close the stream
-					try (OutputStream fout = new FileOutputStream(targetFile)) {
-						for (int c = data.read(); c != -1; c = data.read()) {
-							fout.write(c);
-						}
+				File target = new File(toDir, entry.getName());
+				if (entry.isDirectory()) {
+					// Assume directories are stored parents first then children.
+					//logger.info("Extracting directory: " + entry.getName() + " to " + target);
+					// This is not robust, just for demonstration purposes.
+					if(!target.mkdirs()) {
+						logger.warning("Could not create directory " + target);
+					}
+					return;
+				}
+
+				// zips can contain nested files in sub-dirs without separate entries for the directories
+				if(!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
+					logger.warning("Could not create directory " + target.getParentFile());
+				}
+
+				// it seems we cannot use IOUtils/FileUtils to copy as they close the stream
+				try (OutputStream fout = new FileOutputStream(target)) {
+					for (int c = data.read(); c != -1; c = data.read()) {
+						fout.write(c);
 					}
 				}
 			}
