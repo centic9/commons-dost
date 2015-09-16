@@ -411,10 +411,12 @@ public class ZipUtils {
 				}
 
 				// it seems we cannot use IOUtils/FileUtils to copy as they close the stream
-				try (OutputStream fout = new FileOutputStream(target)) {
-					for (int c = data.read(); c != -1; c = data.read()) {
-						fout.write(c);
-					}
+				int size;
+				byte[] buffer = new byte[2048];
+				try (OutputStream fout = new BufferedOutputStream(new FileOutputStream(target), buffer.length)) {
+	                while ((size = data.read(buffer, 0, buffer.length)) != -1) {
+	                    fout.write(buffer, 0, size);
+	                }
 				}
 			}
 		}.walk(zip);
