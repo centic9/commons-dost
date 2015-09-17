@@ -20,8 +20,8 @@ import org.apache.commons.lang3.time.FastDateFormat;
 
 /**
  * Changes the log format of the jdk-logging to not use a two-line format.
- * 
- * Format is [<Level>|<Thread>|<Date>]: <Message>
+ *
+ * Format is [&lt;Level&gt;|&lt;Thread&gt;|&lt;Date&gt;]: &lt;Message&gt;
  *
  * Use as follows in a file logging.properties in the classpath:
  *

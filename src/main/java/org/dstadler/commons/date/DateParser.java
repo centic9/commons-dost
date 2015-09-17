@@ -199,7 +199,7 @@ public class DateParser {
 	 * appending a suffix.
 	 *
 	 * @param millis The number of milliseconds to print.
-	 * @param suffix A suffix that is appended if the millis is > 0, specify "" if not needed.
+	 * @param suffix A suffix that is appended if the millis is &gt; 0, specify "" if not needed.
 	 *
 	 * @return The readable string
 	 */

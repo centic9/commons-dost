@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 
 
 /**
- * An XML SAX Parser which converts an SVN XML-Log into a Map<Long, LogEntry> objects
+ * An XML SAX Parser which converts an SVN XML-Log into a Map&lt;Long, LogEntry&gt; objects
  * where the key is the subversion revision number.
  *
  * @author dominik.stadler

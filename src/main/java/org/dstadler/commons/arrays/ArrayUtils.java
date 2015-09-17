@@ -25,10 +25,10 @@ public class ArrayUtils {
 	 * strings together, separated by the given delimiter and by adding and appending
 	 * the given prefix and suffix.
 	 *
-	 * toString(null, *) => "null"
-	 * toString(new Object[0], *, "(", ")") => "()"
-	 * toString(new Object[] {"a"}, *, "(", ")") => "(a)"
-	 * toString(new Object[] {"a", "b"}, ",", "(", ")") => "(a,b)"
+	 * toString(null, *) =&gt; "null"
+	 * toString(new Object[0], *, "(", ")") =&gt; "()"
+	 * toString(new Object[] {"a"}, *, "(", ")") =&gt; "(a)"
+	 * toString(new Object[] {"a", "b"}, ",", "(", ")") =&gt; "(a,b)"
 	 *
 	 * @param array Array of elements to print.
 	 * @param delimiter The delimiter to use when concatenating the strings,

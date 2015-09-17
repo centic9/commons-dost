@@ -178,9 +178,6 @@ CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
 	 *
 	 * @return true if the URL is valid and can be read, false if an error occurs when reading from
 	 * it.
-	 * 
-	 * @throws MalformedURLException
-	 * @throws IOException
 	 */
 	public static boolean getURL(final String sUrl, final AtomicInteger gCount, long start) {
 		int count = gCount.incrementAndGet();
