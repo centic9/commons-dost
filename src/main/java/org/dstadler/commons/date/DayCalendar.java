@@ -8,7 +8,7 @@ import java.util.GregorianCalendar;
  *
  * Demonstration of delta day calculations.
  * @author Paul Hill
- * @copyright 2004 Paul Hill
+ * copyright 2004 Paul Hill
  */
 public class DayCalendar extends GregorianCalendar {
 	private static final long serialVersionUID = -9054523308590467657L;
@@ -26,8 +26,8 @@ public class DayCalendar extends GregorianCalendar {
 
     /**
      * Number of leap seconds per day expect on
-     * <BR/>1. days when a leap second has been inserted, e.g. 1999 JAN  1.
-     * <BR/>2. Daylight-savings "spring forward" or "fall back" days.
+     * 1. days when a leap second has been inserted, e.g. 1999 JAN  1.
+     * 2. Daylight-savings "spring forward" or "fall back" days.
      */
     protected static final long MILLISECS_PER_DAY = 24*MILLISECS_PER_HOUR;
 
