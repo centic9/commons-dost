@@ -86,6 +86,10 @@ public class DefaultFormatter extends Formatter {
 
     private void appendClass(LogRecord record) {
         String className = record.getLoggerName();
+        if(className == null) {
+        	className = "<unknown>";
+        }
+
         int lastdot = className.lastIndexOf(DOT);
         if (lastdot > 0) {
             className = className.substring(lastdot + 1);

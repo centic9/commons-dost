@@ -1,6 +1,7 @@
 package org.dstadler.commons.logging.jdk;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -54,6 +55,17 @@ public class DefaultFormatterTest {
 		LogRecord record = new LogRecord(Level.INFO, "somemessage");
 		record.setLoggerName("logger");
 		assertNotNull(formatter.format(record));
+	}
+
+	@Test
+	public void testNullClassName() {
+		DefaultFormatter formatter = new DefaultFormatter();
+
+		LogRecord record = new LogRecord(Level.INFO, "somemessage");
+		record.setLoggerName(null);
+		String format = formatter.format(record);
+		assertNotNull(format);
+		assertTrue("Had: " + format, format.contains("<unknown>"));
 	}
 
 	@Test
