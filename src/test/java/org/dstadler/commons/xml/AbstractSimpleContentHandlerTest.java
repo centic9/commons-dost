@@ -77,6 +77,19 @@ public class AbstractSimpleContentHandlerTest {
 	}
 
 	@Test
+	public void testParseContentURLSyntaxFails() throws Exception {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		};
+
+		try {
+			handler.parseContent(new URL("http://inv\"!$%()(§$)(alidhostname/doesnotexist"), "", null, 10_000);
+			fail("Should catch exception");
+		} catch (IOException e) {
+			TestHelpers.assertContains(e, "inv\"!$%()(§$)(alidhostname");	// NOPMD
+		}
+	}
+
+	@Test
 	public void testParseContentNotFound() throws Exception {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
 		};

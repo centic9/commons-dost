@@ -117,12 +117,19 @@ public class DotUtils {
 		executor.setExitValue(0);
 		ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
 		executor.setWatchdog(watchdog);
-		try (FileOutputStream out2 = new FileOutputStream(resultfile)) {
-			executor.setStreamHandler(new PumpStreamHandler(out2, System.err));
-			int exitValue = executor.execute(cmdLine);
-			if(exitValue != 0) {
-				throw new IOException("Could not convert graph to dot, had exit value: " + exitValue + "!");
+		try {
+			try (FileOutputStream out2 = new FileOutputStream(resultfile)) {
+				executor.setStreamHandler(new PumpStreamHandler(out2, System.err));
+				int exitValue = executor.execute(cmdLine);
+				if(exitValue != 0) {
+					throw new IOException("Could not convert graph to dot, had exit value: " + exitValue + "!");
+				}
 			}
+		} catch (IOException e) {
+			// if something went wrong the file should not be left behind...
+			resultfile.delete();
+
+			throw e;
 		}
 	}
 

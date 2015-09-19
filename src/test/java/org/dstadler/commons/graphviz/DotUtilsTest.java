@@ -1,6 +1,10 @@
 package org.dstadler.commons.graphviz;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -182,4 +186,45 @@ public class DotUtilsTest {
         	assertTrue(temp.delete());
         }
     }
+
+	// helper method to get coverage of the unused constructor
+	@Test
+	public void testPrivateConstructor() throws Exception {
+		org.dstadler.commons.testing.PrivateConstructorCoverage.executePrivateConstructor(DotUtils.class);
+	}
+
+	@Test
+	public void testInvalidDotExe() throws IOException {
+		String previousExe = DotUtils.DOT_EXE;
+		try {
+			DotUtils.setDotExe("SomeInvalidBinaryfile");
+			
+			File out = File.createTempFile("DotUtilsTest", ".png");
+			assertTrue(out.delete());
+			
+			try {
+				DotUtils.renderGraph(new File("Some nonexistingfile"), out);
+			} catch (IOException e) {
+				TestHelpers.assertContains(e, "SomeInvalidBinaryfile");
+			}
+
+			assertFalse(out.exists());
+		} finally {
+			DotUtils.setDotExe(previousExe);
+		}
+	}
+
+	@Test
+	public void testInvalidInput() throws IOException {
+		File out = File.createTempFile("DotUtilsTest", ".png");
+		assertTrue(out.delete());
+		
+		try {
+			DotUtils.renderGraph(new File("SomeNonexistingfile"), out);
+		} catch (IOException e) {
+			// expected here, error is operating system specific
+		}
+
+		assertFalse(out.exists());
+	}
 }
