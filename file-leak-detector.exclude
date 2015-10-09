@@ -20,6 +20,9 @@ javax.xml.transform.FactoryFinder.findJarServiceProvider
 org.apache.xalan.templates.OutputProperties.<init>
 javax.xml.parsers.FactoryFinder.findJarServiceProvider
 
+# JGit
+org.eclipse.jgit.nls.TranslationBundle.load
+
 # Others/3rd party libraries
 com.sun.jersey.spi.service.ServiceFinder.getJerseyModuleVersion
 javax.ws.rs.ext.FactoryFinder.find
