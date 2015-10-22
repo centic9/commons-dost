@@ -14,6 +14,12 @@ public class ArrayUtilsTest {
 		assertEquals("[str1]", ArrayUtils.toString(new Object[]{"str1"}, ", "));
 		assertEquals("[str1, str2]", ArrayUtils.toString(new Object[]{"str1", "str2"}, ", "));
 		assertEquals("[str1/str2]", ArrayUtils.toString(new Object[]{"str1", "str2"}, "/"));
+
+	    // from the JavaDoc
+		assertEquals("null", ArrayUtils.toString(null, "abc"));
+		assertEquals("[]", ArrayUtils.toString(new Object[0], "abc"));
+		assertEquals("[a]", ArrayUtils.toString(new Object[] {"a"}, "abc"));
+		assertEquals("[a;b]", ArrayUtils.toString(new Object[] {"a", "b"}, ";"));
 	}
 
 	@Test

@@ -11,6 +11,13 @@ public class ArrayUtils {
 	 * Call toString() on each element of the array and concatenate the resulting
 	 * strings together, separated by the given delimiter.
 	 *
+     * <pre>
+	 * toString(null, *) =&gt; "null"
+	 * toString(new Object[0], *) =&gt; "[]"
+	 * toString(new Object[] {"a"}, *) =&gt; "[a]"
+	 * toString(new Object[] {"a", "b"}, ";") =&gt; "[a;b]"
+     * <pre>
+     *
 	 * @param array Array of elements to print.
 	 * @param delimiter The delimiter to use when concatenating the strings,
 	 * 				", " leads to the same behavior as Arrays.toString()
@@ -25,10 +32,12 @@ public class ArrayUtils {
 	 * strings together, separated by the given delimiter and by adding and appending
 	 * the given prefix and suffix.
 	 *
+     * <pre>
 	 * toString(null, *) =&gt; "null"
 	 * toString(new Object[0], *, "(", ")") =&gt; "()"
 	 * toString(new Object[] {"a"}, *, "(", ")") =&gt; "(a)"
 	 * toString(new Object[] {"a", "b"}, ",", "(", ")") =&gt; "(a,b)"
+     * <pre>
 	 *
 	 * @param array Array of elements to print.
 	 * @param delimiter The delimiter to use when concatenating the strings,
