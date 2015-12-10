@@ -165,7 +165,7 @@ public class NanoHTTPDTest {
 			NanoHTTPD server = new NanoHTTPD(128000);
 			assertNotNull(server);
 			fail("Should not be possible to assign port out of range");
-		} catch (IllegalArgumentException e) {
+		} catch (@SuppressWarnings("unused") IllegalArgumentException e) {
 			// expected
 		}
 	}

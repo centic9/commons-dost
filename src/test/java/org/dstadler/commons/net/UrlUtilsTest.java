@@ -94,7 +94,7 @@ public class UrlUtilsTest {
 		try {
 			UrlUtils.retrieveRawData("http://localhost:19992", 0);
 			fail("Expecting an exception here");
-		} catch (ConnectException e) {
+		} catch (@SuppressWarnings("unused") ConnectException e) {
 			// expected
 		}
 	}
@@ -120,7 +120,7 @@ public class UrlUtilsTest {
 				return port;
 			} catch (IOException e) {
 				// seems to be taken, try next one
-				log.warning("Port " + port + " seems to be used already, trying next one...");
+				log.warning("Port " + port + " seems to be used already, trying next one: " + e);
 			}
 		}
 
@@ -316,7 +316,7 @@ public class UrlUtilsTest {
             try {
                 UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "", null, 1000);
                 fail("Should timeout with empty body because of NanoHTTPD implementation details");
-            } catch (SocketTimeoutException e) {
+            } catch (@SuppressWarnings("unused") SocketTimeoutException e) {
             }
 
             try {
@@ -368,7 +368,7 @@ public class UrlUtilsTest {
 		// this will fail with 405 Method not allowed
 		try {
 			UrlUtils.retrieveDataPost("https://www.google.com/", null, "content-length:234\n\r", null, 10000, sslFactory);
-		} catch (IOException e) {
+		} catch (@SuppressWarnings("unused") IOException e) {
 			// expected, url does not support POST method
 		}
     }
@@ -385,7 +385,7 @@ public class UrlUtilsTest {
 		// this will fail with 405 Method not allowed
 		try {
 			UrlUtils.retrieveDataPost("https://www.google.com/", null, "content-length:234\n\r", null, 10000, null);
-		} catch (IOException e) {
+		} catch (@SuppressWarnings("unused") IOException e) {
 			// expected, url does not support POST method
 		}
     }

@@ -10,9 +10,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.Test;
 
 public class DeleteOnCloseInputStreamTest {
 
@@ -135,7 +134,7 @@ public class DeleteOnCloseInputStreamTest {
 				assertNotNull(stream);
 			}
 			fail("Should catch exception here");
-		} catch (NullPointerException e) {
+		} catch (@SuppressWarnings("unused") NullPointerException e) {
 			// expected here
 		}
 	}

@@ -14,9 +14,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.Test;
 
 
 
@@ -179,7 +178,7 @@ public class ZipFileCloseInputStreamTest {
 				}
 			}
 			fail("Should catch exception here");
-		} catch (NullPointerException e) {
+		} catch (@SuppressWarnings("unused") NullPointerException e) {
 			// expected here
 		}
 	}

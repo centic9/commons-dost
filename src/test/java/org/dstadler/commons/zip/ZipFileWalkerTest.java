@@ -118,7 +118,7 @@ public class ZipFileWalkerTest {
 			ZipFileWalker walker = new ZipFileWalker(new File("notexisting"));
 			walker.walk(null);
 			fail("Should catch exception here");
-		} catch (FileNotFoundException e) {
+		} catch (@SuppressWarnings("unused") FileNotFoundException e) {
 			// expected
 		}
 	}
