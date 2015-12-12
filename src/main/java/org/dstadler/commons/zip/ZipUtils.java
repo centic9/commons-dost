@@ -97,10 +97,10 @@ public class ZipUtils {
 	 * Looks in the ZIP file available via zipInput for files matching the provided file-filter,
 	 * recursing into sub-ZIP files.
 	 *
-	 * @param zipName
-	 * @param zipInput
-	 * @param searchFilter
-	 * @param results
+	 * @param zipName Name of the file to read, mainly used for building the resulting pointer into the zip-file
+	 * @param zipInput An InputStream which is positioned at the beginning of the zip-file contents 
+	 * @param searchFilter A {@link FileFilter} which determines if files in the zip-file are matched
+	 * @param results A existing list where found matches are added to.
 	 *
 	 * @throws IOException
 	 *         If the ZIP file cannot be read, e.g. if it is corrupted.
@@ -331,10 +331,10 @@ public class ZipUtils {
 	 *
 	 * Note: nested ZIP files are not extracted here.
 	 *
-	 * @param zip
+	 * @param zip The zip-file to process
 	 * @param toDir Target directory, should already exist.
 	 *
-	 * @throws IOException
+	 * @throws IOException Thrown if files can not be read or any other error occurs while handling the Zip-files 
 	 */
 	public static final void extractZip(File zip, File toDir) throws IOException{
 		if(!toDir.exists()) {
@@ -379,10 +379,10 @@ public class ZipUtils {
 	 *
 	 * Note: nested ZIP files are not extracted here.
 	 *
-	 * @param zip
+	 * @param zip An {@link InputStream} to read zipped files from
 	 * @param toDir Target directory, should already exist.
 	 *
-	 * @throws IOException
+	 * @throws IOException Thrown if files can not be read or any other error occurs while handling the Zip-files 
 	 */
 	public static final void extractZip(InputStream zip, final File toDir) throws IOException{
 		if(!toDir.exists()) {
@@ -426,10 +426,10 @@ public class ZipUtils {
 	 * Replace the file denoted by the zipFile with the provided data. The zipFile specifies
 	 * both the zip and the file inside the zip using '!' as separator.
 	 *
-	 * @param zipFile
-	 * @param data
-	 * @param encoding
-	 * @throws IOException
+	 * @param zipFile The zip-file to process
+	 * @param data The string-data to replace
+	 * @param encoding The encoding that should be used when writing the string data to the file
+	 * @throws IOException Thrown if files can not be read or any other error occurs while handling the Zip-files 
 	 */
 	public static void replaceInZip(String zipFile, String data, String encoding) throws IOException {
 		if(zipFile == null || !isFileInZip(zipFile)) {
@@ -444,15 +444,16 @@ public class ZipUtils {
 		// replace in zip
 		ZipUtils.replaceInZip(zip, zipOut, data, encoding);
 	}
+
 	/**
 	 * Replaces the specified file in the provided ZIP file with the
 	 * provided content.
 	 *
-	 * @param zip
-	 * @param file
-	 * @param data
-	 * @param encoding
-	 * @throws IOException
+	 * @param zip The zip-file to process
+	 * @param file The file to look for
+	 * @param data The string-data to replace
+	 * @param encoding The encoding that should be used when writing the string data to the file
+	 * @throws IOException Thrown if files can not be read or any other error occurs while handling the Zip-files 
 	 */
 	public static void replaceInZip(File zip, String file, String data, String encoding) throws IOException {
 		// open the output side

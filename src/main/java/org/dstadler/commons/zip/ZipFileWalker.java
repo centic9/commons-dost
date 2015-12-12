@@ -27,9 +27,16 @@ public class ZipFileWalker {
 	/**
 	 * Run the ZipFileWalker using the given OutputHandler
 	 *
-	 * @param outputHandler
+	 * @param outputHandler For every file that is found in the
+	 * 		Zip-file, the method found() in the {@link OutputHandler}
+	 * 		is invoked.
+	 * 
+	 * @return true if processing was stopped because of a found file, 
+	 * 		false if no file was found or the {@link OutputHandler} did 
+	 * 		not return true on the call to found().
 	 *
-	 * @throws IOException
+	 * @throws IOException Thrown if an error occurs while handling the
+	 * 		Zip-file or while handling the call to found().
 	 */
 	public boolean walk(OutputHandler outputHandler) throws IOException {
 		try (ZipFile zipFile = new ZipFile(zip)) {

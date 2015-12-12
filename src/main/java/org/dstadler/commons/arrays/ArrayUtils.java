@@ -16,7 +16,7 @@ public class ArrayUtils {
 	 * toString(new Object[0], *) =&gt; "[]"
 	 * toString(new Object[] {"a"}, *) =&gt; "[a]"
 	 * toString(new Object[] {"a", "b"}, ";") =&gt; "[a;b]"
-     * <pre>
+     * </pre>
      *
 	 * @param array Array of elements to print.
 	 * @param delimiter The delimiter to use when concatenating the strings,
@@ -37,7 +37,7 @@ public class ArrayUtils {
 	 * toString(new Object[0], *, "(", ")") =&gt; "()"
 	 * toString(new Object[] {"a"}, *, "(", ")") =&gt; "(a)"
 	 * toString(new Object[] {"a", "b"}, ",", "(", ")") =&gt; "(a,b)"
-     * <pre>
+     * </pre>
 	 *
 	 * @param array Array of elements to print.
 	 * @param delimiter The delimiter to use when concatenating the strings,
