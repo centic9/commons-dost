@@ -1,6 +1,10 @@
 package org.dstadler.commons.zip;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -548,6 +552,48 @@ public class ZipUtilsTest {
 		    assertTrue(zipfile2.delete());
 		}
 	}
+	
+	@Test
+	public void testExtractNonExistingZip() throws IOException {
+		File zipfile = new File("nonexistingfile.zip");
+
+		File toDir = File.createTempFile("toDir", "");
+		assertTrue(toDir.delete());
+		assertTrue(toDir.mkdir());
+
+		try {
+			ZipUtils.extractZip(zipfile, toDir);
+			fail("Should fail because file does not exist");
+		} catch (FileNotFoundException e) {
+			TestHelpers.assertContains(e, "nonexistingfile.zip");
+		} finally {
+		    FileUtils.deleteDirectory(toDir);
+		}
+	}	
+
+	@Test
+	public void testExtractInvalidZip() throws IOException {
+		File zipfile = new File("nonexistingfile.zip");
+		try {
+			FileUtils.writeByteArrayToFile(zipfile, new byte[] { 1,2,3,4});
+	
+			File toDir = File.createTempFile("toDir", "");
+			assertTrue(toDir.delete());
+			assertTrue(toDir.mkdir());
+	
+			try {
+				ZipUtils.extractZip(zipfile, toDir);
+				fail("Should fail because file is invalid");
+			} catch (IOException e) {
+				TestHelpers.assertContains(e, "nonexistingfile.zip");
+			} finally {
+			    FileUtils.deleteDirectory(toDir);
+			}
+		} finally {
+			assertTrue(zipfile.exists());
+			assertTrue(zipfile.delete());
+		}
+	}	
 
 	@Test
 	public void testExtractZipFromStream() throws FileNotFoundException, IOException {

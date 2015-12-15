@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -370,6 +371,10 @@ public class ZipUtils {
 					}
 				}
 			}
+		} catch (FileNotFoundException e) {
+			throw e;
+		} catch (IOException e) {
+			throw new IOException("While extracting file " + zip + " to " + toDir, e);
 		}
 	}
 
