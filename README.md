@@ -1,4 +1,4 @@
-[![Build Status](https://buildhive.cloudbees.com/job/centic9/job/commons-dost/badge/icon)](https://buildhive.cloudbees.com/job/centic9/job/commons-dost/) 
+[![Build Status](https://travis-ci.org/centic9/commons-dost.svg)](https://travis-ci.org/centic9/commons-dost)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost) [![Maven Central](https://img.shields.io/maven-central/v/org.dstadler/commons-dost.svg)](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost)
 
