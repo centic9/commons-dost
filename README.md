@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/centic9/commons-dost.svg)](https://travis-ci.org/centic9/commons-dost)
+[![Build Status](https://travis-ci.org/centic9/commons-dost.svg)](https://travis-ci.org/centic9/commons-dost) [![Gradle Status](https://gradleupdate.appspot.com/centic9/commons-dost/status.svg?branch=master)](https://gradleupdate.appspot.com/centic9/commons-dost/status)
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost) [![Maven Central](https://img.shields.io/maven-central/v/org.dstadler/commons-dost.svg)](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost)
 
