@@ -6,4 +6,4 @@ before_install:
  - chmod +x gradlew
 
 install: ./gradlew checkSnapshotDependencies compileJava
-script: ./gradlew check jacocoTestReport javadoc
+script: ./gradlew eclipse check jacocoTestReport javadoc
