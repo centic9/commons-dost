@@ -38,11 +38,16 @@ public class DotUtilsTest {
 		"}\n";
 
 	@Before
-	public void setUp() throws IOException {
+	public void setUp() {
 		boolean exists = new File(DotUtils.DOT_EXE).exists();
 
-		assertEquals(exists, DotUtils.checkDot());
-		Assume.assumeTrue("Did not find dot executable at " + DotUtils.DOT_EXE, exists);
+		try {
+			assertEquals(exists, DotUtils.checkDot());
+			Assume.assumeTrue("Did not find dot executable at " + DotUtils.DOT_EXE, exists);
+		} catch (IOException e) {
+			Assume.assumeTrue("Did not find dot executable at " + DotUtils.DOT_EXE + ": " + e, exists);
+		}
+
 	}
 
 	@Test
@@ -90,7 +95,7 @@ public class DotUtilsTest {
 				} finally {
 					assertTrue(!out.exists() || out.delete());
 				}
-			} catch (IOException e) {
+			} catch (@SuppressWarnings("unused") IOException e) {
 				// expected here
 			}
 		} finally {
@@ -198,10 +203,10 @@ public class DotUtilsTest {
 		String previousExe = DotUtils.DOT_EXE;
 		try {
 			DotUtils.setDotExe("SomeInvalidBinaryfile");
-			
+
 			File out = File.createTempFile("DotUtilsTest", ".png");
 			assertTrue(out.delete());
-			
+
 			try {
 				DotUtils.renderGraph(new File("Some nonexistingfile"), out);
 			} catch (IOException e) {
@@ -218,7 +223,7 @@ public class DotUtilsTest {
 	public void testInvalidInput() throws IOException {
 		File out = File.createTempFile("DotUtilsTest", ".png");
 		assertTrue(out.delete());
-		
+
 		try {
 			DotUtils.renderGraph(new File("SomeNonexistingfile"), out);
 		} catch (IOException e) {
