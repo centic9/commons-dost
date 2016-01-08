@@ -3,6 +3,9 @@ package org.dstadler.commons.http;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -29,7 +32,30 @@ public class HttpClientWrapperTest {
 		}
 	}
 
-    @Test
+	@Test
+	public void testHttpClientWrapperSimpleGetStream() throws Exception {
+		try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
+			assertNotNull(wrapper.getHttpClient());
+
+			try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
+				final AtomicReference<String> str = new AtomicReference<>();
+				wrapper.simpleGet("http://localhost:" + server.getPort(), new Consumer<InputStream>() {
+					@Override
+					public void accept(InputStream inputStream) {
+						try {
+							str.set(IOUtils.toString(inputStream));
+						} catch (IOException e) {
+							throw new IllegalStateException(e);
+						}
+					}
+				});
+
+				assertEquals("ok", str.get());
+			}
+		}
+	}
+
+	@Test
     public void testHttpClientWrapperNormalGet() throws Exception {
         try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
             assertNotNull(wrapper.getHttpClient());
@@ -77,7 +103,7 @@ public class HttpClientWrapperTest {
 	}
 
 	@Test
-	public void testHttpClientWrapperHTTPSBztes() throws Exception {
+	public void testHttpClientWrapperHTTPSBytes() throws Exception {
 		Assume.assumeTrue("https://www.google.com/ should be reachable", UrlUtils.isAvailable("https://www.google.com/", false, 10_000));
 
 		try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {

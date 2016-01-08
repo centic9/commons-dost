@@ -2,6 +2,7 @@ package org.dstadler.commons.http;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -9,6 +10,8 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,9 +65,9 @@ public class HttpClientWrapper implements Closeable {
 	 * Construct the {@link HttpClient} with the given authentication values
 	 * and all timeouts set to the given number of milliseconds
 	 *
-	 * @param user
-	 * @param password
-	 * @param timeoutMs
+	 * @param user The username for basic authentication, use an empty string when no authentication is required
+	 * @param password The password for basic authentication, null when no authentication is required
+	 * @param timeoutMs The timeout for socket connection and reading, specified in milliseconds
 	 */
 	public HttpClientWrapper(String user, String password, int timeoutMs) {
 		super();
@@ -104,48 +107,60 @@ public class HttpClientWrapper implements Closeable {
 	/**
 	 * Perform a simple get-operation and return the resulting String.
 	 *
-	 * Throws an IOException if the HTTP status code is not 200.
-	 *
-	 * @param url
+	 * @param url The URL to query
 	 * @return The data returned when retrieving the data from the given url, converted to a String.
-	 * @throws IOException
+	 * @throws IOException if the HTTP status code is not 200.
 	 */
 	public String simpleGet(String url) throws IOException {
-		// Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
-		AuthCache authCache = new BasicAuthCache();
-		BasicScheme basicAuth = new BasicScheme();
-
-		// Generate BASIC scheme object and add it to the local auth cache
-		URL cacheUrl = new URL(url);
-		HttpHost targetHost = new HttpHost(cacheUrl.getHost(), cacheUrl.getPort(), cacheUrl.getProtocol());
-		authCache.put(targetHost, basicAuth);
-
-		// Add AuthCache to the execution context
-		HttpClientContext context = HttpClientContext.create();
-		//context.setCredentialsProvider(credsProvider);
-		context.setAuthCache(authCache);
-
-		final HttpGet httpGet = new HttpGet(url);
-		try (CloseableHttpResponse response = httpClient.execute(targetHost, httpGet, context)) {
-			int statusCode = response.getStatusLine().getStatusCode();
-			if(statusCode != 200) {
-				String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " + response.getStatusLine().getReasonPhrase();
-				log.warning(msg);
-
-				throw new IOException(msg);
+		final AtomicReference<String> str = new AtomicReference<>();
+		simpleGet(url, new Consumer<InputStream>() {
+			@Override
+			public void accept(InputStream inputStream) {
+				try {
+					str.set(IOUtils.toString(inputStream));
+				} catch (IOException e) {
+					throw new IllegalStateException(e);
+				}
 			}
-		    HttpEntity entity = response.getEntity();
+		});
 
-		    try {
-		    	return IOUtils.toString(entity.getContent());
-		    } finally {
-			    // ensure all content is taken out to free resources
-			    EntityUtils.consume(entity);
-		    }
-		}
+		return str.get();
 	}
 
+	/**
+	 * Perform a simple get-operation and return the resulting byte-array.
+	 *
+	 * @param url The URL to query
+	 * @return The data returned when retrieving the data from the given url.
+	 * @throws IOException if the HTTP status code is not 200.
+	 */
 	public byte[] simpleGetBytes(String url) throws IOException {
+		final AtomicReference<byte[]> bytes = new AtomicReference<>();
+		simpleGet(url, new Consumer<InputStream>() {
+			@Override
+			public void accept(InputStream inputStream) {
+				try {
+					bytes.set(IOUtils.toByteArray(inputStream));
+				} catch (IOException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+		});
+
+		return bytes.get();
+	}
+
+	/**
+	 * Perform a simple get-operation and passes the resulting InputStream to the given Consumer
+	 *
+	 * @param url The URL to query
+	 * @param consumer A Consumer which receives the InputStream and can process the data
+	 *                 on-the-fly in streaming fashion without retrieving all of the data into memory
+	 *                 at once.
+	 *
+	 * @throws IOException if the HTTP status code is not 200.
+	 */
+	public void simpleGet(String url, Consumer<InputStream> consumer) throws IOException {
 		// Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
 		AuthCache authCache = new BasicAuthCache();
 		BasicScheme basicAuth = new BasicScheme();
@@ -172,7 +187,7 @@ public class HttpClientWrapper implements Closeable {
 		    HttpEntity entity = response.getEntity();
 
 		    try {
-		    	return IOUtils.toByteArray(entity.getContent());
+				consumer.accept(entity.getContent());
 		    } finally {
 			    // ensure all content is taken out to free resources
 			    EntityUtils.consume(entity);
