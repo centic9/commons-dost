@@ -552,7 +552,7 @@ public class ZipUtilsTest {
 		    assertTrue(zipfile2.delete());
 		}
 	}
-	
+
 	@Test
 	public void testExtractNonExistingZip() throws IOException {
 		File zipfile = new File("nonexistingfile.zip");
@@ -569,18 +569,18 @@ public class ZipUtilsTest {
 		} finally {
 		    FileUtils.deleteDirectory(toDir);
 		}
-	}	
+	}
 
 	@Test
 	public void testExtractInvalidZip() throws IOException {
 		File zipfile = new File("nonexistingfile.zip");
 		try {
 			FileUtils.writeByteArrayToFile(zipfile, new byte[] { 1,2,3,4});
-	
+
 			File toDir = File.createTempFile("toDir", "");
 			assertTrue(toDir.delete());
 			assertTrue(toDir.mkdir());
-	
+
 			try {
 				ZipUtils.extractZip(zipfile, toDir);
 				fail("Should fail because file is invalid");
@@ -593,7 +593,7 @@ public class ZipUtilsTest {
 			assertTrue(zipfile.exists());
 			assertTrue(zipfile.delete());
 		}
-	}	
+	}
 
 	@Test
 	public void testExtractZipFromStream() throws FileNotFoundException, IOException {

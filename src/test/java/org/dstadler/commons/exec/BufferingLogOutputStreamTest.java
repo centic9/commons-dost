@@ -19,10 +19,10 @@ public class BufferingLogOutputStreamTest {
 	@Test
 	public void test() throws IOException {
 		try (BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
-    
+
     		// sends everything to Level.INFO
     		stream.processLine("someline", 0);
-    
+
     		// test null and empty string
     		stream.processLine(null, 0);
     		stream.processLine("", 0);
@@ -37,12 +37,12 @@ public class BufferingLogOutputStreamTest {
 			@Override
 			public void run() {
 				try (BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
-    
+
     				// sends everything to Level.INFO
     				for (int i = 0; i < 1000; i++) {
     					stream.processLine("someline", 0);
     				}
-    
+
 					stream.close();
 
 					// try closing again, should not fail

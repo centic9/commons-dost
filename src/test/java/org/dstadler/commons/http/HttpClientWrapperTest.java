@@ -79,7 +79,7 @@ public class HttpClientWrapperTest {
             }
         }
     }
-    
+
 	@Test
 	public void testHttpClientWrapperBytes() throws Exception {
 		try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {

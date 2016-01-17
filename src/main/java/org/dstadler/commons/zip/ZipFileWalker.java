@@ -30,9 +30,9 @@ public class ZipFileWalker {
 	 * @param outputHandler For every file that is found in the
 	 * 		Zip-file, the method found() in the {@link OutputHandler}
 	 * 		is invoked.
-	 * 
-	 * @return true if processing was stopped because of a found file, 
-	 * 		false if no file was found or the {@link OutputHandler} did 
+	 *
+	 * @return true if processing was stopped because of a found file,
+	 * 		false if no file was found or the {@link OutputHandler} did
 	 * 		not return true on the call to found().
 	 *
 	 * @throws IOException Thrown if an error occurs while handling the
