@@ -290,7 +290,7 @@ public class NanoHTTPD
 			System.out.println( LICENCE + "\n" );
 		}
 
-		NanoHTTPD nh = null;
+		final NanoHTTPD nh;
 		try
 		{
 			nh = new NanoHTTPD( port );
@@ -434,7 +434,7 @@ public class NanoHTTPD
         }
 
         private void handlePOST(BufferedReader in, Properties parms, Properties header) throws IOException, InterruptedException {
-            long size = 0x7FFFFFFFFFFFFFFFl;
+            long size = 0x7FFFFFFFFFFFFFFFL;
             String contentLength = header.getProperty("content-length");
             if (contentLength != null)
             {
@@ -463,7 +463,7 @@ public class NanoHTTPD
 		{
 			try
 			{
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				for( int i=0; i<str.length(); i++ )
 				{
 				    char c = str.charAt( i );
@@ -637,7 +637,7 @@ public class NanoHTTPD
 		}
 
 		// Prohibit getting out of current directory
-		if ( uri.startsWith( ".." ) || uri.endsWith( ".." ) || uri.indexOf( "../" ) >= 0 ) {
+		if ( uri.startsWith( ".." ) || uri.endsWith( ".." ) || uri.contains( "../" ) ) {
 			return new Response( HTTP_FORBIDDEN, MIME_PLAINTEXT,
 								 "FORBIDDEN: Won't serve ../ for security reasons." );
 		}
