@@ -37,9 +37,7 @@ dependencies {
 	compile 'log4j:log4j:1.2.17'
 	compile 'net.java.dev.jna:jna:3.4.0'
 
-	// for TestHelpers we need junit during normal compile...
 	testCompile "junit:junit:[4.12,)"
-	
 	testCompile 'org.dstadler:commons-test:1.0.0.3'
 }
 
@@ -83,6 +81,9 @@ test {
 
 	// http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
 	systemProperties['user.dir'] = workingDir
+
+    // avoid failures because Gradle provides it's own version of JNA in the system properties
+    systemProperties['jna.boot.library.path'] = null
 }
 
 jacoco {
