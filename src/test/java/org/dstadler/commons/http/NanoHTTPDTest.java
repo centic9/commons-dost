@@ -256,6 +256,8 @@ public class NanoHTTPDTest {
 
 			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "ISO-8859-1", 10_000);
 			assertEquals("<html>\u00c3\u00a4</html>", data);
+		} finally {
+			NanoHTTPD.setEncoding(null);
 		}
 	}
 
@@ -271,6 +273,8 @@ public class NanoHTTPDTest {
 
 			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "ISO-8859-1", 10_000);
 			assertEquals("", data);
+		} finally {
+			NanoHTTPD.setEncoding(null);
 		}
 	}
 
