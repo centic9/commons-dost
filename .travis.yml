@@ -7,3 +7,6 @@ before_install:
 
 install: ./gradlew checkSnapshotDependencies compileJava
 script: ./gradlew eclipse check jacocoTestReport javadoc
+
+after_failure:
+- cat build/test-results/*.xml
