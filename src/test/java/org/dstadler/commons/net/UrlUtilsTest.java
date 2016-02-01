@@ -18,6 +18,8 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
+import org.dstadler.commons.testing.ThreadTestHelper;
+import org.junit.After;
 import org.junit.Assume;
 import org.junit.Test;
 
@@ -28,6 +30,11 @@ import org.junit.Test;
  */
 public class UrlUtilsTest {
     private static final Logger log = LoggerFactory.make();
+
+	@After
+	public void tearDown() throws InterruptedException {
+		ThreadTestHelper.waitForThreadToFinishSubstring("NanoHTTP");
+	}
 
     @Test
 	public void testRetrieveDataString() throws Exception {

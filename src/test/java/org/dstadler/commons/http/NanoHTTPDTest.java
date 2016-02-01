@@ -204,12 +204,12 @@ public class NanoHTTPDTest {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
 
-		Socket socket = new Socket("localhost", port);
+		try (Socket socket = new Socket("localhost", port)) {
+			// wait some time to trigger the timeout
+			Thread.sleep(2000);
 
-		// wait some time to trigger the timeout
-		Thread.sleep(2000);
-
-		assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+			assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+		}
 
 		httpd.stop();
 	}
@@ -219,15 +219,15 @@ public class NanoHTTPDTest {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
 
-		Socket socket = new Socket("localhost", port);
+		try (Socket socket = new Socket("localhost", port)) {
+			// write some bits
+			socket.getOutputStream().write("POST index.html\n".getBytes("UTF-8"));
 
-		// write some bits
-		socket.getOutputStream().write("POST index.html\n".getBytes("UTF-8"));
+			// wait some time to trigger the timeout
+			Thread.sleep(2000);
 
-		// wait some time to trigger the timeout
-		Thread.sleep(2000);
-
-		assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+			assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+		}
 
 		httpd.stop();
 	}
@@ -236,8 +236,10 @@ public class NanoHTTPDTest {
 	public void testServeInvalidBindname() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		try {
-			new NanoHTTPD(port, InetAddress.getByName("192.168.123.234"));
-		} catch (BindException e) {
+			NanoHTTPD nanoHTTPD = new NanoHTTPD(port, InetAddress.getByName("192.168.123.234"));
+			assertNotNull(nanoHTTPD);
+			fail("Should catch exception here");
+		} catch (@SuppressWarnings("unused") BindException e) {
 			// expected to an exception here
 		}
 	}
@@ -290,10 +292,10 @@ public class NanoHTTPDTest {
 				}
 			};
 			httpd2.stop();
-		} catch (BindException e) {
-			TestHelpers.assertContains(e, "Address already in use");
+		} catch (@SuppressWarnings("unused") BindException e) {
+			// Error is locale-specific: TestHelpers.assertContains(e, "Address already in use");
+		} finally {
+			httpd.stop();
 		}
-
-		httpd.stop();
 	}
 }
