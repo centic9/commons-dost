@@ -1,21 +1,29 @@
 package org.dstadler.commons.http;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import org.apache.commons.io.IOUtils;
 import org.dstadler.commons.http.NanoHTTPD.Response;
 import org.dstadler.commons.net.SocketUtils;
 import org.dstadler.commons.net.UrlUtils;
 import org.dstadler.commons.testing.TestHelpers;
+import org.dstadler.commons.testing.ThreadTestHelper;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Socket;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.Assert.*;
+
 public class NanoHTTPDTest {
+	@After
+	public void tearDown() throws InterruptedException {
+		ThreadTestHelper.waitForThreadToFinishSubstring("NanoHTTP");
+	}
 
 	@Test
 	public void testServe() throws Exception {
@@ -187,4 +195,37 @@ public class NanoHTTPDTest {
     	NanoHTTPD server = new NanoHTTPD(SocketUtils.getNextFreePort(9000, 9010));
 		server.stop();
     }
+
+	@Test
+	public void testServeTimeoutInitial() throws Exception {
+		int port = SocketUtils.getNextFreePort(9000, 9010);
+		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
+
+		Socket socket = new Socket("localhost", port);
+
+		// wait some time to trigger the timeout
+		Thread.sleep(2000);
+
+		assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+
+		httpd.stop();
+	}
+
+	@Test
+	public void testServeTimeoutStarted() throws Exception {
+		int port = SocketUtils.getNextFreePort(9000, 9010);
+		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
+
+		Socket socket = new Socket("localhost", port);
+
+		// write some bits
+		socket.getOutputStream().write("POST index.html\n".getBytes("UTF-8"));
+
+		// wait some time to trigger the timeout
+		Thread.sleep(2000);
+
+		assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+
+		httpd.stop();
+	}
 }

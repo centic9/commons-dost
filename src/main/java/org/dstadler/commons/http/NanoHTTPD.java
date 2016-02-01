@@ -1,23 +1,16 @@
 package org.dstadler.commons.http;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 
 /**
  * A simple, tiny, nicely embeddable HTTP 1.0 server in Java
@@ -204,19 +197,39 @@ public class NanoHTTPD
 
 	/**
 	 * Starts a HTTP server to given port and binds on all host-names.<p>
-	 * Throws an IOException if the socket is already in use
+	 *
+	 * @param port The port to listen for HTTP connections
+	 *
+	 * @throws IOException if the socket is already in use
 	 *
 	 */
-	public NanoHTTPD( int port) throws IOException
-	{
+	public NanoHTTPD( int port) throws IOException {
 		this(port, null);
 	}
 
 	/**
 	 * Starts a HTTP server to given port and only binds on the given name if specifed non-null.<p>
-	 * Throws an IOException if the socket is already in use
+	 *
+	 * @param port The port to listen for HTTP connections
+	 * @param bindHost If non-null, the hostanme/address to bind to.
+	 *
+	 * @throws IOException if the socket is already in use
 	 */
-	public NanoHTTPD( int port, InetAddress bindHost ) throws IOException
+	public NanoHTTPD( int port, InetAddress bindHost ) throws IOException {
+		this(port, null, 0);
+	}
+
+	/**
+	 * Starts a HTTP server to given port and only binds on the given name if specifed non-null.<p>
+	 *
+	 * @param port The port to listen for HTTP connections
+	 * @param bindHost If non-null, the hostanme/address to bind to.
+	 * @param sessionTimeout Timeout in milliseconds after which reading from the HTTP client side is terminated
+	 *                       with a timeout-error.
+	 *
+	 * @throws IOException if the socket is already in use
+	 */
+	public NanoHTTPD( int port, InetAddress bindHost, int sessionTimeout ) throws IOException
 	{
 		myServerSocket = new ServerSocket( port, 50, bindHost );
 		myThread = new Thread("NanoHTTPD Micro Webserver Thread") {
@@ -226,7 +239,11 @@ public class NanoHTTPD
 				try
 				{
 					while( true ) {
-						HTTPSession httpSession = new HTTPSession( myServerSocket.accept());
+						Socket socket = myServerSocket.accept();
+						if(sessionTimeout > 0) {
+							socket.setSoTimeout(sessionTimeout);
+						}
+						HTTPSession httpSession = new HTTPSession(socket);
 						httpSession.start();
 					}
 				}
@@ -319,7 +336,7 @@ public class NanoHTTPD
 	 */
 	private class HTTPSession implements Runnable
 	{
-		public HTTPSession( Socket s )
+		public HTTPSession(Socket s)
 		{
 			mySocket = s;
 		}
