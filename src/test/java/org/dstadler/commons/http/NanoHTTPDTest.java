@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.dstadler.commons.http.NanoHTTPD.Response;
 import org.dstadler.commons.net.SocketUtils;
 import org.dstadler.commons.net.UrlUtils;
+import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.testing.ThreadTestHelper;
 import org.junit.After;
@@ -13,6 +14,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.BindException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -225,6 +228,71 @@ public class NanoHTTPDTest {
 		Thread.sleep(2000);
 
 		assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+
+		httpd.stop();
+	}
+
+	@Test
+	public void testServeInvalidBindname() throws Exception {
+		int port = SocketUtils.getNextFreePort(9000, 9010);
+		try {
+			new NanoHTTPD(port, InetAddress.getByName("192.168.123.234"));
+		} catch (BindException e) {
+			// expected to an exception here
+		}
+	}
+
+	@Test
+	public void testEncoding() throws IOException {
+		NanoHTTPD.setEncoding("UTF-8");
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
+			String data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
+			assertEquals("<html>\u00E4</html>", data);
+
+			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "UTF-8", 10_000);
+			assertEquals("<html>\u00E4</html>", data);
+
+			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "ISO-8859-1", 10_000);
+			assertEquals("<html>\u00c3\u00a4</html>", data);
+		}
+	}
+
+	@Test
+	public void testInvalidEncoding() throws IOException {
+		NanoHTTPD.setEncoding("SomeInvalidEncoding");
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
+			String data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
+			assertEquals("", data);
+
+			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "UTF-8", 10_000);
+			assertEquals("", data);
+
+			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "ISO-8859-1", 10_000);
+			assertEquals("", data);
+		}
+	}
+
+	@Test
+	public void testServerTwice() throws IOException {
+		final int port = SocketUtils.getNextFreePort(9000, 9010);
+		NanoHTTPD httpd = new NanoHTTPD(port) {
+			@Override
+			public Response serve(String uri, String method, Properties header, Properties parms) {
+				return new Response(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "Ok");
+			}
+		};
+
+		try {
+			NanoHTTPD httpd2 = new NanoHTTPD(port) {
+				@Override
+				public Response serve(String uri, String method, Properties header, Properties parms) {
+					return new Response(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "Ok");
+				}
+			};
+			httpd2.stop();
+		} catch (BindException e) {
+			TestHelpers.assertContains(e, "Address already in use");
+		}
 
 		httpd.stop();
 	}

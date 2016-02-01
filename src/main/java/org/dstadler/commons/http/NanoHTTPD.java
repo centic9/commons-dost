@@ -216,7 +216,7 @@ public class NanoHTTPD
 	 * @throws IOException if the socket is already in use
 	 */
 	public NanoHTTPD( int port, InetAddress bindHost ) throws IOException {
-		this(port, null, 0);
+		this(port, bindHost, 0);
 	}
 
 	/**
@@ -238,6 +238,7 @@ public class NanoHTTPD
 			{
 				try
 				{
+					//noinspection InfiniteLoopStatement
 					while( true ) {
 						Socket socket = myServerSocket.accept();
 						if(sessionTimeout > 0) {
