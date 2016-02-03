@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Interface for handling output of the Search.
+ * Interface for handling output of searches for matching files.
  *
  * @author dominik.stadler
  */
@@ -13,9 +13,9 @@ public interface OutputHandler {
 	/**
 	 * Reports a file that matched.
 	 *
-	 * @param file
-	 * @return true if processing can be stopped, false otherwise
-	 * @throws IOException
+	 * @param file The filename associated with the stream
+	 * @return content The content of the found file.
+	 * @throws IOException If the file cannot be read.
 	 */
 	public boolean found(File file, InputStream content) throws IOException;
 }
