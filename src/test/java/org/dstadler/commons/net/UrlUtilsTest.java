@@ -1,18 +1,5 @@
 package org.dstadler.commons.net;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.ServerSocket;
-import java.net.SocketTimeoutException;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
-
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.MockRESTServer;
@@ -22,6 +9,18 @@ import org.dstadler.commons.testing.ThreadTestHelper;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Test;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.ServerSocket;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -383,11 +382,11 @@ public class UrlUtilsTest {
     @Test
     public void testSSLHostNoFactory() throws IOException {
     	Assume.assumeTrue("Need access to https://www.google.com/ for this test to run",
-    			UrlUtils.isAvailable("https://www.google.com/", false, 10000));
+    			UrlUtils.isAvailable("https://www.google.com/", false, 20000));
 
-		assertTrue(UrlUtils.isAvailable("https://www.google.com/", true, false, 10000, null));
-		assertNull(UrlUtils.getAccessError("https://www.google.com/", true, false, 10000, null));
-		assertNotNull(UrlUtils.retrieveData("https://www.google.com/", null, 10000, null));
+		assertTrue(UrlUtils.isAvailable("https://www.google.com/", true, false, 20000, null));
+		assertNull(UrlUtils.getAccessError("https://www.google.com/", true, false, 20000, null));
+		assertNotNull(UrlUtils.retrieveData("https://www.google.com/", null, 20000, null));
 
 		// this will fail with 405 Method not allowed
 		try {

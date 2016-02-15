@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -248,8 +249,13 @@ public class NanoHTTPDTest {
 	public void testEncoding() throws IOException {
 		NanoHTTPD.setEncoding("UTF-8");
 		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
-			String data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
-			assertEquals("<html>\u00E4</html>", data);
+			String data;
+
+			// this test can only run for UTF-8
+			if(Charset.defaultCharset().equals(Charset.forName("UTF-8"))) {
+				data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
+				assertEquals("Failed whit default charset: " + Charset.defaultCharset(), "<html>\u00E4</html>", data);
+			}
 
 			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "UTF-8", 10_000);
 			assertEquals("<html>\u00E4</html>", data);

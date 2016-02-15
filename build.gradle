@@ -14,7 +14,7 @@ apply plugin: 'codenarc'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 group = "org.dstadler"
 archivesBaseName = "commons-dost"
 

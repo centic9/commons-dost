@@ -229,7 +229,7 @@ public class NanoHTTPD
 	 *
 	 * @throws IOException if the socket is already in use
 	 */
-	public NanoHTTPD( int port, InetAddress bindHost, int sessionTimeout ) throws IOException
+	public NanoHTTPD( int port, InetAddress bindHost, final int sessionTimeout ) throws IOException
 	{
 		myServerSocket = new ServerSocket( port, 50, bindHost );
 		myThread = new Thread("NanoHTTPD Micro Webserver Thread") {
