@@ -1,14 +1,6 @@
 package org.dstadler.commons.collections;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Default implementation of a {@link MappedCounter}.
@@ -27,6 +19,13 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
 			map.put(k, v);
 		} else {
 			map.put(k, map.get(k) + v);
+		}
+	}
+
+	@Override
+	public void count(Collection<T> items) {
+		for(T item : items) {
+			addInt(item, 1);
 		}
 	}
 
@@ -68,8 +67,7 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
 		});
 
 		Map<T, Integer> result = new LinkedHashMap<>();
-		for (Iterator<Map.Entry<T, Integer>> it = list.iterator(); it.hasNext();) {
-			Map.Entry<T, Integer> entry = it.next();
+		for (Map.Entry<T, Integer> entry : list) {
 			result.put(entry.getKey(), entry.getValue());
 		}
 		return result;

@@ -1,14 +1,16 @@
 package org.dstadler.commons.collections;
 
-import static org.junit.Assert.*;
+import org.dstadler.commons.testing.TestHelpers;
+import org.dstadler.commons.testing.ThreadTestHelper;
+import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.dstadler.commons.testing.TestHelpers;
-import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 
@@ -151,5 +153,27 @@ public class ConcurrentMappedCounterTest {
 
 		counter.remove("test");
 		assertEquals(0, counter.get("test"));
+	}
+
+	@Test
+	public void testCount() {
+		MappedCounter<String> counter = new ConcurrentMappedCounter<>();
+		assertEquals(0, counter.get("some"));
+
+		counter.count(Collections.<String>emptyList());
+		assertEquals(0, counter.sortedMap().size());
+
+		counter.count(Collections.singleton("some"));
+		assertEquals(1, counter.sortedMap().size());
+		assertEquals(1, counter.get("some"));
+
+		counter.count(Collections.singleton("some"));
+		assertEquals(1, counter.sortedMap().size());
+		assertEquals(2, counter.get("some"));
+
+		counter.count(Arrays.asList("some", "some2", "some2"));
+		assertEquals(2, counter.sortedMap().size());
+		assertEquals(3, counter.get("some"));
+		assertEquals(2, counter.get("some2"));
 	}
 }

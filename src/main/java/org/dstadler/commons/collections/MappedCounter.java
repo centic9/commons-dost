@@ -1,5 +1,6 @@
 package org.dstadler.commons.collections;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +13,8 @@ import java.util.Set;
  */
 public interface MappedCounter<T> {
 	void addInt(T k, int v);
+
+	void count(Collection<T> items);
 
 	int get(T k);
 

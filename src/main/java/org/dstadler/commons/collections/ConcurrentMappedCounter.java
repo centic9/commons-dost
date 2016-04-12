@@ -1,5 +1,6 @@
 package org.dstadler.commons.collections;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,12 +14,19 @@ import java.util.Set;
 public class ConcurrentMappedCounter<T> implements MappedCounter<T> {
 	// simply delegate to a normal MappedCounter in synchronized blocks for now
 	// a better implementation, e.g. by using ConcurrentHashMap can be added later if necessary
-	private MappedCounter<T> counter = new MappedCounterImpl<>();
+	private final MappedCounter<T> counter = new MappedCounterImpl<>();
 
 	@Override
 	public void addInt(T k, int v) {
 		synchronized (counter) {
 			counter.addInt(k, v);
+		}
+	}
+
+	@Override
+	public void count(Collection<T> items) {
+		synchronized (counter) {
+			counter.count(items);
 		}
 	}
 
