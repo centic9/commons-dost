@@ -19,6 +19,10 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 /**
  * Helper class which provides convenience support for execution of commandline processes via commons-exec.
  *
+ * Use getCommandResult() for processes where the output is small as they will store the output in
+ * memory. Use getCommandResultIntoStream() in order to properly stream out potentially large
+ * amounts of output from the executable.
+ *
  * @author dominik.stadler
  */
 public class ExecutionHelper {
@@ -38,10 +42,12 @@ public class ExecutionHelper {
 	 * @param timeout The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
 	 * @return An InputStream which provides the output of the command.
      *
-     * @throws IOException Execution of subprocess failed or the
-     *          subprocess returned a exit value indicating a failure
+     * @throws IOException Execution of sub-process failed or the
+     *          sub-process returned a exit value indicating a failure
 	 */
-	public static InputStream getCommandResult(CommandLine cmdLine, File dir, int expectedExit, long timeout) throws IOException {
+	public static InputStream getCommandResult(
+			CommandLine cmdLine, File dir, int expectedExit,
+			long timeout) throws IOException {
 		return getCommandResult(cmdLine, dir, expectedExit, timeout, null);
 	}
 
@@ -60,10 +66,12 @@ public class ExecutionHelper {
 	 * @param input Input for the command-execution
 	 * @return An InputStream which provides the output of the command.
      *
-     * @throws IOException Execution of subprocess failed or the
-     *          subprocess returned a exit value indicating a failure
+     * @throws IOException Execution of sub-process failed or the
+     *          sub-process returned a exit value indicating a failure
 	 */
-	public static InputStream getCommandResult(CommandLine cmdLine, File dir, int expectedExit, long timeout, InputStream input) throws IOException {
+	public static InputStream getCommandResult(
+			CommandLine cmdLine, File dir, int expectedExit,
+			long timeout, InputStream input) throws IOException {
 		DefaultExecutor executor = getDefaultExecutor(dir, expectedExit, timeout);
 
 		try (ByteArrayOutputStream outStr = new ByteArrayOutputStream()) {
@@ -89,10 +97,12 @@ public class ExecutionHelper {
 	 * @param timeout The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
 	 * @param stream An OutputStream which receives the output of the executed command
      *
-     * @throws IOException Execution of subprocess failed or the
-     *          subprocess returned a exit value indicating a failure
+     * @throws IOException Execution of sub-process failed or the
+     *          sub-process returned a exit value indicating a failure
 	 */
-	public static void getCommandResultIntoStream(CommandLine cmdLine, File dir, int expectedExit, long timeout, OutputStream stream) throws IOException {
+	public static void getCommandResultIntoStream(
+			CommandLine cmdLine, File dir, int expectedExit,
+			long timeout, OutputStream stream) throws IOException {
 		getCommandResultIntoStream(cmdLine, dir, expectedExit, timeout, stream, null);
 	}
 
@@ -110,12 +120,13 @@ public class ExecutionHelper {
 	 * @throws IOException Execution of subprocess failed or the
      *          subprocess returned a exit value indicating a failure
 	 */
-	public static void getCommandResultIntoStream(CommandLine cmdLine, File dir, int expectedExit, long timeout, OutputStream stream, Map<String,String> environment) throws IOException {
+	public static void getCommandResultIntoStream(
+			CommandLine cmdLine, File dir, int expectedExit,
+			long timeout, OutputStream stream, Map<String,String> environment) throws IOException {
 		DefaultExecutor executor = getDefaultExecutor(dir, expectedExit, timeout);
 		executor.setStreamHandler(new PumpStreamHandler(stream));
 		execute(cmdLine, dir, executor, environment);
 	}
-
 
 	private static DefaultExecutor getDefaultExecutor(File dir, int expectedExit, long timeout) {
 		DefaultExecutor executor = new DefaultExecutor();
@@ -131,7 +142,8 @@ public class ExecutionHelper {
 		return executor;
 	}
 
-	private static void execute(CommandLine cmdLine, File dir, DefaultExecutor executor, Map<String,String> environment) throws IOException {
+	private static void execute(CommandLine cmdLine, File dir, DefaultExecutor executor,
+								Map<String,String> environment) throws IOException {
 		log.info("-Executing(" + dir + "): " + cmdLine);
 		int exitValue = executor.execute(cmdLine, environment);
 		if (exitValue != 0) {
