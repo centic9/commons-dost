@@ -24,10 +24,14 @@ public final class BufferingLogOutputStream extends LogOutputStream {
 	 */
 	private static final int LOG_FLUSH_LIMIT = 5000;
 
+	private static final int LOG_FLUSH_TIME_LIMIT_SEC = 5;
+
 	/**
 	 * Buffer for output from the external application. Constrained by {@link #LOG_FLUSH_LIMIT}
 	 */
-	private static final StringBuilder logBuffer = new StringBuilder();
+	private final StringBuilder logBuffer = new StringBuilder();
+
+	private long lastFlush = System.currentTimeMillis();
 
 	@Override
 	protected void processLine(String line, int level) {
@@ -35,11 +39,12 @@ public final class BufferingLogOutputStream extends LogOutputStream {
 			if(line != null && line.length() > 0) {
 				logBuffer.append(line).append("\n");
 
-				if(logBuffer.length() > LOG_FLUSH_LIMIT) {
+				if(logBuffer.length() > LOG_FLUSH_LIMIT ||
+						lastFlush < (System.currentTimeMillis() - 1000*LOG_FLUSH_TIME_LIMIT_SEC)) {
 					log.info(logBuffer.toString());
 					logBuffer.setLength(0);
+					lastFlush = System.currentTimeMillis();
 				}
-
 			}
 		}
 	}
@@ -58,6 +63,7 @@ public final class BufferingLogOutputStream extends LogOutputStream {
 			if(logBuffer.length() > 0) {
 				log.info(logBuffer.toString());
 				logBuffer.setLength(0);
+				lastFlush = System.currentTimeMillis();
 			}
 		}
 	}

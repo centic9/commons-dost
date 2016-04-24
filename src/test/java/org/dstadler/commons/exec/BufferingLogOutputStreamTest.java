@@ -12,6 +12,7 @@ import org.junit.Test;
  *
  * @author dominik.stadler
  */
+@SuppressWarnings("Convert2Lambda")
 public class BufferingLogOutputStreamTest {
 	private static final int NUMBER_OF_THREADS = 10;
 	private static final int NUMBER_OF_TESTS = 1000;
@@ -22,10 +23,13 @@ public class BufferingLogOutputStreamTest {
 
     		// sends everything to Level.INFO
     		stream.processLine("someline", 0);
+			stream.processLine("someline", 0);
 
     		// test null and empty string
     		stream.processLine(null, 0);
     		stream.processLine("", 0);
+
+			stream.processLine("someline", 0);
 		}
 
 		// TODO: test if the data actually is buffered and reaches the log output at some point.
