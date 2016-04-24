@@ -9,8 +9,9 @@ import org.xml.sax.SAXException;
 
 
 /**
- * An XML SAX Parser which converts an SVN XML-Log into a Map&lt;Long, LogEntry&gt; objects
- * where the key is the subversion revision number.
+ * An XML SAX Parser which converts an SVN XML-Log into a Map&lt;Long, LogEntry&gt;
+ * where the key is the subversion revision number and the value provides information
+ * about the SVN log entry.
  *
  * @author dominik.stadler
  */
@@ -47,20 +48,43 @@ public class SVNLogFileParser extends AbstractSimpleContentHandler<Long, LogEntr
 */
 
 	/**
-	 * Construct the parser with the name of the branch that we are looking at.
+	 * Construct the parser with the list of branches that we are looking at.
 	 *
-	 * @param branches
+	 * The resulting log-entries can be queried after parsing via getConfigs().
+	 *
+	 * @param branches An array of branch-names.
 	 */
 	public SVNLogFileParser(String[] branches) {
 		this(branches, null, PATH_LIMIT);
 	}
 
+	/**
+	 * Construct the parser with the list of branches and a runnable that is
+	 * invoked for each log-entry.
+	 *
+	 * This can be used for streaming parsing of log-entries, e.g. for potentially
+	 * large results which would consume a large amount of memory otherwise.
+	 *
+	 * The found log-entries are not stored and thus getConfigs() will return
+	 * an empty map after parsing in this case.
+	 *
+	 * @param branches An array of branch-names.
+	 * @param runnable A {@link LogEntryRunnable} runnable which is invoked
+	 *                    once for each log-entry.
+	 * @param pathLimit The maximum number of path-elements that are stored.
+	 *                     This can be used to limit the amount of memory
+	 *                  that is used if the actual affected path names are
+	 *                  not important.
+     */
 	public SVNLogFileParser(String[] branches, LogEntryRunnable runnable, int pathLimit) {
 		this.branches = Arrays.copyOf(branches, branches.length);
 		this.runnable = runnable;
 		this.pathLimit = pathLimit;
 	}
 
+	/**
+	 * Internal method used for XML parsing
+     */
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		if(localName.equals(TAG_LOG_ENTRY)) {
@@ -76,6 +100,9 @@ public class SVNLogFileParser extends AbstractSimpleContentHandler<Long, LogEntr
 		}
 	}
 
+	/**
+	 * Internal method used for XML parsing
+	 */
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if(localName.equals(TAG_LOG_ENTRY)) {
@@ -92,32 +119,41 @@ public class SVNLogFileParser extends AbstractSimpleContentHandler<Long, LogEntr
 			currentTags = null;
 		} else {
 			String value = characters.toString().trim();
-			if(localName.equals(TAG_AUTHOR)) {
-				currentTags.author = value.toLowerCase();
-			} else if(localName.equals(TAG_DATE)) {
-				currentTags.date = value;
-			} else if(localName.equals(TAG_MSG)) {
-				currentTags.msg = value;
-			} else if(localName.equals(TAG_PATH)) {
-				// remove the initial branchname to reduce screen and memory size of the paths
-				for(String branch : branches) {
-					value = StringUtils.removeStart(value, branch);
-				}
+			switch (localName) {
+				case TAG_AUTHOR:
+					currentTags.author = value.toLowerCase();
+					break;
+				case TAG_DATE:
+					currentTags.date = value;
+					break;
+				case TAG_MSG:
+					currentTags.msg = value;
+					break;
+				case TAG_PATH:
+					// remove the initial branchname to reduce screen and memory size of the paths
+					for (String branch : branches) {
+						value = StringUtils.removeStart(value, branch);
+					}
 
-				// only store a few paths to not go OOM with too many paths stored
-				int size = currentTags.paths == null ? 0 : currentTags.paths.size();
-				if(size == pathLimit) {
-					currentTags.addPath(LogEntry.MORE, "");
-				} else if (size < pathLimit) {
-					currentTags.addPath(value, lastAction);
-				}
-				lastAction = "";
+					// only store a few paths to not go OOM with too many paths stored
+					int size = currentTags.paths == null ? 0 : currentTags.paths.size();
+					if (size == pathLimit) {
+						currentTags.addPath(LogEntry.MORE, "");
+					} else if (size < pathLimit) {
+						currentTags.addPath(value, lastAction);
+					}
+					lastAction = "";
+					break;
 			}
 			characters.setLength(0);
 		}
 	}
 
+	/**
+	 * Callback which is invoked for each log-entry to allow
+	 * streaming handling of large svn-log queries.
+	 */
 	public interface LogEntryRunnable {
-		public void run(LogEntry entry);
+		void run(LogEntry entry);
 	}
 }

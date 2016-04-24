@@ -116,7 +116,7 @@ public class UrlUtilsTest {
 	private static final int PORT_RANGE_START = 15100;
 	private static final int PORT_RANGE_END = 15110;
 
-	private static final int getNextFreePort() throws IOException {
+	private static int getNextFreePort() throws IOException {
 		for (int port = PORT_RANGE_START; port < PORT_RANGE_END; port++) {
 			try {
 				try (ServerSocket sock = new ServerSocket(port)) {
@@ -323,6 +323,7 @@ public class UrlUtilsTest {
                 UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "", null, 1000);
                 fail("Should timeout with empty body because of NanoHTTPD implementation details");
             } catch (@SuppressWarnings("unused") SocketTimeoutException e) {
+				// expected here
             }
 
             try {

@@ -1,19 +1,18 @@
 package org.dstadler.commons.graphviz;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteException;
-import org.apache.commons.exec.ExecuteWatchdog;
-import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 
 /**
  * Simple utility methods to run the dot-tool from Graphviz on a file.
@@ -29,21 +28,22 @@ public class DotUtils {
     /**
      * Write out the string and a newline
      *
-     * @param writer
-     * @param string
-     * @throws IOException
+     * @param writer The writer for the .dot-file
+     * @param string The text to write
+     * @throws IOException if writing to the Writer fails
      */
     public static void writeln(final Writer writer, final String string) throws IOException {
         writeln(writer, string, 0);
     }
 
     /**
-	 * Write out the string and a newline
+	 * Write out the string and a newline, appending a number of tabs to
+	 * properly indent the resulting text-file.
 	 *
-	 * @param writer
-	 * @param string
-	 * @param indentLevel
-     * @throws IOException
+	 * @param writer The writer for the .dot-file
+	 * @param string The text to write
+	 * @param indentLevel How much to indent the line
+	 * @throws IOException if writing to the Writer fails
 	 */
 	public static void writeln(final Writer writer, final String string, int indentLevel) throws IOException {
         writer.write(StringUtils.repeat("\t", indentLevel) + string);
@@ -106,7 +106,8 @@ public class DotUtils {
 	 * @param dotfile The dot {@code File}  used for the graph generation
      * @param resultfile The {@code File} to which should be written
 	 *
-	 * @throws IOException
+	 * @throws IOException if writing the resulting graph fails or other I/O
+	 * 			problems occur
 	 */
 	public static void renderGraph(File dotfile, File resultfile) throws IOException {
 		// call graphviz-dot via commons-exec
@@ -127,7 +128,9 @@ public class DotUtils {
 			}
 		} catch (IOException e) {
 			// if something went wrong the file should not be left behind...
-			resultfile.delete();
+			if(!resultfile.delete()) {
+				System.out.println("Could not delete file " + resultfile);
+			}
 
 			throw e;
 		}
@@ -138,8 +141,7 @@ public class DotUtils {
 	 *
 	 * @return True if "dot -V" ran successfully, false otherwise
 	 *
-	 * @throws ExecuteException
-	 * @throws IOException
+	 * @throws IOException If running dot fails.
 	 */
 	public static boolean checkDot() throws IOException {
 		// call graphviz-dot via commons-exec
@@ -159,6 +161,11 @@ public class DotUtils {
 		return true;
 	}
 
+	/**
+	 * Allows to define where the exe-file for dot can be found.
+	 *
+	 * @param dotExe The full pathname of the dot-executable.
+     */
 	public static void setDotExe(String dotExe) {
 		DOT_EXE = dotExe;
 	}

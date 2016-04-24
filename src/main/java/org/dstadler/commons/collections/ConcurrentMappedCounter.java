@@ -8,7 +8,10 @@ import java.util.Set;
  * Thread-Safe variant of {@link MappedCounter},
  * currently internally delegates to a {@link MappedCounterImpl}
  *
- * @param <T>
+ * @param <T> The type of the key for the mapped counter, often this
+ *           will be String, but any type that can be used as key for
+ *           a HashMap will work here.
+ *
  * @author dominik.stadler
  */
 public class ConcurrentMappedCounter<T> implements MappedCounter<T> {

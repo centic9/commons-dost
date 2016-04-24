@@ -80,17 +80,20 @@ public class DayCalendar extends GregorianCalendar {
 
     /**
      * @return LOCAL Chronologists Julian day number each day starting from midnight LOCAL TIME.
-     * @see <a href="http://tycho.usno.navy.mil/mjd.html">here</a> for more information about local C-JDN
+     * See <a href="http://tycho.usno.navy.mil/mjd.html">here</a> for more information about local C-JDN
      */
     public long getJulianDay() {
         return getUnixDay() + EPOCH_UNIX_ERA_DAY;
     }
+
     /**
      * find the number of days from this date to the given end date.
      * later end dates result in positive values.
      * Note this is not the same as subtracting day numbers.  Just after midnight subtracted from just before
      * midnight is 0 days for this method while subtracting day numbers would yields 1 day.
      * @param end - any Calendar representing the moment of time at the end of the interval for calculation.
+     *
+     * @return The difference in days
      */
     public long diffDayPeriods(Calendar end) {
         long endL   =  end.getTimeInMillis() +  end.getTimeZone().getOffset(  end.getTimeInMillis() );

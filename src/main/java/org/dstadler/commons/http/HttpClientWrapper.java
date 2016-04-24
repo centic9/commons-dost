@@ -290,6 +290,8 @@ public class HttpClientWrapper implements Closeable {
 	 * @param response A HttpResponse that is resulting from executing a HttpMethod.
 	 * @param url The url, only used for building the error message of the exception.
 	 *
+	 * @return The {@link HttpEntity} returned from response.getEntity().
+	 *
 	 * @throws IOException if the HTTP status code is higher than 206.
 	 */
     public static HttpEntity checkAndFetch(HttpResponse response, String url) throws IOException {

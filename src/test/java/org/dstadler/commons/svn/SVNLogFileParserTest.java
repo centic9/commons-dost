@@ -30,11 +30,11 @@ public class SVNLogFileParserTest {
 			Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {}).parseContent(inStr);
 			assertNotNull(parsed);
 
-			assertTrue("Had: " + parsed, parsed.containsKey(1798l));
-			assertEquals("somebody", parsed.get(1798l).author);
-			assertEquals("2015-03-31T11:03:42.600994Z", parsed.get(1798l).date);
-			assertEquals("Add gradle-wrapper", parsed.get(1798l).msg);
-			assertEquals(1798l, parsed.get(1798l).revision);
+			assertTrue("Had: " + parsed, parsed.containsKey(1798L));
+			assertEquals("somebody", parsed.get(1798L).author);
+			assertEquals("2015-03-31T11:03:42.600994Z", parsed.get(1798L).date);
+			assertEquals("Add gradle-wrapper", parsed.get(1798L).msg);
+			assertEquals(1798L, parsed.get(1798L).revision);
 		}
 	}
 
@@ -45,7 +45,7 @@ public class SVNLogFileParserTest {
 			assertNotNull(parsed);
 
 			// rev. 1799: 6 paths
-			LogEntry entry = parsed.get(1799l);
+			LogEntry entry = parsed.get(1799L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
 			assertEquals("Expect 4 (3 + ....) for 6 paths, but had: " + entry.paths, 4, entry.paths.size());
@@ -59,7 +59,7 @@ public class SVNLogFileParserTest {
 			assertEquals("", pair.getRight());
 
 			// rev. 1790: 4 paths
-			entry = parsed.get(1790l);
+			entry = parsed.get(1790L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
 			assertEquals("Expect 4 (3 + ....) for 4 paths, but had: " + entry.paths, 4, entry.paths.size());
@@ -73,7 +73,7 @@ public class SVNLogFileParserTest {
 			assertEquals("", pair.getRight());
 
 			// rev. 1800: 3 paths
-			entry = parsed.get(1800l);
+			entry = parsed.get(1800L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
 			assertEquals("Expect 3 paths, but had: " + entry.paths, 3, entry.paths.size());
@@ -86,14 +86,15 @@ public class SVNLogFileParserTest {
 			assertEquals("A", pair.getRight());
 
 			// rev. 1797: 1 path
-			entry = parsed.get(1797l);
+			entry = parsed.get(1797L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
 			assertEquals("Expect 1 paths, but had: " + entry.paths, 1, entry.paths.size());
-			assertFalse("Path is '...', had: " + entry.paths, entry.paths.iterator().next().equals(LogEntry.MORE));
+			assertFalse("Path is '...', had: " + entry.paths,
+					entry.paths.iterator().next().getLeft().equals(LogEntry.MORE));
 
 			// rev. 1791: 0 paths
-			entry = parsed.get(1791l);
+			entry = parsed.get(1791L);
 			assertNotNull(entry);
 			assertNull(entry.paths);
 		}
@@ -106,7 +107,7 @@ public class SVNLogFileParserTest {
 			assertNotNull(parsed);
 
 			// rev. 1799: 6 paths
-			LogEntry entry = parsed.get(1799l);
+			LogEntry entry = parsed.get(1799L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
 			assertEquals("Expect 3 (2 + ....) for 6 paths, but had: " + entry.paths, 3, entry.paths.size());
@@ -184,7 +185,7 @@ public class SVNLogFileParserTest {
 		assertEquals(LogEntry.MORE, it.next().getLeft());
 	}
 
-	private static String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+	private static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 		"<log>\n" +
 		"<logentry revision=\"431200\">\n" +
 		"<date>2014-09-18T10:40:52.345853Z</date>\n" +
@@ -197,10 +198,10 @@ public class SVNLogFileParserTest {
 		Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {}).parseContent(new ByteArrayInputStream(XML.getBytes("UTF-8")));
 		assertNotNull(parsed);
 
-		assertTrue("Had: " + parsed, parsed.containsKey(431200l));
-		assertNull(parsed.get(431200l).author);
-		assertEquals("2014-09-18T10:40:52.345853Z", parsed.get(431200l).date);
-		assertEquals("APM-23041 System.exit", parsed.get(431200l).msg);
-		assertEquals(431200l, parsed.get(431200l).revision);
+		assertTrue("Had: " + parsed, parsed.containsKey(431200L));
+		assertNull(parsed.get(431200L).author);
+		assertEquals("2014-09-18T10:40:52.345853Z", parsed.get(431200L).date);
+		assertEquals("APM-23041 System.exit", parsed.get(431200L).msg);
+		assertEquals(431200L, parsed.get(431200L).revision);
 	}
 }

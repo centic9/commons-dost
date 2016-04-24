@@ -33,7 +33,8 @@ public class DefaultFormatter extends Formatter {
      * where multiple applications log to the same output, e.g.
      * in the Launcher output window.
      *
-     * @param appId
+     * @param appId The application id to use in log messages, null to
+     *              not log an applicatoin id
      */
 	public static void setAppId(String appId) {
 		DefaultFormatter.appId = appId;

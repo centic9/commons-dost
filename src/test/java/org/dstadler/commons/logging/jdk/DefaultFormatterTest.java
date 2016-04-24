@@ -1,5 +1,6 @@
 package org.dstadler.commons.logging.jdk;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -73,6 +74,9 @@ public class DefaultFormatterTest {
 		DefaultFormatter formatter = new DefaultFormatter();
 
 		LogRecord record = new LogRecord(Level.INFO, "somemessage");
+		assertEquals(Level.INFO, record.getLevel());
+		assertEquals("somemessage", record.getMessage());
+
 		record = new LogRecord(Level.INFO, "somemessage");
 		record.setLoggerName("logger");
 		record.setThrown(new Exception() {

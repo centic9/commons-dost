@@ -51,7 +51,7 @@ public final class BufferingLogOutputStream extends LogOutputStream {
 
 	/**
 	 * Flush any pending data in the {@link #logBuffer}
-	 * @throws IOException
+	 * @throws IOException If closing the stream fails.
 	 */
 	@Override
 	public void close() throws IOException {
