@@ -15,8 +15,8 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 sourceCompatibility = 1.7
-group = "org.dstadler"
-archivesBaseName = "commons-dost"
+group = 'org.dstadler'
+archivesBaseName = 'commons-dost'
 
 repositories {
 	mavenCentral()
@@ -24,20 +24,20 @@ repositories {
 
 eclipse {
 	project {
-		name = "commons-dost.git"
+		name = 'commons-dost.git'
 	}
 }
 
 dependencies {
 	compile 'commons-io:commons-io:2.5'
-	compile 'org.apache.commons:commons-lang3:3.4'
-	compile 'org.apache.httpcomponents:httpclient:4.5.1'
+	compile 'org.apache.commons:commons-lang3:3.5'
+	compile 'org.apache.httpcomponents:httpclient:4.5.2'
 	compile 'org.apache.commons:commons-exec:1.3'
-	compile 'com.google.guava:guava:19.0'
+	compile 'com.google.guava:guava:20.0'
 	compile 'log4j:log4j:1.2.17'
 	compile 'net.java.dev.jna:jna:3.4.0'
 
-	testCompile "junit:junit:[4.12,)"
+	testCompile 'junit:junit:[4.12,)'
 	testCompile 'org.dstadler:commons-test:1.0.0.12'
 }
 
@@ -87,7 +87,7 @@ test {
 }
 
 jacoco {
-	toolVersion = '0.7.6.201602180812'
+	toolVersion = '0.7.7.201606060606'
 }
 
 jacocoTestReport {
@@ -115,11 +115,11 @@ signing {
 }
 
 //provide defaults so we do not need to specify them always
-if (!project.hasProperty("ossrhUsername")) {
-    ext.ossrhUsername = ""
+if (!project.hasProperty('ossrhUsername')) {
+    ext.ossrhUsername = ''
 }
-if (!project.hasProperty("ossrhPassword")) {
-    ext.ossrhPassword = ""
+if (!project.hasProperty('ossrhPassword')) {
+    ext.ossrhPassword = ''
 }
 
 uploadArchives {
@@ -127,11 +127,11 @@ uploadArchives {
     mavenDeployer {
       beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+      repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
         authentication(userName: ossrhUsername, password: ossrhPassword)
       }
 
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+      snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
         authentication(userName: ossrhUsername, password: ossrhPassword)
       }
 
