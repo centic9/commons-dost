@@ -68,6 +68,7 @@ public class Measure {
 		return adjustedMap;
 	}
 
+	@SuppressWarnings("ResultOfMethodCallIgnored")
 	public void addDynamicMeasure(String dynamic, double lvalue) {
 		Preconditions.checkNotNull(dynamic,
 				"Cannot add a dynamic measure value when the key of the dynamic measure is null");

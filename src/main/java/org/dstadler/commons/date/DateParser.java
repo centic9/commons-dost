@@ -222,7 +222,7 @@ public class DateParser {
 		}
 
 		if(!haveDays && !haveHours && millis >= ONE_SECOND) {
-			millis = handleTime(builder, millis, ONE_SECOND, "s", "");
+			/*millis =*/ handleTime(builder, millis, ONE_SECOND, "s", "");
 		}
 
 		if(builder.length() > 0) {
