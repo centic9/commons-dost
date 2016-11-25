@@ -1,14 +1,13 @@
 package org.dstadler.commons.collections;
 
-import static org.junit.Assert.assertEquals;
+import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
-import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -27,6 +26,21 @@ public class MapUtilsTest {
 		assertEquals("First", "One", sorted.get(0).getKey());
 		assertEquals("Second", "Two", sorted.get(1).getKey());
 		assertEquals("Third", "Three", sorted.get(2).getKey());
+	}
+
+	@Test
+	public void testSortingByValueEqualValue() {
+		HashMap<String, Integer> map = new HashMap<>();
+		map.put("One", 3);
+		map.put("Two", 2);
+		map.put("Three", 2);
+		map.put("Four", 1);
+
+		List<Map.Entry<String, Integer>> sorted = MapUtils.sortByValue(map);
+		assertEquals("Four", sorted.get(0).getKey());
+		assertEquals("Two", sorted.get(1).getKey());
+		assertEquals("Three", sorted.get(2).getKey());
+		assertEquals("One", sorted.get(3).getKey());
 	}
 
 	@Test
