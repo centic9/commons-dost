@@ -53,6 +53,11 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
     }
 
     @Override
+    public void clear() {
+        map.clear();
+    }
+
+    @Override
     public Map<T, Integer> sortedMap() {
         List<Map.Entry<T, Integer>> list = new LinkedList<>(map.entrySet());
         Collections.sort(list, new Comparator<Map.Entry<T, Integer>>() {

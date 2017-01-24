@@ -30,6 +30,8 @@ public interface MappedCounter<T> {
 
 	int sum();
 
+	void clear();
+
 	Map<T, Integer> sortedMap();
 
 	@Override

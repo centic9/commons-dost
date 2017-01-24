@@ -13,9 +13,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class MappedCounterTest {
+    protected <T> MappedCounter<T> createCounter() {
+        return new MappedCounterImpl<>();
+    } 
+    
     @Test
     public void test() {
-        MappedCounter<String> counter = new MappedCounterImpl<>();
+        MappedCounter<String> counter = createCounter();
         assertEquals(0, counter.get("some"));
         assertNotNull(counter.keys());
         assertNotNull(counter.entries());
@@ -45,7 +49,7 @@ public class MappedCounterTest {
 
     @Test
     public void testSortedMapSorted() {
-        MappedCounter<String> counter = new MappedCounterImpl<>();
+        MappedCounter<String> counter = createCounter();
 
         counter.addInt("test", 1);
         assertEquals(1, counter.get("test"));
@@ -65,7 +69,7 @@ public class MappedCounterTest {
 
     @Test
     public void testGeneric() {
-        MappedCounter<Integer> counter = new MappedCounterImpl<>();
+        MappedCounter<Integer> counter = createCounter();
         assertEquals(0, counter.get(24));
         assertNotNull(counter.keys());
         assertNotNull(counter.entries());
@@ -93,7 +97,7 @@ public class MappedCounterTest {
 
     @Test
     public void testToString() {
-        MappedCounter<String> counter = new MappedCounterImpl<>();
+        MappedCounter<String> counter = createCounter();
         TestHelpers.ToStringTest(counter);
 
         counter.addInt("Str1", 3);
@@ -106,7 +110,7 @@ public class MappedCounterTest {
 
     @Test
     public void testToStringGeneric() {
-        MappedCounter<Integer> counter = new MappedCounterImpl<>();
+        MappedCounter<Integer> counter = createCounter();
         TestHelpers.ToStringTest(counter);
 
         counter.addInt(234, 3);
@@ -119,7 +123,7 @@ public class MappedCounterTest {
 
     @Test
     public void testRemove() {
-        MappedCounter<String> counter = new MappedCounterImpl<>();
+        MappedCounter<String> counter = createCounter();
         assertEquals(0, counter.get("some"));
         assertNotNull(counter.keys());
         assertNotNull(counter.entries());
@@ -133,7 +137,7 @@ public class MappedCounterTest {
 
     @Test
     public void testCount() {
-        MappedCounter<String> counter = new MappedCounterImpl<>();
+        MappedCounter<String> counter = createCounter();
         assertEquals(0, counter.get("some"));
 
         counter.count(Collections.<String>emptyList());
@@ -151,11 +155,15 @@ public class MappedCounterTest {
         assertEquals(2, counter.sortedMap().size());
         assertEquals(3, counter.get("some"));
         assertEquals(2, counter.get("some2"));
+
+        counter.clear();
+        assertEquals(0, counter.get("some"));
+        assertEquals("{}", counter.sortedMap().toString());
     }
 
     @Test
     public void testNullKey() {
-        MappedCounter<String> counter = new MappedCounterImpl<>();
+        MappedCounter<String> counter = createCounter();
 
         counter.addInt(null, 1);
 
