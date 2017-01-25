@@ -42,13 +42,13 @@ public class DateParserTest {
 
 	@Test
 	public void testParseURLDateAbsolute() throws Exception {
-		assertEquals(1304215200000l, DateParser.parseURLDate("04:00 20110501", null).getTime());
-		assertEquals(1304215200000l, DateParser.parseURLDate("04:00 110501", null).getTime());
-		assertEquals("Expected " + new Date(1304200800000l) + " but got: " + DateParser.parseURLDate("2011-05-01", null),
-				1304200800000l, DateParser.parseURLDate("2011-05-01", null).getTime());
-		assertEquals(1304215200000l, DateParser.parseURLDate("2011-05-01T04:00:00.0", null).getTime());
-		assertEquals("Expected " + new Date(1304200800000l) + " but got: " + DateParser.parseURLDate("05/01/11", null),
-				1304200800000l, DateParser.parseURLDate("05/01/11", null).getTime());
+		assertEquals(1304215200000L, DateParser.parseURLDate("04:00 20110501", null).getTime());
+		assertEquals(1304215200000L, DateParser.parseURLDate("04:00 110501", null).getTime());
+		assertEquals("Expected " + new Date(1304200800000L) + " but got: " + DateParser.parseURLDate("2011-05-01", null),
+				1304200800000L, DateParser.parseURLDate("2011-05-01", null).getTime());
+		assertEquals(1304215200000L, DateParser.parseURLDate("2011-05-01T04:00:00.0", null).getTime());
+		assertEquals("Expected " + new Date(1304200800000L) + " but got: " + DateParser.parseURLDate("05/01/11", null),
+				1304200800000L, DateParser.parseURLDate("05/01/11", null).getTime());
 	}
 
 	@Test

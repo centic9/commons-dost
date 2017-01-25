@@ -160,7 +160,7 @@ public class DateParser {
 		for(FastDateFormat format : DATE_PARSERS) {
 			string.append(format.getPattern()).append(", ");
 		}
-		throw new IllegalArgumentException("Could not parse absolut date " + dateStr + " via any of the available parsers: " + string.toString());
+		throw new IllegalArgumentException("Could not parse absolute date " + dateStr + " via any of the available parsers: " + string.toString());
 	}
 
 	/**
