@@ -3,9 +3,6 @@ package org.dstadler.commons.dynatrace;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
-
-
 /**
  * Helper class to handle measures together with their dynamic measure values locally.
  *
@@ -70,9 +67,9 @@ public class Measure {
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	public void addDynamicMeasure(String dynamic, double lvalue) {
-		Preconditions.checkNotNull(dynamic,
+		checkNotNull(dynamic,
 				"Cannot add a dynamic measure value when the key of the dynamic measure is null");
-		Preconditions.checkNotNull(dynamicMeasureName,
+		checkNotNull(dynamicMeasureName,
 				"Cannot add a dynamic measure value when the name of the dynamic measure is not set in the constructor");
 
 		if(!dynamicMeasures.containsKey(dynamic)) {
@@ -88,5 +85,12 @@ public class Measure {
 
 	public void addValue(double lvalue) {
 		value+=lvalue;
+	}
+
+	private static <T> T checkNotNull(T reference, Object errorMessage) {
+		if (reference == null) {
+			throw new NullPointerException(String.valueOf(errorMessage));
+		}
+		return reference;
 	}
 }
