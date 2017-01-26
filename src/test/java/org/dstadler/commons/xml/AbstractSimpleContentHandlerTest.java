@@ -34,7 +34,7 @@ public class AbstractSimpleContentHandlerTest {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
 		};
 
-		try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml")))) {
+		try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
 			handler.parseContent(new URL("http://localhost:" + server.getPort()), "", null, 10_000);
 		}
 	}
@@ -49,7 +49,7 @@ public class AbstractSimpleContentHandlerTest {
 		};
 
 		try {
-			try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml")))) {
+			try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
 				handler.parseContent(new URL("http://localhost:" + server.getPort()), "", null, 10_000);
 			}
 			fail("Should catch exception here");
@@ -94,7 +94,7 @@ public class AbstractSimpleContentHandlerTest {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
 		};
 
-		try (MockRESTServer server = new MockRESTServer("404", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml")))) {
+		try (MockRESTServer server = new MockRESTServer("404", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
 		    try {
     			handler.parseContent(new URL("http://localhost:" + server.getPort() + "/notfound"), "", null, 10_000);
     			fail("Should catch exception");

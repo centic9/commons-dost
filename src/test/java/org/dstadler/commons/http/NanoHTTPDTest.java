@@ -209,7 +209,7 @@ public class NanoHTTPDTest {
 			// wait some time to trigger the timeout
 			Thread.sleep(2000);
 
-			assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+			assertTrue(IOUtils.toString(socket.getInputStream(), "UTF-8").startsWith("HTTP/1.0 500 Internal Server Error"));
 		}
 
 		httpd.stop();
@@ -227,7 +227,7 @@ public class NanoHTTPDTest {
 			// wait some time to trigger the timeout
 			Thread.sleep(2000);
 
-			assertTrue(IOUtils.toString(socket.getInputStream()).startsWith("HTTP/1.0 500 Internal Server Error"));
+			assertTrue(IOUtils.toString(socket.getInputStream(), "UTF-8").startsWith("HTTP/1.0 500 Internal Server Error"));
 		}
 
 		httpd.stop();

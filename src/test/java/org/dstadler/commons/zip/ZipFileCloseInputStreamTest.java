@@ -35,14 +35,14 @@ public class ZipFileCloseInputStreamTest {
 			File file = File.createTempFile("ZipFileClose", ".test");
 			try {
 				FileUtils.writeStringToFile(file,
-						"somedata to have something to read...");
+						"somedata to have something to read...", "UTF-8");
 				try (InputStream input = new FileInputStream(file)) {
 					assertTrue(input.available() > 0);
 
 					try (ZipFileCloseInputStream stream = new ZipFileCloseInputStream(input, zipfile)) {
 						assertTrue(stream.available() > 0);
 
-						List<String> lines = IOUtils.readLines(stream);
+						List<String> lines = IOUtils.readLines(stream, "UTF-8");
 						assertEquals(1, lines.size());
 					}
 
@@ -57,7 +57,9 @@ public class ZipFileCloseInputStreamTest {
 				assertTrue(file.delete());
 			}
 		} finally {
-			assertTrue(new File(name).delete());
+			if(name != null) {
+				assertTrue(new File(name).delete());
+			}
 		}
 
 	}
@@ -70,7 +72,7 @@ public class ZipFileCloseInputStreamTest {
 			File file = File.createTempFile("ZipFileClose", ".test");
 			try {
 				FileUtils.writeStringToFile(file,
-						"somedata to have something to read...");
+						"somedata to have something to read...", "UTF-8");
 				try (InputStream input = new FileInputStream(file)) {
 					try (ZipFileCloseInputStream stream = new ZipFileCloseInputStream(input, zipfile)) {
 						assertTrue(stream.available() > 0);
@@ -91,7 +93,7 @@ public class ZipFileCloseInputStreamTest {
 
 						stream.mark(2);
 
-						stream.skip(1);
+						assertEquals(1, stream.skip(1));
 						try {
 							stream.reset();
 							fail("Mark/Reset not supported");
@@ -112,7 +114,9 @@ public class ZipFileCloseInputStreamTest {
 				assertTrue(file.delete());
 			}
 		} finally {
-			assertTrue(new File(name).delete());
+			if(name != null) {
+				assertTrue(new File(name).delete());
+			}
 		}
 	}
 
@@ -124,7 +128,7 @@ public class ZipFileCloseInputStreamTest {
 			File file = File.createTempFile("ZipFileClose", ".test");
 			try {
 				FileUtils.writeStringToFile(file,
-						"somedata to have something to read...");
+						"somedata to have something to read...", "UTF-8");
 				try (InputStream input = new FileInputStream(file) {
 
 					@Override
@@ -147,7 +151,9 @@ public class ZipFileCloseInputStreamTest {
 				assertTrue(file.delete());
 			}
 		} finally {
-			assertTrue(new File(name).delete());
+			if(name != null) {
+				assertTrue(new File(name).delete());
+			}
 		}
 	}
 

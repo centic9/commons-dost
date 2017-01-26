@@ -117,7 +117,7 @@ public class HttpClientWrapper implements Closeable {
 			@Override
 			public void accept(InputStream inputStream) {
 				try {
-					str.set(IOUtils.toString(inputStream));
+					str.set(IOUtils.toString(inputStream, "UTF-8"));
 				} catch (IOException e) {
 					throw new IllegalStateException(e);
 				}

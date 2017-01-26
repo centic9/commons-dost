@@ -54,7 +54,7 @@ public class DotUtilsTest {
 	public void testRenderGraph() throws Exception {
 		File file = File.createTempFile("DotUtilsTest", ".dot");
 		try {
-			FileUtils.write(file, DOT_FILE);
+			FileUtils.write(file, DOT_FILE, "UTF-8");
 
 			File out = File.createTempFile("DotUtilsTest", ".png");
 			try {
@@ -77,7 +77,7 @@ public class DotUtilsTest {
 	public void testRenderGraphInvalidFile() throws Exception {
 		File file = File.createTempFile("DotUtilsTest", ".dot");
 		try {
-			FileUtils.write(file, "{ digraph");
+			FileUtils.write(file, "{ digraph", "UTF-8");
 
 			try {
 				File out = File.createTempFile("DotUtilsTest", ".png");
@@ -135,7 +135,7 @@ public class DotUtilsTest {
 	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
 	            DotUtils.writeHeader(fileWriter, 0, null, "G", null);
 	            fileWriter.flush();
-	            assertEquals(FileUtils.readFileToString(temp),
+	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
 	                            "digraph G {\n" +
 	                            "rankdir=LR;\n" +
 	                            "node [shape=box];\n\n");
@@ -145,7 +145,7 @@ public class DotUtilsTest {
 	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
 	            DotUtils.writeHeader(fileWriter, 200, null, "G", null);
 	            fileWriter.flush();
-	            assertEquals(FileUtils.readFileToString(temp),
+	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
 	                            "digraph G {\n" +
 	                            "dpi=200;\n" +
 	                            "rankdir=LR;\n" +
@@ -156,7 +156,7 @@ public class DotUtilsTest {
 	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
 	            DotUtils.writeHeader(fileWriter, 0, "AB", "G", null);
 	            fileWriter.flush();
-	            assertEquals(FileUtils.readFileToString(temp),
+	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
 	                            "digraph G {\n" +
 	                            "rankdir=AB;\n" +
 	                            "node [shape=box];\n\n");
@@ -170,7 +170,7 @@ public class DotUtilsTest {
 
 	            DotUtils.writeHeader(fileWriter, 0, null, "G", lines);
 	            fileWriter.flush();
-	            assertEquals(FileUtils.readFileToString(temp),
+	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
 	                            "digraph G {\n" +
 	                            "rankdir=LR;\n" +
 	                            "someline;\n" +
@@ -178,11 +178,11 @@ public class DotUtilsTest {
 	                            "node [shape=box];\n\n");
 	        }
 
-	        // different titlke
+	        // different title
 	        try (FileWriter fileWriter = new FileWriter(temp, false)) {
 	            DotUtils.writeHeader(fileWriter, 0, null, "mygraph", null);
 	            fileWriter.flush();
-	            assertEquals(FileUtils.readFileToString(temp),
+	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
 	                            "digraph mygraph {\n" +
 	                            "rankdir=LR;\n" +
 	                            "node [shape=box];\n\n");

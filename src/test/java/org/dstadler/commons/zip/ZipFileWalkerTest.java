@@ -43,7 +43,7 @@ public class ZipFileWalkerTest {
 
 					log.info("File: " + file);
 					if(file.getAbsolutePath().endsWith(".log")) {
-						assertEquals(LOGLINE, IOUtils.toString(content));
+						assertEquals(LOGLINE, IOUtils.toString(content, "UTF-8"));
 						found.set(true);
 					}
 
@@ -75,7 +75,7 @@ public class ZipFileWalkerTest {
 
 					log.info("File: " + file);
 					if(file.getAbsolutePath().endsWith(".log")) {
-						assertEquals(LOGLINE, IOUtils.toString(content));
+						assertEquals(LOGLINE, IOUtils.toString(content, "UTF-8"));
 						found.set(true);
 					}
 
@@ -123,7 +123,7 @@ public class ZipFileWalkerTest {
 		}
 	}
 
-	public static File createNestedZip() throws IOException, FileNotFoundException {
+	public static File createNestedZip() throws IOException {
 		File zipfile = File.createTempFile("zipfile", ".zip");
 		File zipfile2 = File.createTempFile("zipfile2", ".zip");
 

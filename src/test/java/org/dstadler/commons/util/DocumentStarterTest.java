@@ -57,7 +57,7 @@ public class DocumentStarterTest {
 	public void testStartURLWithBlanks() throws IOException {
 		File file = File.createTempFile("DocumentStarterTest-some file with blanks", ".txt");
 		try {
-			FileUtils.writeStringToFile(file, "test");
+			FileUtils.writeStringToFile(file, "test", "UTF-8");
 			new DocumentStarter().openURL(file.getAbsolutePath());
 		} finally {
 			assertTrue(file.delete());

@@ -40,17 +40,15 @@ public class ZipUtilsTest {
 
 	/**
 	 * Test method for {@link org.dstadler.commons.zip.ZipUtils#getZipContentsRecursive(java.lang.String)}.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testGetZipContentsRecursive() throws Exception {
 		File file = File.createTempFile("somefile", ".txt");
 		try {
-			FileUtils.writeStringToFile(file, "somedata");
+			FileUtils.writeStringToFile(file, "somedata", "UTF-8");
 
 			try (InputStream zipContents = ZipUtils.getZipContentsRecursive(file.getAbsolutePath())) {
-				assertEquals("somedata", IOUtils.toString(zipContents));
+				assertEquals("somedata", IOUtils.toString(zipContents, "UTF-8"));
 			}
 		} finally {
 			assertTrue(file.exists());
@@ -77,7 +75,7 @@ public class ZipUtilsTest {
 			}
 
 			try (InputStream zipContents = ZipUtils.getZipContentsRecursive(zipfile.getAbsolutePath() + "!filename")) {
-				assertEquals("somedata", IOUtils.toString(zipContents));
+				assertEquals("somedata", IOUtils.toString(zipContents, "UTF-8"));
 			}
 		} finally {
 			assertTrue(zipfile.exists());
@@ -97,7 +95,7 @@ public class ZipUtilsTest {
 		try {
     		try (InputStream zipContents = ZipUtils.getZipContentsRecursive(zipfile2.getAbsolutePath() + "!nested.zip!filename")) {
     			assertEquals("somedata",
-    					IOUtils.toString(zipContents));
+    					IOUtils.toString(zipContents, "UTF-8"));
     		}
 		} finally {
 		    assertTrue(zipfile2.exists());
@@ -129,7 +127,7 @@ public class ZipUtilsTest {
 		}
 
 		File file = File.createTempFile("ZipUtils", ".test");
-		FileUtils.writeStringToFile(file, "");
+		FileUtils.writeStringToFile(file, "", "UTF-8");
 		assertEquals(0, file.length());
 		try {
 			try {
@@ -249,7 +247,7 @@ public class ZipUtilsTest {
 		}
 	}
 
-	private File createNestedZip() throws IOException, FileNotFoundException {
+	private File createNestedZip() throws IOException {
 		File zipfile = File.createTempFile("zipfile", ".zip");
 
 		try
@@ -323,6 +321,7 @@ public class ZipUtilsTest {
 				throw ioException;
 			}
 
+			assertNotNull(runtimeException);
 			throw runtimeException;
 		}
 	}
@@ -347,7 +346,7 @@ public class ZipUtilsTest {
 	public void testGetZipStringContentsRecursive() throws Exception {
 		File file = File.createTempFile("somefile", ".txt");
 		try {
-			FileUtils.writeStringToFile(file, "somedata");
+			FileUtils.writeStringToFile(file, "somedata", "UTF-8");
 
 			assertEquals("somedata", ZipUtils.getZipStringContentsRecursive(file.getAbsolutePath()));
 		} finally {
@@ -430,7 +429,7 @@ public class ZipUtilsTest {
 		}
 
 		File file = File.createTempFile("ZipUtils", ".test");
-		FileUtils.writeStringToFile(file, "");
+		FileUtils.writeStringToFile(file, "", "UTF-8");
 		assertEquals(0, file.length());
 		try {
 			try {
@@ -515,7 +514,7 @@ public class ZipUtilsTest {
 	}
 
 	@Test
-	public void testExtractZip() throws FileNotFoundException, IOException {
+	public void testExtractZip() throws IOException {
 		File zipfile2 = createNestedZip();
 
 		try {
@@ -596,7 +595,7 @@ public class ZipUtilsTest {
 	}
 
 	@Test
-	public void testExtractZipFromStream() throws FileNotFoundException, IOException {
+	public void testExtractZipFromStream() throws IOException {
 		File zipfile2 = createNestedZip();
 
 		try (InputStream stream = new FileInputStream(zipfile2)){
@@ -632,6 +631,7 @@ public class ZipUtilsTest {
 	@Test
 	public void testReplaceInZipFailed() {
 		try {
+			//noinspection ConstantConditions
 			ZipUtils.replaceInZip(null, "somedata", null);
 			fail("Should catch exception here");
 		} catch (IOException e) {
@@ -673,7 +673,7 @@ public class ZipUtilsTest {
     		try (ZipFile checkZip = new ZipFile(zipfile)) {
     			assertNotNull(checkZip.getEntry("nested.zip"));
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
-    				assertEquals("somenewdata", IOUtils.toString(stream));
+    				assertEquals("somenewdata", IOUtils.toString(stream, "UTF-8"));
     			}
     		}
 		} finally {
@@ -718,7 +718,7 @@ public class ZipUtilsTest {
     		try (ZipFile checkZip = new ZipFile(zipfile)) {
     			assertNotNull(checkZip.getEntry("newfile.zip"));
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("newfile.zip"))) {
-    				assertEquals("somemorenewdata", IOUtils.toString(stream));
+    				assertEquals("somemorenewdata", IOUtils.toString(stream, "UTF-8"));
     			}
     		}
         } finally {

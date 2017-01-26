@@ -20,7 +20,7 @@ public class TailInputStreamTest {
 	public void testTailInputStream() throws Exception {
 		File file = File.createTempFile("TailInputStream", ".test");
 		try {
-			FileUtils.write(file, StringUtils.repeat("1234567890\n", 100));
+			FileUtils.write(file, StringUtils.repeat("1234567890\n", 100), "UTF-8");
 
 			assertEquals(1100, file.length());
 
@@ -42,7 +42,7 @@ public class TailInputStreamTest {
 	public void testTailInputStreamRN() throws Exception {
 		File file = File.createTempFile("TailInputStream", ".test");
 		try {
-			FileUtils.write(file, StringUtils.repeat("1234567890\r\n", 100));
+			FileUtils.write(file, StringUtils.repeat("1234567890\r\n", 100), "UTF-8");
 
 			assertEquals(1200, file.length());
 
@@ -64,7 +64,7 @@ public class TailInputStreamTest {
 	public void testTailInputStreamR() throws Exception {
 		File file = File.createTempFile("TailInputStream", ".test");
 		try {
-			FileUtils.write(file, StringUtils.repeat("1234567890\r", 100));
+			FileUtils.write(file, StringUtils.repeat("1234567890\r", 100), "UTF-8");
 
 			assertEquals(1100, file.length());
 
@@ -86,7 +86,7 @@ public class TailInputStreamTest {
 	public void testTailInputStreamRNOnly() throws Exception {
 		File file = File.createTempFile("TailInputStream", ".test");
 		try {
-			FileUtils.write(file, StringUtils.repeat("\r\n", 100));
+			FileUtils.write(file, StringUtils.repeat("\r\n", 100), "UTF-8");
 
 			assertEquals(200, file.length());
 
@@ -107,7 +107,7 @@ public class TailInputStreamTest {
 	public void testTailInputStreamRead() throws Exception {
 		File file = File.createTempFile("TailInputStream", ".test");
 		try {
-			FileUtils.write(file, StringUtils.repeat("1234567890\r", 100));
+			FileUtils.write(file, StringUtils.repeat("1234567890\r", 100), "UTF-8");
 
 			assertEquals(1100, file.length());
 

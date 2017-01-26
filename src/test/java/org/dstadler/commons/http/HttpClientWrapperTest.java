@@ -43,7 +43,7 @@ public class HttpClientWrapperTest {
                     @Override
                     public void accept(InputStream inputStream) {
                         try {
-                            str.set(IOUtils.toString(inputStream));
+                            str.set(IOUtils.toString(inputStream, "UTF-8"));
                         } catch (IOException e) {
                             throw new IllegalStateException(e);
                         }
@@ -70,7 +70,7 @@ public class HttpClientWrapperTest {
                     HttpEntity entity = response.getEntity();
 
                     try {
-                        String string = IOUtils.toString(entity.getContent());
+                        String string = IOUtils.toString(entity.getContent(), "UTF-8");
                         assertNotNull(string);
                     } finally {
                         // ensure all content is taken out to free resources

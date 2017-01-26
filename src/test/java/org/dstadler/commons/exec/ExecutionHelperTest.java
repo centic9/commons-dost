@@ -35,7 +35,7 @@ public class ExecutionHelperTest {
 		log.info("Working dir: " + new File(".").getAbsolutePath());
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000)) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result));
+			log.info("Svn-Update reported:\n" + IOUtils.toString(result, "UTF-8"));
 		}
 	}
 
@@ -61,7 +61,7 @@ public class ExecutionHelperTest {
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
         	assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result));
+			log.info("Svn-Update reported:\n" + IOUtils.toString(result, "UTF-8"));
 		}
 	}
 
@@ -72,7 +72,7 @@ public class ExecutionHelperTest {
 
         try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
         	assertNotNull(result);
-            log.info("Svn-Update reported:\n" + IOUtils.toString(result));
+            log.info("Svn-Update reported:\n" + IOUtils.toString(result, "UTF-8"));
         }
     }
 
@@ -83,7 +83,7 @@ public class ExecutionHelperTest {
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result));
+			log.info("Svn-Update reported:\n" + IOUtils.toString(result, "UTF-8"));
 		}
 	}
 
@@ -95,7 +95,7 @@ public class ExecutionHelperTest {
 		log.info("Working dir: " + new File(".").getAbsolutePath());
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000, new ByteArrayInputStream(new byte[] {}))) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result));
+			log.info("Svn-Update reported:\n" + IOUtils.toString(result, "UTF-8"));
 		}
 	}
 
@@ -125,7 +125,7 @@ public class ExecutionHelperTest {
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000, new ByteArrayInputStream(new byte[] {}))) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result));
+			log.info("Svn-Update reported:\n" + IOUtils.toString(result, "UTF-8"));
 		}
 	}
 
@@ -136,7 +136,7 @@ public class ExecutionHelperTest {
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000, new ByteArrayInputStream(new byte[] {}))) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result));
+			log.info("Svn-Update reported:\n" + IOUtils.toString(result, "UTF-8"));
 		}
 	}
 

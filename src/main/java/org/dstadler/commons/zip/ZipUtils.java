@@ -113,9 +113,7 @@ public class ZipUtils {
 			final ZipEntry en;
 			try {
 				en = zin.getNextEntry();
-			} catch (IOException e) {
-				throw new IOException("While handling file " + zipName, e);
-			} catch (IllegalArgumentException e) {
+			} catch (IOException | IllegalArgumentException e) {
 				throw new IOException("While handling file " + zipName, e);
 			}
 			if(en == null) {
@@ -266,7 +264,7 @@ public class ZipUtils {
 			try {
 				try (InputStream str = new FileInputStream(file)) {
 					if (str.available() > 0) {
-						return IOUtils.toString(str);
+						return IOUtils.toString(str, "UTF-8");
 					}
 
 					return "";
@@ -318,7 +316,7 @@ public class ZipUtils {
 
 			try (InputStream str = zipfile.getInputStream(entry)) {
 				if (str.available() > 0) {
-					return IOUtils.toString(str);
+					return IOUtils.toString(str, "UTF-8");
 				}
 
 				return "";
@@ -337,7 +335,7 @@ public class ZipUtils {
 	 *
 	 * @throws IOException Thrown if files can not be read or any other error occurs while handling the Zip-files
 	 */
-	public static final void extractZip(File zip, File toDir) throws IOException{
+	public static void extractZip(File zip, File toDir) throws IOException{
 		if(!toDir.exists()) {
 			throw new IOException("Directory '" + toDir + "' does not exist.");
 		}
@@ -389,7 +387,7 @@ public class ZipUtils {
 	 *
 	 * @throws IOException Thrown if files can not be read or any other error occurs while handling the Zip-files
 	 */
-	public static final void extractZip(InputStream zip, final File toDir) throws IOException{
+	public static void extractZip(InputStream zip, final File toDir) throws IOException{
 		if(!toDir.exists()) {
 			throw new IOException("Directory '" + toDir + "' does not exist.");
 		}
@@ -492,7 +490,7 @@ public class ZipUtils {
 					if(!found) {
 						zos.putNextEntry(new ZipEntry(file));
 						try {
-							IOUtils.write(data, zos);
+							IOUtils.write(data, zos, "UTF-8");
 						} finally {
 							zos.closeEntry();
 						}
@@ -504,6 +502,7 @@ public class ZipUtils {
 			FileUtils.copyFile(zipOutFile, zip);
 		} finally {
 			if(!zipOutFile.delete()) {
+				//noinspection ThrowFromFinallyBlock
 				throw new IOException("Error deleting file: " + zipOutFile);
 			}
 		}
