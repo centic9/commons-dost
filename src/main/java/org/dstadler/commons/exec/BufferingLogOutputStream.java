@@ -1,10 +1,10 @@
 package org.dstadler.commons.exec;
 
-import java.io.IOException;
-import java.util.logging.Logger;
-
 import org.apache.commons.exec.LogOutputStream;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+
+import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Implementation of the LogOutputStream from commons-exec which buffers
@@ -12,9 +12,12 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
  *
  * It will print out all remaining data upon "close()".
  *
+ * This class can be subclassed, e.g. to filter some lines from
+ * processing.
+ *
  * @author dominik.stadler
  */
-public final class BufferingLogOutputStream extends LogOutputStream {
+public class BufferingLogOutputStream extends LogOutputStream {
 	private final static Logger log = LoggerFactory.make();
 
 	/**
