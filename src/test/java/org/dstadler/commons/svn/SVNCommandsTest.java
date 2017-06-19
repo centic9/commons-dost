@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 public class SVNCommandsTest {
@@ -61,12 +63,14 @@ public class SVNCommandsTest {
             throw new RuntimeException(e);
         }
 
-        BASE_URL = "file://" + repoDir.getAbsolutePath() + "/project1";
+        BASE_URL = "file://" + repoDir.getAbsolutePath().
+                // local URL on Windows has limitations
+                replace("\\", "/").replace("c:/", "/") + "/project1";
         log.info("Using baseUrl " + BASE_URL);
 
         try {
             // checkout to 2nd directory
-            try (InputStream result = SVNCommands.checkout("file://" + repoDir.getAbsolutePath() + "/project1",
+            try (InputStream result = SVNCommands.checkout(BASE_URL,
                     svnRepoDir, USERNAME, PASSWORD)) {
                 log.info("Svn-checkout reported:\n" + SVNCommands.extractResult(result));
             }
