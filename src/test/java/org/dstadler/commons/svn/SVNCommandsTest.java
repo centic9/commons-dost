@@ -1,16 +1,9 @@
 package org.dstadler.commons.svn;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.dstadler.commons.exec.ExecutionHelper;
-import org.dstadler.commons.logging.jdk.LoggerFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.xml.sax.SAXException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +14,18 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.dstadler.commons.exec.ExecutionHelper;
+import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 public class SVNCommandsTest {
     private final static Logger log = LoggerFactory.make();
@@ -63,7 +64,7 @@ public class SVNCommandsTest {
             throw new RuntimeException(e);
         }
 
-        BASE_URL = "file://" + repoDir.getAbsolutePath().
+        BASE_URL = (SystemUtils.IS_OS_WINDOWS ? "file:///" : "file://") + repoDir.getAbsolutePath().
                 // local URL on Windows has limitations
                 replace("\\", "/").replace("c:/", "/") + "/project1";
         log.info("Using baseUrl " + BASE_URL);
