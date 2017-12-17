@@ -34,57 +34,51 @@ public class BufferingLogOutputStreamTest {
 
 	@Test
 	public void testLargeData() {
-		TestHelpers.runTestWithDifferentLogLevel(new Runnable() {
-			@Override
-			public void run() {
-				try (BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
+		TestHelpers.runTestWithDifferentLogLevel(() -> {
+            try (BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
 
-    				// sends everything to Level.INFO
-    				for (int i = 0; i < 1000; i++) {
-    					stream.processLine("some line", 0);
-    				}
-
-					stream.close();
-
-					// try closing again, should not fail
-					stream.close();
-				} catch (IOException e) {
-				    throw new IllegalStateException(e);
+                // sends everything to Level.INFO
+                for (int i = 0; i < 1000; i++) {
+                    stream.processLine("some line", 0);
                 }
-			}
-		}, BufferingLogOutputStream.class.getName(), Level.WARNING);
+
+                stream.close();
+
+                // try closing again, should not fail
+                stream.close();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+}
+        }, BufferingLogOutputStream.class.getName(), Level.WARNING);
 	}
 
 	@Test
 	public void testMultipleThreads() throws Throwable {
-		TestHelpers.runTestWithDifferentLogLevel(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					ThreadTestHelper helper =
-							new ThreadTestHelper(NUMBER_OF_THREADS, NUMBER_OF_TESTS);
+		TestHelpers.runTestWithDifferentLogLevel(() -> {
+            try {
+                ThreadTestHelper helper =
+                        new ThreadTestHelper(NUMBER_OF_THREADS, NUMBER_OF_TESTS);
 
-					try (final BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
-						helper.executeTest(new ThreadTestHelper.TestRunnable() {
+                try (final BufferingLogOutputStream stream = new BufferingLogOutputStream()) {
+                    helper.executeTest(new ThreadTestHelper.TestRunnable() {
 
-							@Override
-							public void doEnd(int threadNum) throws Exception {
-								// do stuff at the end ...
-							}
+                        @Override
+                        public void doEnd(int threadNum) throws Exception {
+                            // do stuff at the end ...
+                        }
 
-							@Override
-							public void run(int threadNum, int it) throws Exception {
-								for (int i = 0; i < 100; i++) {
-									stream.processLine("some line", 0);
-								}
-							}
-						});
-					}
-				} catch (Throwable e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		}, BufferingLogOutputStream.class.getName(), Level.WARNING);
+                        @Override
+                        public void run(int threadNum, int it) throws Exception {
+                            for (int i = 0; i < 100; i++) {
+                                stream.processLine("some line", 0);
+                            }
+                        }
+                    });
+                }
+            } catch (Throwable e) {
+                throw new IllegalStateException(e);
+            }
+        }, BufferingLogOutputStream.class.getName(), Level.WARNING);
 	}
 
 	@Test

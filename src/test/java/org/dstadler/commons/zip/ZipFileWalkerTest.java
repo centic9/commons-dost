@@ -32,24 +32,20 @@ public class ZipFileWalkerTest {
 			ZipFileWalker walker = new ZipFileWalker(nestedZip);
 
 			final AtomicBoolean found = new AtomicBoolean(false);
-			assertFalse(walker.walk(new OutputHandler() {
+			assertFalse(walker.walk((file, content) -> {
+                if(file.isDirectory()) {
+                    log.info("Directory: " + file);
+                    return false;
+                }
 
-				@Override
-				public boolean found(File file, InputStream content) throws IOException {
-					if(file.isDirectory()) {
-						log.info("Directory: " + file);
-						return false;
-					}
+                log.info("File: " + file);
+                if(file.getAbsolutePath().endsWith(".log")) {
+                    assertEquals(LOGLINE, IOUtils.toString(content, "UTF-8"));
+                    found.set(true);
+                }
 
-					log.info("File: " + file);
-					if(file.getAbsolutePath().endsWith(".log")) {
-						assertEquals(LOGLINE, IOUtils.toString(content, "UTF-8"));
-						found.set(true);
-					}
-
-					return false;
-				}
-			}));
+                return false;
+            }));
 
 			assertTrue(found.get());
 		} finally {
@@ -64,24 +60,20 @@ public class ZipFileWalkerTest {
 			ZipFileWalker walker = new ZipFileWalker(nestedZip);
 
 			final AtomicBoolean found = new AtomicBoolean(false);
-			assertTrue(walker.walk(new OutputHandler() {
+			assertTrue(walker.walk((file, content) -> {
+                if(file.isDirectory()) {
+                    log.info("Directory: " + file);
+                    return true;
+                }
 
-				@Override
-				public boolean found(File file, InputStream content) throws IOException {
-					if(file.isDirectory()) {
-						log.info("Directory: " + file);
-						return true;
-					}
+                log.info("File: " + file);
+                if(file.getAbsolutePath().endsWith(".log")) {
+                    assertEquals(LOGLINE, IOUtils.toString(content, "UTF-8"));
+                    found.set(true);
+                }
 
-					log.info("File: " + file);
-					if(file.getAbsolutePath().endsWith(".log")) {
-						assertEquals(LOGLINE, IOUtils.toString(content, "UTF-8"));
-						found.set(true);
-					}
-
-					return true;
-				}
-			}));
+                return true;
+            }));
 
 			assertFalse(found.get());
 		} finally {
@@ -96,13 +88,9 @@ public class ZipFileWalkerTest {
 			ZipFileWalker walker = new ZipFileWalker(nestedZip);
 
 			try {
-				walker.walk(new OutputHandler() {
-
-					@Override
-					public boolean found(File file, InputStream content) throws IOException {
-						throw new IOException("testexception");
-					}
-				});
+				walker.walk((file, content) -> {
+                    throw new IOException("testexception");
+                });
 				fail("Should catch exception here");
 			} catch (IOException e) {
 				TestHelpers.assertContains(e, "testexception");

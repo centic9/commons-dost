@@ -328,18 +328,14 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testWithDifferentLogLevel() {
-		TestHelpers.runTestWithDifferentLogLevel(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					testGetZipContentsRecursive2();
-					testGetZipStringContentsRecursive2();
-				} catch (Exception e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		}, ZipUtils.class.getName(), Level.FINE);
+		TestHelpers.runTestWithDifferentLogLevel(() -> {
+            try {
+                testGetZipContentsRecursive2();
+                testGetZipStringContentsRecursive2();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }, ZipUtils.class.getName(), Level.FINE);
 	}
 
 	@Test
@@ -490,13 +486,10 @@ public class ZipUtilsTest {
 		try (InputStream zipInput = new FileInputStream("C:\\data\\easyTravel\\ThirdPartyLibraries\\IceFaces\\ICEfaces-2.0.0-bin\\icefaces\\lib\\jsf-impl.jar")) {
 			ZipUtils.findZip("C:\\data\\easyTravel\\ThirdPartyLibraries\\IceFaces\\ICEfaces-2.0.0-bin\\icefaces\\lib\\jsf-impl.jar",
 					zipInput,
-					new FileFilter() {
-				@Override
-				public boolean accept(File t) {
-					System.out.println("Check " + t);
-					return t.getPath().matches(".*jsf.js");
-				}
-			}, r);
+					t -> {
+                        System.out.println("Check " + t);
+                        return t.getPath().matches(".*jsf.js");
+                    }, r);
 			assertEquals("List: " + r, 1, r.size());
 		}
 	}

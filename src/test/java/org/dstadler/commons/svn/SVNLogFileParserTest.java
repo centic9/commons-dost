@@ -125,16 +125,12 @@ public class SVNLogFileParserTest {
 	public void testWithLogEntryRunnable() throws SAXException, IOException {
 		try (InputStream inStr = new FileInputStream(new File("src/test/data/svnlogwithpath.xml"))) {
 		    final AtomicInteger count = new AtomicInteger(0);
-			Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {"/trunk/CommonCrawl"}, new SVNLogFileParser.LogEntryRunnable() {
+			Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {"/trunk/CommonCrawl"}, entry -> {
+                count.incrementAndGet();
 
-				@Override
-				public void run(LogEntry entry) {
-					count.incrementAndGet();
-
-					assertNotNull(entry);
-					assertTrue(entry.revision > 0);
-				}
-			}, 10).parseContent(inStr);
+                assertNotNull(entry);
+                assertTrue(entry.revision > 0);
+            }, 10).parseContent(inStr);
 
 			assertNotNull(parsed);
 			assertEquals("When using runnable, no entries are returned", 0, parsed.size());

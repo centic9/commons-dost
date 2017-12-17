@@ -34,7 +34,7 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
 
     @Override
     public int get(T k) {
-        return map.containsKey(k) ? map.get(k) : 0;
+        return map.getOrDefault(k, 0);
     }
 
     @Override
@@ -60,30 +60,26 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
     @Override
     public Map<T, Integer> sortedMap() {
         List<Map.Entry<T, Integer>> list = new LinkedList<>(map.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<T, Integer>>() {
-
-            @Override
-            public int compare(Map.Entry<T, Integer> o1, Map.Entry<T, Integer> o2) {
-                // reverse ordering to get highest values first
-                int ret = (-1) * o1.getValue().compareTo(o2.getValue());
-                if(ret != 0) {
-                    return ret;
-                }
-
-                final T key1 = o1.getKey();
-                final T key2 = o2.getKey();
-
-                // we use a HashMap which allows null-keys
-                if(key1 == null && key2 == null) {
-                    return 0;
-                } else if(key1 == null) {
-                    return -1;
-                } else if(key2 == null) {
-                    return 1;
-                }
-
-                return key1.toString().compareTo(key2.toString());
+        list.sort((o1, o2) -> {
+            // reverse ordering to get highest values first
+            int ret = (-1) * o1.getValue().compareTo(o2.getValue());
+            if (ret != 0) {
+                return ret;
             }
+
+            final T key1 = o1.getKey();
+            final T key2 = o2.getKey();
+
+            // we use a HashMap which allows null-keys
+            if (key1 == null && key2 == null) {
+                return 0;
+            } else if (key1 == null) {
+                return -1;
+            } else if (key2 == null) {
+                return 1;
+            }
+
+            return key1.toString().compareTo(key2.toString());
         });
 
         Map<T, Integer> result = new LinkedHashMap<>();

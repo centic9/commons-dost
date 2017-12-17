@@ -2,7 +2,6 @@ package org.dstadler.commons.collections;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ public final class MapUtils {
      */
     public static <K, V extends Comparable<V>> List<Entry<K, V>> sortByValue(Map<K, V> map) {
         List<Entry<K, V>> entries = new ArrayList<>(map.entrySet());
-        Collections.sort(entries, new ByValue<K, V>());
+        entries.sort(new ByValue<>());
         return entries;
     }
 
@@ -58,7 +57,7 @@ public final class MapUtils {
      */
     public static <K extends Comparable<K>, V extends Comparable<V>> List<Map.Entry<K, V>> sortByValueAndKey(Map<K, V> map) {
         List<Map.Entry<K, V>> entries = new ArrayList<>(map.entrySet());
-        Collections.sort(entries, new ByValueAndKey<K,V>());
+        entries.sort(new ByValueAndKey<>());
         return entries;
     }
 

@@ -38,14 +38,11 @@ public class HttpClientWrapperTest {
 
             try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
                 final AtomicReference<String> str = new AtomicReference<>();
-                wrapper.simpleGet("http://localhost:" + server.getPort(), new Consumer<InputStream>() {
-                    @Override
-                    public void accept(InputStream inputStream) {
-                        try {
-                            str.set(IOUtils.toString(inputStream, "UTF-8"));
-                        } catch (IOException e) {
-                            throw new IllegalStateException(e);
-                        }
+                wrapper.simpleGet("http://localhost:" + server.getPort(), inputStream -> {
+                    try {
+                        str.set(IOUtils.toString(inputStream, "UTF-8"));
+                    } catch (IOException e) {
+                        throw new IllegalStateException(e);
                     }
                 });
 
@@ -159,11 +156,8 @@ public class HttpClientWrapperTest {
     @Test
     public void testSimpleGetException() throws Exception {
         try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
-            try (MockRESTServer server = new MockRESTServer(new Runnable() {
-                @Override
-                public void run() {
-                    throw new IllegalStateException("testexception");
-                }
+            try (MockRESTServer server = new MockRESTServer(() -> {
+                throw new IllegalStateException("testexception");
             }, NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
                 try {
                     wrapper.simpleGet("http://localhost:" + server.getPort());
@@ -179,11 +173,8 @@ public class HttpClientWrapperTest {
     @Test
     public void testSimpleGetBytesException() throws Exception {
         try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
-            try (MockRESTServer server = new MockRESTServer(new Runnable() {
-                @Override
-                public void run() {
-                    throw new IllegalStateException("testexception");
-                }
+            try (MockRESTServer server = new MockRESTServer(() -> {
+                throw new IllegalStateException("testexception");
             }, NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
                 try {
                     wrapper.simpleGetBytes("http://localhost:" + server.getPort());

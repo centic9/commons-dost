@@ -28,23 +28,19 @@ public class LogEntry {
 
 	public void addPath(String path, String action) {
 		if(paths == null) {
-			paths = new TreeSet<>(new Comparator<Pair<String,String>>() {
+			paths = new TreeSet<>((o1, o2) -> {
+                // sort "..." at the end, otherwise sort alphabetically
+                String path1 = o1.getLeft();
+                if(path1 != null && path1.equals(MORE)) {
+                    return 1;
+                }
+                String path2 = o2.getLeft();
+                if(path2 != null && path2.equals(MORE)) {
+                    return -1;
+                }
 
-				@Override
-				public int compare(Pair<String,String> o1, Pair<String,String> o2) {
-					// sort "..." at the end, otherwise sort alphabetically
-					String path1 = o1.getLeft();
-					if(path1 != null && path1.equals(MORE)) {
-						return 1;
-					}
-					String path2 = o2.getLeft();
-					if(path2 != null && path2.equals(MORE)) {
-						return -1;
-					}
-
-					return o1.compareTo(o2);
-				}
-			});
+                return o1.compareTo(o2);
+            });
 		}
 		paths.add(Pair.of(path, action));
 	}

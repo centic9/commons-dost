@@ -197,17 +197,13 @@ public class UrlUtilsTest {
 
 	@Test
 	public void testRetrieveDataStringStringInt() throws Exception {
-		try (MockRESTServer server = new MockRESTServer(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(1300);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}, NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "OK")) {
+		try (MockRESTServer server = new MockRESTServer(() -> {
+            try {
+                Thread.sleep(1300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "OK")) {
 			UrlUtils.retrieveData("http://localhost:" + server.getPort(), null, 1000);
 			fail("Should timeout here!");
 		} catch (SocketTimeoutException e) {
@@ -291,20 +287,16 @@ public class UrlUtilsTest {
 	@Test
 	public void testRunWithDifferentLoglevel() {
 		final AtomicReference<Exception> exception = new AtomicReference<>(null);
-		TestHelpers.runTestWithDifferentLogLevel(new Runnable() {
+		TestHelpers.runTestWithDifferentLogLevel(() -> {
+            try {
+                testRetrieveDataString();
+                testIsAvailable();
+                testRetrieveDataPost();
+            } catch (Exception e) {
+                exception.set(e);
+            }
 
-			@Override
-			public void run() {
-				try {
-					testRetrieveDataString();
-					testIsAvailable();
-					testRetrieveDataPost();
-				} catch (Exception e) {
-					exception.set(e);
-				}
-
-			}
-		}, UrlUtils.class.getName(), Level.FINE);
+        }, UrlUtils.class.getName(), Level.FINE);
 
 		assertNull(exception.get());
 	}

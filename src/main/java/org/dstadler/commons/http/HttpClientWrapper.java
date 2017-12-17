@@ -113,16 +113,13 @@ public class HttpClientWrapper implements Closeable {
 	 */
 	public String simpleGet(String url) throws IOException {
 		final AtomicReference<String> str = new AtomicReference<>();
-		simpleGet(url, new Consumer<InputStream>() {
-			@Override
-			public void accept(InputStream inputStream) {
-				try {
-					str.set(IOUtils.toString(inputStream, "UTF-8"));
-				} catch (IOException e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		});
+		simpleGet(url, inputStream -> {
+            try {
+                str.set(IOUtils.toString(inputStream, "UTF-8"));
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        });
 
 		return str.get();
 	}
@@ -136,16 +133,13 @@ public class HttpClientWrapper implements Closeable {
 	 */
 	public byte[] simpleGetBytes(String url) throws IOException {
 		final AtomicReference<byte[]> bytes = new AtomicReference<>();
-		simpleGet(url, new Consumer<InputStream>() {
-			@Override
-			public void accept(InputStream inputStream) {
-				try {
-					bytes.set(IOUtils.toByteArray(inputStream));
-				} catch (IOException e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		});
+		simpleGet(url, inputStream -> {
+            try {
+                bytes.set(IOUtils.toByteArray(inputStream));
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        });
 
 		return bytes.get();
 	}
