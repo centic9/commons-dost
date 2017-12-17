@@ -29,33 +29,14 @@ public class ClientConstants {
     public static final String FTICK = "\u00B4"; // Should be char "U+00B4", must not be "U+0092"(like in some codepages)
     public static final String BTICK = "\u0060";
 
-    public static final String FORMAT_STRING_PERCENT_20 = "%20";
-    public static final String PLATFORM_WIN32 = "win32";
     public static final String[] CMD_C_START_ARRAY = new String[] {"cmd", "/c", "start"};		// NOSONAR
-    public static final String PLATFORM_CARBON = "carbon";
-    public static final String USR_BIN_OPEN = "/usr/bin/open ";
     public static final String FILE_PROTOCOL = "file:///";
     public static final String STRING_FILE = "file:";
 
     /** * round brackets ** */
-    public static final String WS_LRBRA = " (";
     public static final String LRBRA = "(";
     public static final String RRBRA = ")";
-    public static final String RRBRA_WS = ") ";
 
-    /** * angle brackets ** */
-    public static final String RABRA_WS = "> ";
-    public static final String WS_LABRA = " <";
-    public static final String RABRA = ">";
-    public static final String LABRA = "<";
-    /** * curly brackets ** */
-    public static final String RCBRA_WS = "} ";
-    public static final String WS_LCBRA = " {";
-    public static final String RCBRA = "}";
-    public static final String LCBRA = "{";
-    /** * square brackets ** */
-    public static final String RSBRA_WS = "] ";
-    public static final String WS_LSBRA = " [";
     public static final String RSBRA = "]";
     public static final String LSBRA = "[";
 }
