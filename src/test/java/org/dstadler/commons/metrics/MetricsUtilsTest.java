@@ -8,6 +8,14 @@ import java.io.IOException;
 
 public class MetricsUtilsTest {
     @Test
+    public void testSendMetricURL() throws Exception {
+        try (MockRESTServer server = new MockRESTServer("200", "application/json", "OK")) {
+            String url = "http://localhost:" + server.getPort();
+            MetricsUtils.sendMetric("testmetric", 123, System.currentTimeMillis(), url, "", null);
+        }
+    }
+
+    @Test
     public void testSendMetric() throws Exception {
         try (MockRESTServer server = new MockRESTServer("200", "application/json", "OK");
                 HttpClientWrapper metrics = new HttpClientWrapper("", null, 60_000)) {

@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.dstadler.commons.http.HttpClientWrapper;
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
@@ -19,6 +20,26 @@ import java.util.logging.Logger;
  */
 public class MetricsUtils {
     private static final Logger log = LoggerFactory.make();
+
+    /**
+     * Send the given value for the given metric and timestamp.
+     *
+     * Authentication can be provided via the configured {@link HttpClient} instance.
+     *
+     * @param metric The key of the metric
+     * @param value The value of the measurement
+     * @param ts The timestamp of the measurement
+     * @param url The base URL where Elasticsearch is available.
+     * @param user The username for basic authentication of the HTTP connection, empty if unused
+     * @param password The password for basic authentication of the HTTP connection, null if unused
+     *
+     * @throws IOException If the HTTP call fails with an HTTP status code.
+     */
+    public static void sendMetric(String metric, int value, long ts, String url, String user, String password) throws IOException {
+        try (HttpClientWrapper metrics = new HttpClientWrapper(user, password, 60_000)) {
+            org.dstadler.commons.metrics.MetricsUtils.sendMetric(metric, value, ts, metrics.getHttpClient(), url);
+        }
+    }
 
     /**
      * Send the given value for the given metric and timestamp.
