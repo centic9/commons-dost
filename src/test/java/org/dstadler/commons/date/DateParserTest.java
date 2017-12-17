@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Test;
@@ -96,7 +97,7 @@ public class DateParserTest {
 		assertEquals("1 day, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000)- (59*60*1000) - (59*1000), ""));
 		assertEquals("1 day, 1 h", DateParser.computeTimeAgoString(System.currentTimeMillis()- (25 * 60 * 60 * 1000), ""));
 		assertEquals("1 day, 4 h", DateParser.computeTimeAgoString(System.currentTimeMillis()- (28 * 60 * 60 * 1000), ""));
-		assertEquals("18 days, 14 h", DateParser.computeTimeAgoString(System.currentTimeMillis()- (384732 * 60 * 1000), ""));
+		assertEquals("18 days, 14 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(18) - TimeUnit.HOURS.toMillis(14), ""));
 		assertEquals("", DateParser.computeTimeAgoString(System.currentTimeMillis(), ""));
 		assertEquals("34 s", DateParser.computeTimeAgoString(System.currentTimeMillis()- (34*1000), ""));
 		assertEquals("19 h, 52 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (29*1000 + 52*60*1000 + 19*60*60*1000), ""));
@@ -104,7 +105,7 @@ public class DateParserTest {
 
 		assertEquals("6 min ago", DateParser.computeTimeAgoString(System.currentTimeMillis()- (6 * 60 * 1000), " ago"));
 
-		assertEquals("1 day, 1 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000)- (1*60*1000), ""));
+		assertEquals("1 day, 1 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000) - (60*1000), ""));
 	}
 
 	@Test
@@ -114,7 +115,7 @@ public class DateParserTest {
 		assertEquals("1 h", DateParser.timeToReadable(60 * 60 * 1000));
 		assertEquals("3 h, 5 min", DateParser.timeToReadable(185 * 60 * 1000));
 		assertEquals("1 day, 4 h", DateParser.timeToReadable(28 * 60 * 60 * 1000));
-		assertEquals("18 days, 14 h", DateParser.timeToReadable(384732 * 60 * 1000));
+		assertEquals("18 days, 14 h", DateParser.timeToReadable(TimeUnit.DAYS.toMillis(18) + TimeUnit.HOURS.toMillis(14)));
 		assertEquals("", DateParser.timeToReadable(0));
 		assertEquals("34 s", DateParser.timeToReadable(34*1000));
 		assertEquals("19 h, 52 min", DateParser.timeToReadable(29*1000 + 52*60*1000 + 19*60*60*1000));

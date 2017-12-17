@@ -30,7 +30,7 @@ public class NodeListWrapper implements List<Node> {
 		@Override
 		public Node next() {
 			if(nextPos >= nodeList.getLength()) {
-				throw new NoSuchElementException("Cannot access beyound end of iterator, had " + nodeList.getLength() + " items, tried to access item at position " + nextPos + ".");
+				throw new NoSuchElementException("Cannot access beyond end of iterator, had " + nodeList.getLength() + " items, tried to access item at position " + nextPos + ".");
 			}
 
 			Node node = nodeList.item(nextPos);

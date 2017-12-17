@@ -18,7 +18,6 @@ import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Assume;
 import org.junit.Test;
 
-
 public class HttpClientWrapperTest {
 
     @Test
@@ -65,9 +64,7 @@ public class HttpClientWrapperTest {
 
                 final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
                 try (CloseableHttpResponse response = wrapper.getHttpClient().execute(httpGet)) {
-                    HttpClientWrapper.checkAndFetch(response, "http://localhost:" + server.getPort());
-
-                    HttpEntity entity = response.getEntity();
+                    HttpEntity entity = HttpClientWrapper.checkAndFetch(response, "http://localhost:" + server.getPort());
 
                     try {
                         String string = IOUtils.toString(entity.getContent(), "UTF-8");

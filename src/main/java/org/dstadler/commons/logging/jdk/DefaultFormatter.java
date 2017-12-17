@@ -34,7 +34,7 @@ public class DefaultFormatter extends Formatter {
      * in the Launcher output window.
      *
      * @param appId The application id to use in log messages, null to
-     *              not log an applicatoin id
+     *              not log an application id
      */
 	public static void setAppId(String appId) {
 		DefaultFormatter.appId = appId;
@@ -91,9 +91,9 @@ public class DefaultFormatter extends Formatter {
         	className = "<unknown>";
         }
 
-        int lastdot = className.lastIndexOf(DOT);
-        if (lastdot > 0) {
-            className = className.substring(lastdot + 1);
+        int lastDot = className.lastIndexOf(DOT);
+        if (lastDot > 0) {
+            className = className.substring(lastDot + 1);
         }
 
         BUILDER.append(LSBRA);

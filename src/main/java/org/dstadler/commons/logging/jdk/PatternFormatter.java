@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright [2007] [Rohit B. Rai]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ public class PatternFormatter extends Formatter {
 	* The default log format is "[%LOGGER% - %LEVEL%] %TIME%: %MESSAGE%"
 	* And exception format is [%LOGGER% - %LEVEL%] %TIME% %MESSAGE% \n
 	* Exception: %EXCEPTION% \n %STACKTRACE% Apart from this the time
-	* format may be specified in satand java time format in the timeFormat
+	* format may be specified in standard java time format in the timeFormat
 	* variable The default time format is "dd-MMM-yyy; HH:mm:ss"
 	*/
 
@@ -54,22 +54,22 @@ public class PatternFormatter extends Formatter {
 
 	public PatternFormatter() {
 		LogManager manager = LogManager.getLogManager();
-		String cname = getClass().getName();
+		String cName = getClass().getName();
 
-		timeFormat = manager.getProperty(cname + ".timeFormat");
+		timeFormat = manager.getProperty(cName + ".timeFormat");
 
 		if (timeFormat == null) {
 			timeFormat = "dd-MMM-yyy; HH:mm:ss";
 		}
 		setTimeFormat(timeFormat);
 
-		logPattern = manager.getProperty(cname + ".logPattern");
+		logPattern = manager.getProperty(cName + ".logPattern");
 		if (logPattern == null) {
 			logPattern = "[{0} - {1}] {2}: {3} \n";
 		}
 		setLogPattern(logPattern);
 
-		exceptionPattern = manager.getProperty(cname + ".exceptionPattern");
+		exceptionPattern = manager.getProperty(cName + ".exceptionPattern");
 		if (exceptionPattern == null) {
 			exceptionPattern = "[{0} - {1}] {2} {3} \nException in {4}: {6} \n{7} ";
 		}
@@ -119,7 +119,7 @@ public class PatternFormatter extends Formatter {
 		Date time = new Date(record.getMillis());
 		String formattedTime = dateFormat.format(time);
 
-		String logMessage = "";
+		final String logMessage;
 
 		if (record.getThrown() == null) {
 			Object[] log = { record.getLoggerName(), record.getLevel(), formattedTime, record.getMessage(),

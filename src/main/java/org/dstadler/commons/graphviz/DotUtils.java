@@ -18,7 +18,6 @@ import java.util.List;
  * Simple utility methods to run the dot-tool from Graphviz on a file.
  *
  * @author dominik.stadler
- *
  */
 public class DotUtils {
 	public static String DOT_EXE = SystemUtils.IS_OS_WINDOWS ? "C:\\cygwin\\bin\\dot.exe" : "/usr/bin/dot";
@@ -72,18 +71,18 @@ public class DotUtils {
         // add ...
 
         // DPI and Rankdir
-        String header = "digraph " + id + " {\n";
+        StringBuilder header = new StringBuilder("digraph " + id + " {\n");
         if (dpi > 0) {
-            header += "dpi=" + dpi + ";\n";
+            header.append("dpi=").append(dpi).append(";\n");
         }
-        header += "rankdir=" + (StringUtils.isNotBlank(rankdir) ? rankdir : "LR") + ";\n";
+        header.append("rankdir=").append(StringUtils.isNotBlank(rankdir) ? rankdir : "LR").append(";\n");
 
         // Additional lines
         for (String line : attribLines) {
             line = line.trim();
-            header += line + (line.endsWith(";") ? "\n" : ";\n");
+            header.append(line).append(line.endsWith(";") ? "\n" : ";\n");
         }
-        DotUtils.writeln(writer, header);
+        DotUtils.writeln(writer, header.toString());
     }
 
     /**

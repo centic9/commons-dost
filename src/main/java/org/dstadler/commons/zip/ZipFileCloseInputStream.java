@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.zip.ZipFile;
 
 /**
- * Small wrapper InputStream which closes the underlying zipfile as soon
+ * Small wrapper InputStream which closes the underlying zip-file as soon
  * as the InputStream is closed.
  *
  * @author dominik.stadler

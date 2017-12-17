@@ -1,7 +1,5 @@
-/**
+/*
  * http://www.javalobby.org/java/forums/t18515.html
- *
- *
  *
  *
  * handlers=java.util.logging.ConsoleHandler
@@ -46,21 +44,19 @@ public class BriefLogFormatter extends Formatter {
 	 */
 	@Override
 	public String format(LogRecord record) {
-		String loggerName = record.getLoggerName();
+		/*String loggerName = record.getLoggerName();
 		if (loggerName == null) {
 			loggerName = "root";
-		}
-		StringBuilder output = new StringBuilder()
-				// .append(loggerName)
-				.append("[")
-				.append(StringUtils.repeat(" ", 8 - record.getLevel().toString().length()))
-				.append(record.getLevel()).append('|')
-				.append(StringUtils.repeat(" ", 12 - Thread.currentThread().getName().length()))
-				.append(Thread.currentThread().getName()).append('|')
-				.append(format.format(new Date(record.getMillis())))
-				.append("]: ")
-				.append(record.getMessage()).append(' ')
-				.append(lineSep);
-		return output.toString();
+		}*/
+		// .append(loggerName)
+		return "[" +
+				StringUtils.repeat(" ", 8 - record.getLevel().toString().length()) +
+				record.getLevel() + '|' +
+				StringUtils.repeat(" ", 12 - Thread.currentThread().getName().length()) +
+				Thread.currentThread().getName() + '|' +
+				format.format(new Date(record.getMillis())) +
+				"]: " +
+				record.getMessage() + ' ' +
+				lineSep;
 	}
 }

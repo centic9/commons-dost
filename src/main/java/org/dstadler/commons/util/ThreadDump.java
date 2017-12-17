@@ -31,7 +31,7 @@ public class ThreadDump {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (ThreadInfo info : infos) {
 			sb.append(threadInfoToString(info));
 		}
@@ -64,7 +64,7 @@ public class ThreadDump {
 		StackTraceElement [] stackTrace = info.getStackTrace();
 		for (int i = 0; i < stackTrace.length; i++) {
 			StackTraceElement ste = stackTrace[i];
-			sb.append("\tat " + ste.toString());
+			sb.append("\tat ").append(ste.toString());
 			sb.append('\n');
 			if (i == 0 && info.getLockInfo() != null) {
 				Thread.State ts = info.getThreadState();

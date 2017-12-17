@@ -15,7 +15,6 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
-
 /**
  * Helper class which provides convenience support for execution of commandline processes via commons-exec.
  *

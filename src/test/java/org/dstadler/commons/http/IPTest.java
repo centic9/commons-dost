@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import org.dstadler.commons.testing.TestHelpers;
 
-
-
 /**
  *
  * @author dominik.stadler
@@ -17,11 +15,11 @@ public class IPTest {
 	public void testIP() {
 		checkOneIp(0,0,0,0,0);
 		checkOneIp(1,1,1,1,16843009);
-		checkOneIp(128,0,0,0,2147483648l);
-		checkOneIp(128,128,128,128,2155905152l);
-		checkOneIp(129,129,129,129,2172748161l);
-		checkOneIp(254,254,254,254,4278124286l);
-		checkOneIp(255,255,255,255,4294967295l);
+		checkOneIp(128,0,0,0, 2147483648L);
+		checkOneIp(128,128,128,128, 2155905152L);
+		checkOneIp(129,129,129,129, 2172748161L);
+		checkOneIp(254,254,254,254, 4278124286L);
+		checkOneIp(255,255,255,255, 4294967295L);
 	}
 
 	private void checkOneIp(int i1, int i2, int i3, int i4, long sum) {

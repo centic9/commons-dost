@@ -44,7 +44,14 @@ public class NodeListWrapperTest {
 		try {
 			it.next();
 		} catch (NoSuchElementException e) {
-			TestHelpers.assertContains(e, "Cannot access beyound end of iterator", "23");
+			TestHelpers.assertContains(e, "Cannot access beyond end of iterator", "23");
+		}
+
+		try {
+			wrapper.add(null);
+			fail("Add should not be supported");
+		} catch (UnsupportedOperationException e) {
+			// expected here
 		}
 	}
 
@@ -60,7 +67,7 @@ public class NodeListWrapperTest {
 		}
 
 		try {
-			wrapper.contains(null);
+			assertTrue(wrapper.contains(null));
 			fail("should throw exception");
 		} catch (UnsupportedOperationException e) {
 			assertNull(e.getMessage());

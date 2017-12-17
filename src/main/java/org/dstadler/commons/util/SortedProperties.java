@@ -31,7 +31,7 @@ public class SortedProperties extends Properties {
 
 		Collections.sort(keyList);
 
-		// reverse this list to have the newes items on top
+		// reverse this list to have the newest items on top
 		Collections.reverse(keyList);
 
 		return keyList.elements();

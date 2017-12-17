@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class MetricsUtils {
      */
     public static void sendMetric(String metric, int value, long ts, CloseableHttpClient httpClient, String url) throws IOException {
         final HttpPut httpPut = new HttpPut(url);
-        httpPut.addHeader("Content-Type", "application/json");
+        httpPut.addHeader("Content-Type", NanoHTTPD.MIME_JSON);
         httpPut.setEntity(new StringEntity(
                 "{ \"timestamp\": " + ts + "," +
                         "  \"metric\": \"" + metric + "\"," +

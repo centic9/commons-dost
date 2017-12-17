@@ -1,7 +1,8 @@
-/**
+/*
  * Taken from http://www.java2s.com/Open-Source/Java-Document/IDE-Eclipse/Eclipse-plug-in-development/org/eclipse/pde/internal/runtime/logview/TailInputStream.java.htm
  */
-/*******************************************************************************
+
+/*
  * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -37,10 +38,10 @@ public class TailInputStream extends InputStream {
 		skipHead(file);
 	}
 
-	private final void skipHead(File file) throws IOException {
+	private void skipHead(File file) throws IOException {
 		if (file.length() > fTail) {
 			fRaf.seek(file.length() - fTail);
-			// skip bytes until a new line to be sure we start from a beginnng of valid UTF-8 character
+			// skip bytes until a new line to be sure we start from a beginning of valid UTF-8 character
 			int c = read();
 			while (c != '\n' && c != '\r' && c != -1) {
 				c = read();

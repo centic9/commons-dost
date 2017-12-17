@@ -144,45 +144,34 @@ public class ZipFileWalkerTest {
 
 			}
 
-			{ // write outer zip file
-				ZipEntry entry2 = new ZipEntry("nested.zip");
-				try (ZipOutputStream zipout2 = new ZipOutputStream(new FileOutputStream(zipfile2))) {
-					zipout2.putNextEntry(entry2);
-					zipout2.write(FileUtils.readFileToByteArray(zipfile));
-					zipout2.closeEntry();
-
-					ZipEntry dirEntry = new ZipEntry("dir/");
-					zipout2.putNextEntry(dirEntry);
-					zipout2.closeEntry();
-
-					ZipEntry fileEntry = new ZipEntry("dir/file");
-					zipout2.putNextEntry(fileEntry);
-					zipout2.closeEntry();
-				}
-			}
+			// write outer zip file
+			writeOuterZipFile(zipfile, zipfile2);
 
 			File zipfile3 = File.createTempFile("zipfile2", ".zip");
-			{ // write outer zip file
-				ZipEntry entry3 = new ZipEntry("nested.zip");
-				try (ZipOutputStream zipout3 = new ZipOutputStream(new FileOutputStream(zipfile3))) {
-					zipout3.putNextEntry(entry3);
-					zipout3.write(FileUtils.readFileToByteArray(zipfile2));
-					zipout3.closeEntry();
-
-					ZipEntry dirEntry = new ZipEntry("dir/");
-					zipout3.putNextEntry(dirEntry);
-					zipout3.closeEntry();
-
-					ZipEntry fileEntry = new ZipEntry("dir/file");
-					zipout3.putNextEntry(fileEntry);
-					zipout3.closeEntry();
-				}
-			}
+			// write outer zip file
+			writeOuterZipFile(zipfile2, zipfile3);
 
 			return zipfile3;
 		} finally {
 			assertTrue(zipfile2.delete());
 			assertTrue(zipfile.delete());
 		}
+	}
+
+	private static void writeOuterZipFile(File zipfile, File zipfile2) throws IOException {
+		ZipEntry entry2 = new ZipEntry("nested.zip");
+		try (ZipOutputStream zipout2 = new ZipOutputStream(new FileOutputStream(zipfile2))) {
+            zipout2.putNextEntry(entry2);
+            zipout2.write(FileUtils.readFileToByteArray(zipfile));
+            zipout2.closeEntry();
+
+            ZipEntry dirEntry = new ZipEntry("dir/");
+            zipout2.putNextEntry(dirEntry);
+            zipout2.closeEntry();
+
+            ZipEntry fileEntry = new ZipEntry("dir/file");
+            zipout2.putNextEntry(fileEntry);
+            zipout2.closeEntry();
+        }
 	}
 }

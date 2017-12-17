@@ -1,6 +1,7 @@
 package org.dstadler.commons.xml;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +36,8 @@ public class AbstractSimpleContentHandlerTest {
 		};
 
 		try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
-			handler.parseContent(new URL("http://localhost:" + server.getPort()), "", null, 10_000);
+			SortedMap<String, String> map = handler.parseContent(new URL("http://localhost:" + server.getPort()), "", null, 10_000);
+			assertTrue("Parsing not implemented in abstract base class", map.isEmpty());
 		}
 	}
 

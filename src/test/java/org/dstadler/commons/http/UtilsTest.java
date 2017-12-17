@@ -77,7 +77,6 @@ public class UtilsTest {
 
 	/**
 	 * Test method for {@link org.dstadler.commons.http.Utils#getURL(java.lang.String, java.util.concurrent.atomic.AtomicInteger, long)}.
-	 * @throws IOException
 	 */
 	@Test
 	public void testGetURL() throws IOException {
@@ -97,17 +96,17 @@ public class UtilsTest {
 	}
 
 	private boolean checkURL(URL url) {
-       final URLConnection con;
-        try {
-            con = url.openConnection();
-            con.setConnectTimeout(10000);
-            con.setReadTimeout(10000);
-            con.getInputStream().read();
-        } catch (IOException e) {
-            return false;
-        }
+		try {
+			final URLConnection con = url.openConnection();
+			con.setConnectTimeout(10000);
+			con.setReadTimeout(10000);
+			int read = con.getInputStream().read();
+			assertTrue(read >= 0);
+		} catch (IOException e) {
+			return false;
+		}
 
-        return true;
+		return true;
 	}
 
 	@Test

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.net.SocketException;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -58,7 +57,7 @@ public class SocketUtilsTest {
 		}
 	}
 
-	private ServerSocket openSocket(int port) throws IOException, SocketException {
+	private ServerSocket openSocket(int port) throws IOException {
 		ServerSocket sock = new ServerSocket();
 
 		// for some strange reason this does not work on Windows!

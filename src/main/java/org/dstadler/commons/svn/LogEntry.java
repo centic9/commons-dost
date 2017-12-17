@@ -6,7 +6,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-/*
+/**
  * Data object for one SVN changelog
  *
  * @author dominik.stadler

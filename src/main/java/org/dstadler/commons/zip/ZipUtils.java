@@ -544,8 +544,8 @@ public class ZipUtils {
 		}
 
 		/**
-		 * This method is called for each entry in the Zipfile, this includes
-		 * directorys, use ZipEntry.isDirectory() to check which type of entry
+		 * This method is called for each entry in the zip-file, this includes
+		 * directories, use ZipEntry.isDirectory() to check which type of entry
 		 * you see.
 		 *
 		 * @param entry The current {@link ZipEntry}

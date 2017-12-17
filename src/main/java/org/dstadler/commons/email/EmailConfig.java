@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-
 /**
 * Configuration object for all properties necessary to send an email.
 *

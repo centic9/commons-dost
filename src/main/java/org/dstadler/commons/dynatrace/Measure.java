@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Helper class to handle measures together with their dynamic measure values locally.
  *
- * These are then passed on to the Dynatrace measure interface.
+ * These are then passed on to the Dynatrace AppMon measure interface.
  *
  * This class supports only one type of dynamic measure which can have a number of
  * values reported for different occurrences.
@@ -65,7 +65,6 @@ public class Measure {
 		return adjustedMap;
 	}
 
-	@SuppressWarnings("ResultOfMethodCallIgnored")
 	public void addDynamicMeasure(String dynamic, double lvalue) {
 		checkNotNull(dynamic,
 				"Cannot add a dynamic measure value when the key of the dynamic measure is null");
@@ -87,10 +86,9 @@ public class Measure {
 		value+=lvalue;
 	}
 
-	private static <T> T checkNotNull(T reference, Object errorMessage) {
+	private static void checkNotNull(Object reference, Object errorMessage) {
 		if (reference == null) {
 			throw new NullPointerException(String.valueOf(errorMessage));
 		}
-		return reference;
 	}
 }

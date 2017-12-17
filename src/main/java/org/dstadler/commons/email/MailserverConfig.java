@@ -2,7 +2,6 @@ package org.dstadler.commons.email;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-
 /**
  * Configuration object for the properties that are necessary to configure
  * an SMTP email server.

@@ -56,7 +56,6 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 public class HttpClientWrapper implements Closeable {
 	private final static Logger log = LoggerFactory.make();
 
-	private final CredentialsProvider credsProvider = new BasicCredentialsProvider();
 	private final CloseableHttpClient httpClient;
 
 	private final int timeoutMs;
@@ -72,6 +71,7 @@ public class HttpClientWrapper implements Closeable {
 	public HttpClientWrapper(String user, String password, int timeoutMs) {
 		super();
 
+		CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(
                 new AuthScope(null, -1),
                 new UsernamePasswordCredentials(user, password));

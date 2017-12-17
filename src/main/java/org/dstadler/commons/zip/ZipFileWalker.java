@@ -9,7 +9,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.input.CloseShieldInputStream;
-import org.dstadler.commons.zip.ZipUtils;
 
 /**
  * File Walker for Zip-Files which can step down into nested zip-files while
@@ -45,7 +44,7 @@ public class ZipFileWalker {
 			while(entries.hasMoreElements()) {
 				ZipEntry entry = entries.nextElement();
 
-				// first check for File matchesname, if a name-pattern is given
+				// first check if the file matches the name, if a name-pattern is given
 				File file = new File(zip, entry.getName());
 				if(outputHandler.found(file, zipFile.getInputStream(entry))) {
 					return true;

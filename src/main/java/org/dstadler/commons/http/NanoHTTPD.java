@@ -277,10 +277,9 @@ public class NanoHTTPD
 		}
 	}
 
-
 	/**
 	 * Starts as a standalone file server and waits for Enter.
-	 * @throws IOException
+	 * @throws IOException If starting the web-server fails.
 	 */
 	public static void main( String[] args ) throws IOException
 	{
@@ -426,18 +425,19 @@ public class NanoHTTPD
 					{
 						sendError( HTTP_INTERNALERROR, msg);
 					}
-					catch ( Throwable t ) {} // NOPMD - imported code
+					catch ( Throwable t ) { // NOPMD - imported code
+						// imported code
+					}
 				} finally {
 					in.close();
 				}
 			}
-			catch ( IOException ioe )
-			{
-				try
-				{
-					sendError( HTTP_INTERNALERROR, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
+			catch ( IOException ioe ) {
+				try {
+					sendError(HTTP_INTERNALERROR, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
+				} catch (Throwable t) { // NOPMD - imported code
+					// imported code
 				}
-				catch ( Throwable t ) {} // NOPMD - imported code
 			}
 		}
 
@@ -457,7 +457,9 @@ public class NanoHTTPD
             if (contentLength != null)
             {
             	try { size = Integer.parseInt(contentLength); }
-            catch (NumberFormatException ex) {} // NOPMD - imported code
+				catch (NumberFormatException ex) { // NOPMD - imported code
+					// imported code
+				}
             }
             StringBuilder postLine = new StringBuilder();
             char buf[] = new char[512];
@@ -596,7 +598,11 @@ public class NanoHTTPD
 			catch( IOException ioe )
 			{
 				// Couldn't write? No can do.
-				try { mySocket.close(); } catch( Throwable t ) {} // NOPMD - imported code
+				try {
+					mySocket.close();
+				} catch( Throwable t ) { // NOPMD - imported code
+					// imported code
+				}
 			}
 		}
 
@@ -618,9 +624,12 @@ public class NanoHTTPD
 				newUri.append('/');
 			} else if ( tok.equals( " " )) {
 				newUri.append("%20");
-			} else
-			{
-				try { newUri.append(URLEncoder.encode( tok, "UTF-8" )); } catch ( UnsupportedEncodingException uee ) {} // NOPMD - imported code
+			} else {
+				try {
+					newUri.append(URLEncoder.encode( tok, "UTF-8" ));
+				} catch ( UnsupportedEncodingException uee ) { // NOPMD - imported code
+					// imported code
+				}
 			}
 		}
 		return newUri.toString();
@@ -756,14 +765,14 @@ public class NanoHTTPD
 
     private String createDirListing(String uri, File f) {
         String[] files = f.list();
-        String msg = "<html><body><h1>Directory " + uri + "</h1><br/>";
+        StringBuilder msg = new StringBuilder("<html><body><h1>Directory " + uri + "</h1><br/>");
 
         if ( uri.length() > 1 )
         {
         	String u = uri.substring( 0, uri.length()-1 );
         	int slash = u.lastIndexOf( '/' );
         	if ( slash >= 0 && slash  < u.length()) {
-        		msg += "<b><a href=\"" + uri.substring(0, slash+1) + "\">..</a></b><br/>";
+        		msg.append("<b><a href=\"").append(uri.substring(0, slash + 1)).append("\">..</a></b><br/>");
         	}
         }
 
@@ -773,34 +782,33 @@ public class NanoHTTPD
         	boolean dir = curFile.isDirectory();
         	if ( dir )
         	{
-        		msg += "<b>";
+        		msg.append("<b>");
         		files[i] += '/';
         	}
 
-        	msg += "<a href=\"" + encodeUri( uri + files[i] ) + "\">" +
-        		   files[i] + "</a>";
+        	msg.append("<a href=\"").append(encodeUri(uri + files[i])).append("\">").append(files[i]).append("</a>");
 
         	// Show file size
         	if ( curFile.isFile())
         	{
         		long len = curFile.length();
-        		msg += " &nbsp;<font size=2>(";
+        		msg.append(" &nbsp;<font size=2>(");
         		if ( len < 1024 ) {
-        			msg += curFile.length() + " bytes";
+        			msg.append(curFile.length()).append(" bytes");
         		} else if ( len < 1024 * 1024 ) {
-        			msg += curFile.length()/1024 + "." + (curFile.length()%1024/10%100) + " KB";
+        			msg.append(curFile.length() / 1024).append(".").append(curFile.length() % 1024 / 10 % 100).append(" KB");
         		} else {
-        			msg += curFile.length()/(1024*1024) + "." + curFile.length()%(1024*1024)/10%100 + " MB";
+        			msg.append(curFile.length() / (1024 * 1024)).append(".").append(curFile.length() % (1024 * 1024) / 10 % 100).append(" MB");
         		}
 
-        		msg += ")</font>";
+        		msg.append(")</font>");
         	}
-        	msg += "<br/>";
+        	msg.append("<br/>");
         	if ( dir ) {
-        		msg += "</b>";
+        		msg.append("</b>");
         	}
         }
-        return msg;
+        return msg.toString();
     }
 
 	/**

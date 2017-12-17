@@ -87,6 +87,12 @@ public abstract class AbstractSimpleContentHandler<K,V> extends DefaultHandler {
 		return getConfigs();
 	}
 
+	/**
+	 * Callback method which allows to adjust the parser, e.g.
+	 * by adjusting additional features.
+	 *
+	 * @param parser The {@link XMLReader} used for parsing the XML.
+	 */
 	protected void adjustParser(XMLReader parser) {
 	}
 

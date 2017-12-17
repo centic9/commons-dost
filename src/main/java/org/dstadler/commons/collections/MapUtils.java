@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 /**
  * Some helper methods related to Maps, e.g. sorting by value.
  *

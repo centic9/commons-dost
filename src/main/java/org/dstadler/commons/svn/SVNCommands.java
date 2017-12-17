@@ -213,7 +213,7 @@ public class SVNCommands {
     /**
      * Check if the given branch already exists
      *
-     * @param branch The name of the branch including the path to the branch, e.g. jloadtrace/branches/4.2.x
+     * @param branch The name of the branch including the path to the branch, e.g. branches/4.2.x
      * @param baseUrl       The SVN url to connect to
      * @return true if the branch already exists, false otherwise.
      */
@@ -237,7 +237,7 @@ public class SVNCommands {
     /**
      * Return the revision from which the branch was branched off.
      *
-     * @param branch The name of the branch including the path to the branch, e.g. jloadtrace/branches/4.2.x
+     * @param branch The name of the branch including the path to the branch, e.g. branches/4.2.x
      * @param baseUrl       The SVN url to connect to
      * @return The revision where the branch was branched off from it's parent branch.
      * @throws IOException Execution of the SVN sub-process failed or the
@@ -273,9 +273,9 @@ public class SVNCommands {
     /**
      * Return the last revision of the given branch. Uses the full svn repository if branch is ""
      *
-     * @param branch The name of the branch including the path to the branch, e.g. jloadtrace/branches/4.2.x
+     * @param branch The name of the branch including the path to the branch, e.g. branches/4.2.x
      * @param baseUrl       The SVN url to connect to
-     * @return The last revision where a checkin was made on the branch
+     * @return The last revision where a check-in was made on the branch
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
@@ -402,7 +402,7 @@ public class SVNCommands {
                 if (e.getMessage().contains("Process exited with an error: 1 (Exit value: 1)")) {
                     exception = e;
 
-                    log.log(Level.WARNING, "Retrying merge info commit as we had an error which usually indicatest that another developer checked in something: " + e.getMessage());
+                    log.log(Level.WARNING, "Retrying merge info commit as we had an error which usually indicates that another developer checked in something: " + e.getMessage());
                     continue;
                 }
 
