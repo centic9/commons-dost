@@ -23,6 +23,7 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -35,6 +36,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -113,13 +115,34 @@ public class HttpClientWrapper implements Closeable {
 	 */
 	public String simpleGet(String url) throws IOException {
 		final AtomicReference<String> str = new AtomicReference<>();
-		simpleGet(url, inputStream -> {
+		simpleGetInternal(url, inputStream -> {
             try {
                 str.set(IOUtils.toString(inputStream, "UTF-8"));
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
-        });
+        }, null);
+
+		return str.get();
+	}
+
+	/**
+	 * Perform a simple get-operation with a request body and return the resulting String.
+	 *
+	 * @param url The URL to query
+	 * @param body Additional data to send with the request as HTTP body
+	 * @return The data returned when retrieving the data from the given url, converted to a String.
+	 * @throws IOException if the HTTP status code is not 200.
+	 */
+	public String simpleGet(String url, String body) throws IOException {
+		final AtomicReference<String> str = new AtomicReference<>();
+		simpleGetInternal(url, inputStream -> {
+            try {
+                str.set(IOUtils.toString(inputStream, "UTF-8"));
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }, body);
 
 		return str.get();
 	}
@@ -133,13 +156,13 @@ public class HttpClientWrapper implements Closeable {
 	 */
 	public byte[] simpleGetBytes(String url) throws IOException {
 		final AtomicReference<byte[]> bytes = new AtomicReference<>();
-		simpleGet(url, inputStream -> {
+		simpleGetInternal(url, inputStream -> {
             try {
                 bytes.set(IOUtils.toByteArray(inputStream));
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
-        });
+        }, null);
 
 		return bytes.get();
 	}
@@ -155,6 +178,10 @@ public class HttpClientWrapper implements Closeable {
 	 * @throws IOException if the HTTP status code is not 200.
 	 */
 	public void simpleGet(String url, Consumer<InputStream> consumer) throws IOException {
+		simpleGetInternal(url, consumer, null);
+	}
+
+	private void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException {
 		// Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
 		AuthCache authCache = new BasicAuthCache();
 		BasicScheme basicAuth = new BasicScheme();
@@ -169,7 +196,13 @@ public class HttpClientWrapper implements Closeable {
 		//context.setCredentialsProvider(credsProvider);
 		context.setAuthCache(authCache);
 
-		final HttpGet httpGet = new HttpGet(url);
+		final HttpRequest httpGet;
+		if(body == null) {
+			httpGet = new HttpGet(url);
+		} else {
+			httpGet = new HttpGetWithBody(url);
+			((HttpGetWithBody)httpGet).setEntity(new StringEntity(body));
+		}
 		try (CloseableHttpResponse response = httpClient.execute(targetHost, httpGet, context)) {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if(statusCode != 200) {

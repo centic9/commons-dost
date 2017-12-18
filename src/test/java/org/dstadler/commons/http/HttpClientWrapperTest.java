@@ -1,11 +1,13 @@
 package org.dstadler.commons.http;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -27,6 +29,17 @@ public class HttpClientWrapperTest {
 
             try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
                 assertEquals("ok", wrapper.simpleGet("http://localhost:" + server.getPort()));
+            }
+        }
+    }
+
+    @Test
+    public void testHttpClientWrapperSimpleGetWithBody() throws Exception {
+        try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
+            assertNotNull(wrapper.getHttpClient());
+
+            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
+                assertEquals("ok", wrapper.simpleGet("http://localhost:" + server.getPort(), "some body data"));
             }
         }
     }
