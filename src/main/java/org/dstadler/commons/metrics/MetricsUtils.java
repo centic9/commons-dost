@@ -1,19 +1,20 @@
 package org.dstadler.commons.metrics;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.dstadler.commons.http.HttpClientWrapper;
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
-
-import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Helper class for sending simple metrics to an Elasticsearch instance.
@@ -61,7 +62,7 @@ public class MetricsUtils {
         httpPut.setEntity(new StringEntity(
                 "{ \"timestamp\": " + ts + "," +
                         "  \"metric\": \"" + metric + "\"," +
-                        "  \"value\": " + value + "}"));
+                        "  \"value\": " + value + "}", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpClient.execute(httpPut)) {
             int statusCode = response.getStatusLine().getStatusCode();
