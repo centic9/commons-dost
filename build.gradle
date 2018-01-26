@@ -1,9 +1,19 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'de.thetaphi:forbiddenapis:2.4.1'
+	}
+}
+
 plugins {
 	// https://github.com/researchgate/gradle-release
 	id 'net.researchgate.release' version '2.6.0'
 }
 
 apply plugin: 'java'
+apply plugin: 'de.thetaphi.forbiddenapis'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 // too chatty apply plugin: 'checkstyle'
@@ -26,6 +36,18 @@ eclipse {
 	project {
 		name = 'commons-dost.git'
 	}
+}
+
+forbiddenApis {
+	suppressAnnotations = ['org.dstadler.commons.util.SuppressForbidden']
+}
+forbiddenApisMain {
+	// 'jdk-unsafe', 'jdk-system-out', 'jdk-reflection'
+	bundledSignatures = [ 'jdk-reflection', 'jdk-deprecated', 'jdk-internal', 'jdk-non-portable', 'commons-io-unsafe-2.5' ]
+	signaturesFiles = files('config/forbidden-apis/forbidden.signatures.txt')
+}
+forbiddenApisTest {
+	bundledSignatures = [ 'jdk-reflection', 'commons-io-unsafe-2.5' ]
 }
 
 dependencies {

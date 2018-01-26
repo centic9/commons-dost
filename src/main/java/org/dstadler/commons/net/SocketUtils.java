@@ -5,6 +5,8 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.logging.Logger;
 
+import org.dstadler.commons.util.SuppressForbidden;
+
 /**
  * Various utilities related to sockets.
  *
@@ -29,6 +31,7 @@ public final class SocketUtils {
 	 * @throws IOException
 	 *             If no available port is found.
 	 */
+	@SuppressForbidden(reason = "We want to bind to any address here when checking for free ports")
 	public static int getNextFreePort(int portRangeStart, int portRangeEnd) throws IOException {
 		for (int port = portRangeStart; port <= portRangeEnd; port++) {
 			try (ServerSocket sock = new ServerSocket()) {

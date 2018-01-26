@@ -1,16 +1,33 @@
 package org.dstadler.commons.http;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.dstadler.commons.util.SuppressForbidden;
 
 /**
  * A simple, tiny, nicely embeddable HTTP 1.0 server in Java
@@ -281,6 +298,7 @@ public class NanoHTTPD
 	 * Starts as a standalone file server and waits for Enter.
 	 * @throws IOException If starting the web-server fails.
 	 */
+	@SuppressForbidden(reason = "Allow to exit the application with a return code here")
 	public static void main( String[] args ) throws IOException
 	{
 		System.out.println( "NanoHTTPD 1.14 (C) 2001,2005-2010 Jarno Elonen\n" +

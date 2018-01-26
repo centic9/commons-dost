@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import org.dstadler.commons.util.SuppressForbidden;
+
 /**
  * Taken with explicit allowance from Dr Heinz M. Kabutz on 04.04.2007 from
  * http://www.javaspecialists.co.za/archive/newsletter.do?issue=137:
@@ -91,6 +93,7 @@ public class LoggerFactory {
 	 *
 	 * @throws IllegalStateException If there is a problem calling the rotate-method of the {@link FileHandler}
 	 */
+	@SuppressForbidden(reason = "Could not do this without reflection")
     public static void rolloverLogfile() {
         Logger log = Logger.getLogger("");    // NOSONAR - local logger used on purpose here
         for (Handler handler : log.getHandlers()) {

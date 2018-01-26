@@ -1,5 +1,21 @@
 package org.dstadler.commons.svn;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -7,16 +23,6 @@ import org.dstadler.commons.arrays.ArrayUtils;
 import org.dstadler.commons.exec.ExecutionHelper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.xml.sax.SAXException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -173,7 +179,7 @@ public class SVNCommands {
      *          sub-process returned a exit value indicating a failure
      */
     public static InputStream getBranchLogStream(String[] branches, Date startDate, Date endDate, String baseUrl, String user, String pwd) throws IOException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.ROOT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         CommandLine cmdLine = new CommandLine(SVN_CMD);

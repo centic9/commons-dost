@@ -18,6 +18,7 @@ package org.dstadler.commons.logging.jdk;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Formatter;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
@@ -75,8 +76,8 @@ public class PatternFormatter extends Formatter {
 		}
 		setExceptionPattern(exceptionPattern);
 
-		logMessageFormat = new MessageFormat(logPattern);
-		exceptionMessageFormat = new MessageFormat(exceptionPattern);
+		logMessageFormat = new MessageFormat(logPattern, Locale.ROOT);
+		exceptionMessageFormat = new MessageFormat(exceptionPattern, Locale.ROOT);
 
 		dateFormat = FastDateFormat.getInstance(timeFormat);
 	}
@@ -96,7 +97,7 @@ public class PatternFormatter extends Formatter {
 
 		this.logPattern = logFormat;
 
-		logMessageFormat = new MessageFormat(logPattern);
+		logMessageFormat = new MessageFormat(logPattern, Locale.ROOT);
 	}
 
 	public final void setExceptionPattern(String exceptionFormatIn) {
@@ -111,7 +112,7 @@ public class PatternFormatter extends Formatter {
 
 		this.exceptionPattern = exceptionFormat;
 
-		exceptionMessageFormat = new MessageFormat(logPattern);
+		exceptionMessageFormat = new MessageFormat(logPattern, Locale.ROOT);
 	}
 
 	@Override
