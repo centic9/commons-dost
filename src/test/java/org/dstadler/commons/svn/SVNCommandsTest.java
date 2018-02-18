@@ -3,6 +3,7 @@ package org.dstadler.commons.svn;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.dstadler.commons.exec.ExecutionHelper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -148,7 +150,7 @@ public class SVNCommandsTest {
         assertEquals(20, log.size());
     }
 
-    private boolean serverAvailable() throws IOException {
+    private boolean serverAvailable() {
         // does not work with ssh-url
         //return UrlUtils.isAvailable(BASE_URL, false, true, 10000);
         return true;
@@ -176,5 +178,52 @@ public class SVNCommandsTest {
         } finally {
             FileUtils.deleteDirectory(tempDir);
         }
+    }
+
+    @Test
+    public void testMergeRevision() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            // check that the necessary structures were created
+            assertEquals(SVNCommands.MergeResult.Normal, SVNCommands.mergeRevision(1, tempDir, "", BASE_URL));
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testGetBranchRevision() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            // check that the necessary structures were created
+            try {
+                SVNCommands.getBranchRevision("", BASE_URL);
+                fail("Should throw exception here");
+            } catch (IOException e) {
+                // expected here
+            }
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    // helper method to get coverage of the unused constructor
+    @Test
+    public void testPrivateConstructor() throws Exception {
+        PrivateConstructorCoverage.executePrivateConstructor(SVNCommands.class);
     }
 }

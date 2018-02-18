@@ -558,7 +558,7 @@ public class SVNCommands {
                     continue;
                 }
 
-                if (line.substring(0, 4).contains("C")) {
+                if (line.length() >= 4 && line.substring(0, 4).contains("C")) {
                     // C..Conflict
                     foundConflict = true;
                     log.info("Found conflict!");
