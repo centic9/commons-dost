@@ -1,6 +1,7 @@
 package org.dstadler.commons.svn;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -20,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.dstadler.commons.exec.ExecutionHelper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
@@ -114,10 +116,35 @@ public class SVNCommandsTest {
     }
 
     @Test
-    public void testGetBranchLog() throws Exception {
+    public void testGetBranchLogRevisionRevision() throws Exception {
         assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
 
         Map<Long, LogEntry> log = SVNCommands.getBranchLog(new String[]{""}, 0, 1, BASE_URL, USERNAME, PASSWORD);
+        assertNotNull(log);
+        assertTrue(log.size() > 0);
+        final String date = log.values().iterator().next().date;
+        // depends on actual time of check-in to the temp-repo: assertEquals("2017-04-24T19:54:31.089532Z", date);
+        assertNotNull(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.parse(date));
+    }
+
+    @Test
+    public void testGetBranchLogRevision() throws Exception {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        Map<Long, LogEntry> log = SVNCommands.getBranchLog(new String[]{""}, 0, BASE_URL, USERNAME, PASSWORD);
+        assertNotNull(log);
+        assertTrue(log.size() > 0);
+        final String date = log.values().iterator().next().date;
+        // depends on actual time of check-in to the temp-repo: assertEquals("2017-04-24T19:54:31.089532Z", date);
+        assertNotNull(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.parse(date));
+    }
+
+    @Test
+    public void testGetBranchLogDate() throws Exception {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        Map<Long, LogEntry> log = SVNCommands.getBranchLog(new String[]{""}, new Date(0),
+                DateUtils.addDays(new Date(), 1), BASE_URL, USERNAME, PASSWORD);
         assertNotNull(log);
         assertTrue(log.size() > 0);
         final String date = log.values().iterator().next().date;
@@ -216,6 +243,41 @@ public class SVNCommandsTest {
             } catch (IOException e) {
                 // expected here
             }
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testBranchExists() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            assertFalse(SVNCommands.branchExists("/not_existing", BASE_URL));
+            assertTrue(SVNCommands.branchExists("/README", BASE_URL));
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testCopyBranch() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            SVNCommands.copyBranch("/", "/newbranch", 1, BASE_URL);
         } finally {
             FileUtils.deleteDirectory(tempDir);
         }
