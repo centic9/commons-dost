@@ -10,6 +10,7 @@ import static org.junit.Assume.assumeTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.dstadler.commons.exec.ExecutionHelper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import org.dstadler.commons.testing.TestHelpers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -281,6 +283,101 @@ public class SVNCommandsTest {
         } finally {
             FileUtils.deleteDirectory(tempDir);
         }
+    }
+
+    @Test
+    public void testUpdate() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            SVNCommands.update(tempDir);
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testVerifyNoPendingChanges() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            assertFalse(SVNCommands.verifyNoPendingChanges(tempDir));
+
+            FileUtils.writeStringToFile(new File(tempDir, "README"), "some other string", "UTF-8");
+
+            assertTrue(SVNCommands.verifyNoPendingChanges(tempDir));
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testRevertAll() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            SVNCommands.revertAll(tempDir);
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testCommitMergeInfo() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            SVNCommands.commitMergeInfo("some merge", tempDir);
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testGetConflicts() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            assertEquals("", SVNCommands.getConflicts(tempDir));
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testMergeResult() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        TestHelpers.EnumTest(SVNCommands.MergeResult.Normal, SVNCommands.MergeResult.class,
+                "Normal");
     }
 
     // helper method to get coverage of the unused constructor
