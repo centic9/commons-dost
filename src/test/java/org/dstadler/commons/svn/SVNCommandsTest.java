@@ -142,6 +142,18 @@ public class SVNCommandsTest {
     }
 
     @Test
+    public void testGetBranchLogStream() throws Exception {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        InputStream str = SVNCommands.getBranchLogStream(new String[]{""}, 0, BASE_URL, USERNAME, PASSWORD);
+        String result = IOUtils.toString(str, "UTF-8");
+        assertNotNull(result);
+        assertTrue(result.contains("revision=\"1\""));
+        assertTrue(result.contains("/README"));
+        str.close();
+    }
+
+    @Test
     public void testGetBranchLogDate() throws Exception {
         assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
 
@@ -238,7 +250,6 @@ public class SVNCommandsTest {
                 System.out.println(IOUtils.toString(stream, "UTF-8"));
             }
 
-            // check that the necessary structures were created
             try {
                 SVNCommands.getBranchRevision("", BASE_URL);
                 fail("Should throw exception here");
@@ -369,6 +380,72 @@ public class SVNCommandsTest {
             }
 
             assertEquals("", SVNCommands.getConflicts(tempDir));
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testGetLastRevision() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            long rev = SVNCommands.getLastRevision("", BASE_URL, USERNAME, PASSWORD);
+            assertTrue(rev >= 1);
+        } finally {
+            FileUtils.deleteDirectory(tempDir);
+        }
+    }
+
+    @Test
+    public void testRecordMerge() throws IOException {
+        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+
+        File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
+        try {
+            assertTrue(tempDir.delete());
+            try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
+                System.out.println(IOUtils.toString(stream, "UTF-8"));
+            }
+
+            // add some minimal content
+            assertTrue(new File(tempDir, "bugfix").mkdir());
+
+            CommandLine cmdLine = new CommandLine(SVNCommands.SVN_CMD);
+            cmdLine.addArgument("add");
+            cmdLine.addArgument("bugfix");
+
+             try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, tempDir, 0, 360000)) {
+                log.info("Svn-add reported:\n" + SVNCommands.extractResult(result));
+            }
+
+            cmdLine = new CommandLine(SVNCommands.SVN_CMD);
+            cmdLine.addArgument("commit");
+            cmdLine.addArgument("-m");
+            cmdLine.addArgument("comment");
+
+            try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, tempDir, 0, 360000)) {
+                log.info("Svn-commit reported:\n" + SVNCommands.extractResult(result));
+            }
+
+            SVNCommands.update(tempDir);
+
+            long rev = SVNCommands.getLastRevision("/bugfix", BASE_URL, USERNAME, PASSWORD);
+
+            //assertEquals(rev, SVNCommands.getBranchRevision("/bugfix", BASE_URL));
+
+            InputStream bugfix = SVNCommands.recordMerge(tempDir, "/bugfix", rev);
+            assertNotNull(bugfix);
+
+            /*String revs = SVNCommands.getMergedRevisions(tempDir, "");
+            assertNotNull(revs);
+            assertEquals("" + rev, revs);*/
         } finally {
             FileUtils.deleteDirectory(tempDir);
         }

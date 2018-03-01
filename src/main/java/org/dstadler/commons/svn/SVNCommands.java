@@ -61,7 +61,7 @@ public class SVNCommands {
      * @param branches The list of branches to fetch logs for, currently only the first entry is used!
      * @param startRevision The SVN revision to use as starting point for the log-entries.
      * @param baseUrl       The SVN url to connect to
-     *@param user          The SVN user or null if the default user from the machine should be used
+     * @param user          The SVN user or null if the default user from the machine should be used
      * @param pwd           The SVN password or null if the default user from the machine should be used   @return A mapping of revision numbers to the {@link LogEntry}.
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
@@ -82,7 +82,7 @@ public class SVNCommands {
      * @param startRevision The SVN revision to use as starting point for the log-entries.
      * @param endRevision   The SVN revision to use as end point for the log-entries. In case <code>endRevision</code> is <code>-1</code>, HEAD revision is being used
      * @param baseUrl       The SVN url to connect to
-     *@param user          The SVN user or null if the default user from the machine should be used
+     * @param user          The SVN user or null if the default user from the machine should be used
      * @param pwd           The SVN password or null if the default user from the machine should be used   @return A mapping of revision numbers to the {@link LogEntry}.
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
@@ -103,7 +103,7 @@ public class SVNCommands {
      * @param startDate The starting date for the log-entries that are fetched
      * @param endDate   The end date for the log-entries that are fetched
      * @param baseUrl       The SVN url to connect to
-     *@param user      The SVN user or null if the default user from the machine should be used
+     * @param user      The SVN user or null if the default user from the machine should be used
      * @param pwd       The SVN password or null if the default user from the machine should be used   @return A mapping of revision numbers to the {@link LogEntry}.
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
@@ -124,7 +124,7 @@ public class SVNCommands {
      * @param branches The list of branches to fetch logs for, currently only the first entry is used!
      * @param startRevision The SVN revision to use as starting point for the log-entries.
      * @param baseUrl       The SVN url to connect to
-     *@param user          The SVN user or null if the default user from the machine should be used
+     * @param user          The SVN user or null if the default user from the machine should be used
      * @param pwd           The SVN password or null if the default user from the machine should be used   @return The result of the "svn log -xml" call, should be closed by the caller
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
@@ -144,7 +144,7 @@ public class SVNCommands {
      * @param startRevision The SVN revision to use as starting point for the log-entries.
      * @param endRevision   The SVN revision to use as end point for the log-entries. In case <code>endRevision</code> is <code>-1</code>, HEAD revision is being used
      * @param baseUrl       The SVN url to connect to
-     *@param user          The SVN user or null if the default user from the machine should be used
+     * @param user          The SVN user or null if the default user from the machine should be used
      * @param pwd           The SVN password or null if the default user from the machine should be used   @return A stream that can be used to read the XML data, should be closed by the caller
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
@@ -173,7 +173,7 @@ public class SVNCommands {
      * @param startDate The starting date for the log-entries that are fetched
      * @param endDate   In case <code>endDate</code> is not specified, the current date is used
      * @param baseUrl       The SVN url to connect to
-     *@param user      The SVN user or null if the default user from the machine should be used
+     * @param user      The SVN user or null if the default user from the machine should be used
      * @param pwd       The SVN password or null if the default user from the machine should be used   @return A stream that can be used to read the XML data, should be closed by the caller
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
@@ -198,8 +198,9 @@ public class SVNCommands {
      * Retrieve the contents of a file from the web-interface of the SVN server.
      *
      * @param file The file to fetch from the SVN server via
+     * @param revision      The SVN revision to use
      * @param baseUrl       The SVN url to connect to
-     *@param user The SVN user or null if the default user from the machine should be used
+     * @param user The SVN user or null if the default user from the machine should be used
      * @param pwd  The SVN password or null if the default user from the machine should be used   @return The contents of the file.
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
@@ -281,6 +282,8 @@ public class SVNCommands {
      *
      * @param branch The name of the branch including the path to the branch, e.g. branches/4.2.x
      * @param baseUrl       The SVN url to connect to
+     * @param user The SVN user or null if the default user from the machine should be used
+     * @param pwd  The SVN password or null if the default user from the machine should be used   @return The contents of the file.
      * @return The last revision where a check-in was made on the branch
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
@@ -593,7 +596,7 @@ public class SVNCommands {
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
-    public static String getMergedRevisions(File directory, String[] branches) throws IOException {
+    public static String getMergedRevisions(File directory, String... branches) throws IOException {
         // we could also use svn mergeinfo --show-revs merged ^/trunk ^/branches/test
         CommandLine cmdLine;
         cmdLine = new CommandLine(SVN_CMD);
@@ -692,6 +695,8 @@ public class SVNCommands {
      *
      * @param url       The SVN URL that should be checked out
      * @param directory The location where the working copy is created.
+     * @param user The SVN user or null if the default user from the machine should be used
+     * @param pwd  The SVN password or null if the default user from the machine should be used   @return The contents of the file.
      * @return A stream with output from the command, should be closed by the caller
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
