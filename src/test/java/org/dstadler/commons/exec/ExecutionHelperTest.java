@@ -42,13 +42,13 @@ public class ExecutionHelperTest {
 	@Test
 	public void testGetCommandResultWrongCmd() throws Exception {
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
-		cmdLine.addArgument("notexists");
+		cmdLine.addArgument("notExists");
 
 		try {
 			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000);
 			fail("Should throw exception");
 		} catch (IOException e) {
-			TestHelpers.assertContains(e, "Process exited with an error: 1");
+			TestHelpers.assertContains(e, "Process exited with an error: 1", SVN_CMD, "notExists");
 		}
 	}
 

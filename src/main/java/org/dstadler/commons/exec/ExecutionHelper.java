@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -144,9 +145,13 @@ public class ExecutionHelper {
 	private static void execute(CommandLine cmdLine, File dir, DefaultExecutor executor,
 								Map<String,String> environment) throws IOException {
 		log.info("-Executing(" + dir + "): " + cmdLine);
-		int exitValue = executor.execute(cmdLine, environment);
-		if (exitValue != 0) {
-			log.info("Had exit code " + exitValue + " when calling " + cmdLine);
+		try {
+			int exitValue = executor.execute(cmdLine, environment);
+			if (exitValue != 0) {
+				log.info("Had exit code " + exitValue + " when calling " + cmdLine);
+			}
+		} catch (ExecuteException e) {
+			throw new ExecuteException("While executing (" + dir + "); " + cmdLine, e.getExitValue(), e);
 		}
 	}
 }
