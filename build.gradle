@@ -94,6 +94,7 @@ task adjustWrapperPropertiesFile << {
 wrapper.finalizedBy adjustWrapperPropertiesFile
 
 test {
+	maxHeapSize = "12m"
 	systemProperties = System.properties
 
 	// enable to show standard out and standard error of the test JVM(s) on the console
