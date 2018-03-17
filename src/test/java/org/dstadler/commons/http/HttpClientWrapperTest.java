@@ -101,10 +101,10 @@ public class HttpClientWrapperTest {
 
     @Test
     public void testHttpClientWrapperHTTPS() throws Exception {
-        Assume.assumeTrue("https://www.google.com/ should be reachable", UrlUtils.isAvailable("https://www.google.com/", false, 10_000));
+        Assume.assumeTrue("https://dstadler.org/ should be reachable", UrlUtils.isAvailable("https://dstadler.org/", false, 10_000));
 
         try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
-            String ret = wrapper.simpleGet("https://www.google.com/");
+            String ret = wrapper.simpleGet("https://dstadler.org/");
             assertNotNull(ret);
             assertTrue(ret.length() > 0);
         }
@@ -112,10 +112,10 @@ public class HttpClientWrapperTest {
 
     @Test
     public void testHttpClientWrapperHTTPSBytes() throws Exception {
-        Assume.assumeTrue("https://www.google.com/ should be reachable", UrlUtils.isAvailable("https://www.google.com/", false, 10_000));
+        Assume.assumeTrue("https://dstadler.org/ should be reachable", UrlUtils.isAvailable("https://dstadler.org/", false, 10_000));
 
         try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
-            byte[] ret = wrapper.simpleGetBytes("https://www.google.com/");
+            byte[] ret = wrapper.simpleGetBytes("https://dstadler.org/");
             assertNotNull(ret);
             assertTrue(ret.length > 0);
         }

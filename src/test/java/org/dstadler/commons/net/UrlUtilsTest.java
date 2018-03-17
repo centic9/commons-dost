@@ -262,7 +262,7 @@ public class UrlUtilsTest {
 	}
 
 	@Test
-	public void testIsAvailableInvalidUrl() throws Exception {
+	public void testIsAvailableInvalidUrl() {
 		try {
 			UrlUtils.isAvailable("invalidurl", true, 0);
 			fail("Should catch exception because of invalid url here");
@@ -356,17 +356,20 @@ public class UrlUtilsTest {
 
     @Test
     public void testSSLHostWithFacctory() throws IOException {
-    	Assume.assumeTrue("Need access to https://www.google.com/ for this test to run",
-    			UrlUtils.isAvailable("https://www.google.com/", false, 10000));
+    	Assume.assumeTrue("Need access to https://dstadler.org/ for this test to run",
+    			UrlUtils.isAvailable("https://dstadler.org/", false, 10000));
 
     	SSLSocketFactory sslFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-		assertTrue(UrlUtils.isAvailable("https://www.google.com/", true, false, 10000, sslFactory));
-		assertNull(UrlUtils.getAccessError("https://www.google.com/", true, false, 10000, sslFactory));
-		assertNotNull(UrlUtils.retrieveData("https://www.google.com/", null, 10000, sslFactory));
+		String accessError = UrlUtils.getAccessError("https://dstadler.org/", true, false, 10000, sslFactory);
+		assertNull("Contacting https://dstadler.org/ failed, had: " + accessError,accessError);
+		assertTrue("Contacting https://dstadler.org/ failed",
+				UrlUtils.isAvailable("https://dstadler.org/", true, false, 10000, sslFactory));
+		assertNotNull("Contacting https://dstadler.org/ failed",
+				UrlUtils.retrieveData("https://www.dstadler.org/mambo2/", null, 10000, sslFactory));
 
 		// this will fail with 405 Method not allowed
 		try {
-			UrlUtils.retrieveDataPost("https://www.google.com/", null, "content-length:234\n\r", null, 10000, sslFactory);
+			UrlUtils.retrieveDataPost("https://dstadler.org/", null, "content-length:234\n\r", null, 10000, sslFactory);
 		} catch (@SuppressWarnings("unused") IOException e) {
 			// expected, url does not support POST method
 		}
@@ -374,16 +377,19 @@ public class UrlUtilsTest {
 
     @Test
     public void testSSLHostNoFactory() throws IOException {
-    	Assume.assumeTrue("Need access to https://www.google.com/ for this test to run",
-    			UrlUtils.isAvailable("https://www.google.com/", false, 20000));
+    	Assume.assumeTrue("Need access to https://dstadler.org/ for this test to run",
+    			UrlUtils.isAvailable("https://dstadler.org/", false, 20000));
 
-		assertTrue(UrlUtils.isAvailable("https://www.google.com/", true, false, 20000, null));
-		assertNull(UrlUtils.getAccessError("https://www.google.com/", true, false, 20000, null));
-		assertNotNull(UrlUtils.retrieveData("https://www.google.com/", null, 20000, null));
+		String accessError = UrlUtils.getAccessError("https://dstadler.org/", true, false, 20000, null);
+		assertNull("Contacting https://dstadler.org/ failed, had: " + accessError,accessError);
+		assertTrue("Contacting https://dstadler.org/ failed",
+				UrlUtils.isAvailable("https://dstadler.org/", true, false, 20000, null));
+		assertNotNull("Contacting https://dstadler.org/ failed",
+				UrlUtils.retrieveData("https://www.dstadler.org/mambo2/", null, 20000, null));
 
 		// this will fail with 405 Method not allowed
 		try {
-			UrlUtils.retrieveDataPost("https://www.google.com/", null, "content-length:234\n\r", null, 10000, null);
+			UrlUtils.retrieveDataPost("https://dstadler.org/", null, "content-length:234\n\r", null, 10000, null);
 		} catch (@SuppressWarnings("unused") IOException e) {
 			// expected, url does not support POST method
 		}

@@ -40,7 +40,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultWrongCmd() throws Exception {
+	public void testGetCommandResultWrongCmd() {
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notExists");
 
@@ -100,7 +100,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultWrongCmdInputStream() throws Exception {
+	public void testGetCommandResultWrongCmdInputStream() {
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notexists");
 
