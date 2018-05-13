@@ -204,15 +204,7 @@ public class HttpClientWrapper implements Closeable {
 			((HttpGetWithBody)httpGet).setEntity(new StringEntity(body));
 		}
 		try (CloseableHttpResponse response = httpClient.execute(targetHost, httpGet, context)) {
-			int statusCode = response.getStatusLine().getStatusCode();
-			if(statusCode != 200) {
-				String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " + response.getStatusLine().getReasonPhrase();
-				log.warning(msg);
-
-				throw new IOException(msg);
-			}
-		    HttpEntity entity = response.getEntity();
-
+			HttpEntity entity = checkAndFetch(response, url);
 		    try {
 				consumer.accept(entity.getContent());
 		    } finally {
@@ -261,7 +253,7 @@ public class HttpClientWrapper implements Closeable {
 							// supported any more by dynaTrace after applying the FixPack for the POODLE SSLv3 attack
 							Set<String> protocols = new HashSet<>(Arrays.asList(socket.getEnabledProtocols()));
 							protocols.remove("SSLv2Hello");
-							socket.setEnabledProtocols(protocols.toArray(new String[protocols.size()]));
+							socket.setEnabledProtocols(protocols.toArray(new String[0]));
 						}
 
 	        };
@@ -330,6 +322,7 @@ public class HttpClientWrapper implements Closeable {
 
             throw new IOException(msg);
         }
+
         return response.getEntity();
-    }
+	}
 }
