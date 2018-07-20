@@ -16,24 +16,75 @@ import java.util.Set;
  * @author dominik.stadler
  */
 public interface MappedCounter<T> {
+	/**
+	 * Add the given amount to the given key
+	 *
+	 * @param k The key for which to add a value
+	 * @param v The amount to add
+	 */
 	void addInt(T k, int v);
 
+	/**
+	 * Add one for each item in the collection.
+	 *
+	 * @param items The collection of items to add.
+	 */
 	void count(Collection<T> items);
 
+	/**
+	 * Get the current value for the given key.
+	 *
+	 * @param k The key to look for.
+	 *
+	 * @return The current count for the key, 0 if no call was made with that key yet.
+	 */
 	int get(T k);
 
+	/**
+	 * Remove the given key and return the value that was associated with it.
+	 *
+	 * @param key The key to remove.
+	 *
+	 * @return The value that was assigned to this key
+	 */
     int remove(T key);
 
+	/**
+	 * @return The set of keys that are currently stored in the counter
+	 */
 	Set<T> keys();
 
+	/**
+	 * @return The unsorted keys and their assigned count.
+	 */
 	Set<Map.Entry<T, Integer>> entries();
 
+	/**
+	 * @return The sum of all values of all currently held keys.
+	 */
 	int sum();
 
+	/**
+	 * Remove all keys.
+	 */
 	void clear();
 
+	/**
+	 * Return a sorted Map of keys and their current count.
+	 *
+	 * Sorting is done first by count descending, if the count is
+	 * equal, sorting is done by key. If the key is a Comparable
+	 * {@link Comparable#compareTo(Object)} is used, otherwise
+	 * comparing is done on the string-value of the key.
+	 *
+	 * @return A sorted map.
+	 */
 	Map<T, Integer> sortedMap();
 
+	/**
+	 * @return A string-representation of all keys and their
+	 * 	 * associated counts.
+	 */
 	@Override
 	String toString();
 }

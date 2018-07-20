@@ -1,11 +1,13 @@
 package org.dstadler.commons.collections;
 
-import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.dstadler.commons.testing.ThreadTestHelper;
+import org.junit.Test;
 
 
 /**
@@ -30,12 +32,12 @@ public class ConcurrentMappedCounterTest extends MappedCounterTest {
 
         helper.executeTest(new ThreadTestHelper.TestRunnable() {
             @Override
-            public void doEnd(int threadnum) throws Exception {
+            public void doEnd(int threadNum) {
                 // do stuff at the end ...
             }
 
             @Override
-            public void run(int threadnum, int iter) throws Exception {
+            public void run(int threadNum, int iter) {
                 String key = "iter" + iter;
                 counter.addInt(key, 1);
                 counter.addInt("sum", 1);
