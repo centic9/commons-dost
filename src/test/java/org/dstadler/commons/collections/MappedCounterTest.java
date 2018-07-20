@@ -1,7 +1,7 @@
 package org.dstadler.commons.collections;
 
-import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.dstadler.commons.testing.TestHelpers;
+import org.junit.Test;
 
 public class MappedCounterTest {
     protected <T> MappedCounter<T> createCounter() {
@@ -140,7 +140,7 @@ public class MappedCounterTest {
         MappedCounter<String> counter = createCounter();
         assertEquals(0, counter.get("some"));
 
-        counter.count(Collections.<String>emptyList());
+        counter.count(Collections.emptyList());
         assertEquals(0, counter.sortedMap().size());
 
         counter.count(Collections.singleton("some"));
@@ -187,5 +187,21 @@ public class MappedCounterTest {
 
         assertEquals(1, counter.get(null));
         assertEquals("{more=3, some=2, null=1, other=1, third=1}", counter.sortedMap().toString());
+    }
+
+    private enum TestEnum {
+        A, C, B
+    }
+
+    @Test
+    public void testWithComparable() {
+        MappedCounter<TestEnum> counter = new MappedCounterImpl<>();
+
+        counter.addInt(TestEnum.C, 1);
+        counter.addInt(TestEnum.B, 1);
+        counter.addInt(TestEnum.A, 1);
+
+        // sorted by enum-order as Enum is a comparable
+        assertEquals("{A=1, C=1, B=1}", counter.sortedMap().toString());
     }
 }

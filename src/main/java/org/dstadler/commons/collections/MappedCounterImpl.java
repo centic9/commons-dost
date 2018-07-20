@@ -1,6 +1,12 @@
 package org.dstadler.commons.collections;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Default implementation of a {@link MappedCounter}.
@@ -79,7 +85,12 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
                 return 1;
             }
 
-            return key1.toString().compareTo(key2.toString());
+            if(key1 instanceof Comparable) {
+                //noinspection unchecked
+                return ((Comparable)key1).compareTo(key2);
+            } else {
+                return key1.toString().compareTo(key2.toString());
+            }
         });
 
         Map<T, Integer> result = new LinkedHashMap<>();
