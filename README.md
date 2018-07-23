@@ -4,7 +4,7 @@
 
 This is a small library of code-pieces that I find useful in many of my projects. 
 
-It covers areas that I miss in the JDK itself e.g. for arrays and collections, logging, networking stuff, 
+It covers areas that I miss in the JDK itself and also in Apache Commons libraries, e.g. for arrays and collections, logging, networking stuff, 
 as well as helpers for testing.
 
 ## Contents
@@ -41,6 +41,10 @@ http://github.com/centic9/commons-test for more details.
 
 	cd commons-dost
 	./gradlew check jacocoTestReport
+
+### Release it
+
+    ./gradlew release
 
 #### Licensing
 * commons-dost is licensed under the [BSD 2-Clause License].
