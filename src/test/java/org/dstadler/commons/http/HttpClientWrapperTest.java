@@ -124,12 +124,12 @@ public class HttpClientWrapperTest {
     @Test
     public void testSimpleGetFails() throws Exception {
         try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
-            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "ok")) {
+            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
                 try {
                     wrapper.simpleGet("http://localhost:" + server.getPort());
                     fail("Should throw an exception");
                 } catch (IOException e) {
-                    TestHelpers.assertContains(e, "500");
+                    TestHelpers.assertContains(e, "500", "test error");
                 }
             }
         }
@@ -138,7 +138,7 @@ public class HttpClientWrapperTest {
     @Test
     public void testCheckAndFetchFails() throws Exception {
         try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
-            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "ok")) {
+            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
                 try {
                     final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
                     try (CloseableHttpResponse response = wrapper.getHttpClient().execute(httpGet)) {
@@ -146,7 +146,7 @@ public class HttpClientWrapperTest {
                     }
                     fail("Should throw an exception");
                 } catch (IOException e) {
-                    TestHelpers.assertContains(e, "500");
+                    TestHelpers.assertContains(e, "500", "test error");
                 }
             }
         }
@@ -155,12 +155,12 @@ public class HttpClientWrapperTest {
     @Test
     public void testSimpleGetBytesFails() throws Exception {
         try (HttpClientWrapper wrapper = new HttpClientWrapper("", null, 10000)) {
-            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "ok")) {
+            try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
                 try {
                     wrapper.simpleGetBytes("http://localhost:" + server.getPort());
                     fail("Should throw an exception");
                 } catch (IOException e) {
-                    TestHelpers.assertContains(e, "500");
+                    TestHelpers.assertContains(e, "500", "test error");
                 }
             }
         }
@@ -176,7 +176,7 @@ public class HttpClientWrapperTest {
                     wrapper.simpleGet("http://localhost:" + server.getPort());
                     fail("Should throw an exception");
                 } catch (IOException e) {
-                    TestHelpers.assertContains(e, "500");
+                    TestHelpers.assertContains(e, "500", "testexception");
                 }
             }
         }
@@ -193,7 +193,7 @@ public class HttpClientWrapperTest {
                     wrapper.simpleGetBytes("http://localhost:" + server.getPort());
                     fail("Should throw an exception");
                 } catch (IOException e) {
-                    TestHelpers.assertContains(e, "500");
+                    TestHelpers.assertContains(e, "500", "testexception");
                 }
             }
         }
@@ -215,7 +215,7 @@ public class HttpClientWrapperTest {
 
     @Test
     public void microBenchmark() throws IOException {
-        // locally this executes in aprox. 1 sec...
+        // locally this executes in approx. 1 sec...
         for(int i = 0;i < 500;i++) {
             try (HttpClientWrapper client = new HttpClientWrapper("", null, 10_000)) {
                 assertNotNull(client);

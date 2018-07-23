@@ -21,6 +21,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -316,8 +317,9 @@ public class HttpClientWrapper implements Closeable {
     public static HttpEntity checkAndFetch(HttpResponse response, String url) throws IOException {
         int statusCode = response.getStatusLine().getStatusCode();
         if(statusCode > 206) {
-            String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " +
-                    response.getStatusLine().getReasonPhrase();
+			String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " +
+					response.getStatusLine().getReasonPhrase() + "\n" +
+					StringUtils.abbreviate(IOUtils.toString(response.getEntity().getContent(), "UTF-8"), 1024);
             log.warning(msg);
 
             throw new IOException(msg);
