@@ -24,7 +24,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -34,6 +33,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -62,6 +62,7 @@ public class HttpClientWrapper implements Closeable {
 	private final CloseableHttpClient httpClient;
 
 	private final int timeoutMs;
+	private final boolean withAuth;
 
 	/**
 	 * Construct the {@link HttpClient} with the given authentication values
@@ -96,6 +97,35 @@ public class HttpClientWrapper implements Closeable {
 		// finally create the HttpClient instance
 		this.httpClient = builder.build();
 		this.timeoutMs = timeoutMs;
+		this.withAuth = true;
+	}
+
+    /**
+     * Construct the {@link HttpClient} without using authentication values
+     * and all timeouts set to the given number of milliseconds
+     *
+     * @param timeoutMs The timeout for socket connection and reading, specified in milliseconds
+     */
+	public HttpClientWrapper(int timeoutMs) {
+		super();
+
+		RequestConfig reqConfig = RequestConfig.custom()
+			    .setSocketTimeout(timeoutMs)
+			    .setConnectTimeout(timeoutMs)
+			    .setConnectionRequestTimeout(timeoutMs)
+			    .build();
+
+		// configure the builder for HttpClients
+		HttpClientBuilder builder = HttpClients.custom()
+				.setDefaultRequestConfig(reqConfig);
+
+		// add a permissive SSL Socket Factory to the builder
+		builder = createSSLSocketFactory(builder);
+
+		// finally create the HttpClient instance
+		this.httpClient = builder.build();
+		this.timeoutMs = timeoutMs;
+		this.withAuth = false;
 	}
 
 	/**
@@ -183,28 +213,36 @@ public class HttpClientWrapper implements Closeable {
 	}
 
 	private void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException {
-		// Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
-		AuthCache authCache = new BasicAuthCache();
-		BasicScheme basicAuth = new BasicScheme();
+        final HttpUriRequest httpGet;
+        if(body == null) {
+            httpGet = new HttpGet(url);
+        } else {
+            httpGet = new HttpGetWithBody(url);
+            ((HttpGetWithBody)httpGet).setEntity(new StringEntity(body));
+        }
 
-		// Generate BASIC scheme object and add it to the local auth cache
-		URL cacheUrl = new URL(url);
-		HttpHost targetHost = new HttpHost(cacheUrl.getHost(), cacheUrl.getPort(), cacheUrl.getProtocol());
-		authCache.put(targetHost, basicAuth);
+        final CloseableHttpResponse execute;
+        if(withAuth) {
+            // Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
+            AuthCache authCache = new BasicAuthCache();
+            BasicScheme basicAuth = new BasicScheme();
 
-		// Add AuthCache to the execution context
-		HttpClientContext context = HttpClientContext.create();
-		//context.setCredentialsProvider(credsProvider);
-		context.setAuthCache(authCache);
+            // Generate BASIC scheme object and add it to the local auth cache
+            URL cacheUrl = new URL(url);
+            HttpHost targetHost = new HttpHost(cacheUrl.getHost(), cacheUrl.getPort(), cacheUrl.getProtocol());
+            authCache.put(targetHost, basicAuth);
 
-		final HttpRequest httpGet;
-		if(body == null) {
-			httpGet = new HttpGet(url);
-		} else {
-			httpGet = new HttpGetWithBody(url);
-			((HttpGetWithBody)httpGet).setEntity(new StringEntity(body));
-		}
-		try (CloseableHttpResponse response = httpClient.execute(targetHost, httpGet, context)) {
+            // Add AuthCache to the execution context
+            HttpClientContext context = HttpClientContext.create();
+            //context.setCredentialsProvider(credsProvider);
+            context.setAuthCache(authCache);
+
+            execute = httpClient.execute(targetHost, httpGet, context);
+        } else {
+            execute = httpClient.execute(httpGet);
+        }
+
+        try (CloseableHttpResponse response = execute) {
 			HttpEntity entity = checkAndFetch(response, url);
 		    try {
 				consumer.accept(entity.getContent());
@@ -215,7 +253,7 @@ public class HttpClientWrapper implements Closeable {
 		}
 	}
 
-	private HttpClientBuilder createSSLSocketFactory(HttpClientBuilder builder) {
+    private HttpClientBuilder createSSLSocketFactory(HttpClientBuilder builder) {
 		try {
 	        // Trust all certs, even self-signed and invalid hostnames, ...
 	        final SSLContext sslcontext = SSLContext.getInstance("TLS");
