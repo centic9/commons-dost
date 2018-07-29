@@ -1,8 +1,5 @@
 package org.dstadler.commons.metrics;
 
-import java.io.IOException;
-import java.util.logging.Logger;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
@@ -15,6 +12,9 @@ import org.apache.http.util.EntityUtils;
 import org.dstadler.commons.http.HttpClientWrapper;
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+
+import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Helper class for sending simple metrics to an Elasticsearch instance.
@@ -104,15 +104,7 @@ public class MetricsUtils {
                 json, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpClient.execute(httpPut)) {
-            int statusCode = response.getStatusLine().getStatusCode();
-            if(statusCode > 201) {
-                String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " + response.getStatusLine().getReasonPhrase() + "\n" +
-                        "Response: " + IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-                log.warning(msg);
-
-                throw new IOException(msg);
-            }
-            HttpEntity entity = response.getEntity();
+            HttpEntity entity = HttpClientWrapper.checkAndFetch(response, url);
 
             try {
                 log.info("Had result when sending document to Elasticsearch at " + url + ": " + IOUtils.toString(entity.getContent(), "UTF-8"));
