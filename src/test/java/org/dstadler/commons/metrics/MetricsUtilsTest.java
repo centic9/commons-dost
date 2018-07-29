@@ -24,6 +24,24 @@ public class MetricsUtilsTest {
         }
     }
 
+    @Test
+    public void testSendMetricWithSplitting() throws Exception {
+        try (MockRESTServer server = new MockRESTServer("200", "application/json", "OK");
+                HttpClientWrapper metrics = new HttpClientWrapper("", null, 60_000)) {
+            String url = "http://localhost:" + server.getPort();
+            MetricsUtils.sendMetric("splitting", "testmetric", 123, System.currentTimeMillis(), metrics.getHttpClient(), url);
+        }
+    }
+
+    @Test
+    public void testSendDocument() throws Exception {
+        try (MockRESTServer server = new MockRESTServer("200", "application/json", "OK");
+             HttpClientWrapper metrics = new HttpClientWrapper("", null, 60_000)) {
+            String url = "http://localhost:" + server.getPort();
+            MetricsUtils.sendDocument("{ \"test\": \"value\"}", metrics.getHttpClient(), url);
+        }
+    }
+
     @Test(expected = IOException.class)
     public void testSendMetricFails() throws Exception {
         try (MockRESTServer server = new MockRESTServer("503", "application/json", "ERROR");
