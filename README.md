@@ -33,10 +33,6 @@ http://github.com/centic9/commons-test for more details.
 
     git clone git://github.com/centic9/commons-dost
 
-### Create Eclipse project files
-
-	./gradlew eclipse
-
 ### Build it and run tests
 
 	cd commons-dost

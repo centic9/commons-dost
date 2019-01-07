@@ -1,7 +1,10 @@
+dist: xenial
 language: java
 jdk:
   - oraclejdk8
- 
+  - oraclejdk11
+  - openjdk11
+
 before_install:
  - chmod +x gradlew
 
