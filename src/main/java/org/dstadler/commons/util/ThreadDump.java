@@ -11,12 +11,12 @@ import java.lang.management.ThreadMXBean;
  */
 public class ThreadDump {
 	private static ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-	private ThreadInfo [] infos = null;
+	private ThreadInfo [] infos;
 
 	/**
 	 * Creates a Thread Dump of all Java Threads
-	 * @param  lockedMonitors if <tt>true</tt>, dump all locked monitors.
-	 * @param  lockedSynchronizers if <tt>true</tt>, dump all locked
+	 * @param  lockedMonitors if true, dump all locked monitors.
+	 * @param  lockedSynchronizers if true, dump all locked
 	 *             ownable synchronizers.
 	 */
 	public ThreadDump(boolean lockedMonitors, boolean lockedSynchronizers) {

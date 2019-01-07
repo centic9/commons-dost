@@ -12,12 +12,11 @@ import org.dstadler.commons.testing.TestHelpers;
 public class ThreadDumpTest {
 
     @Test
-    public void testThreadDump() throws Exception {
+    public void testThreadDump() {
         ThreadDump dump = new ThreadDump(false, false);
 
         TestHelpers.assertContains(dump.toString(), "main");
     }
-
 
     @Test
     public void testThreadDumpWithSync() throws Exception {
