@@ -2,17 +2,18 @@ package org.dstadler.commons.zip;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -142,7 +143,7 @@ public class ZipUtilsTest {
 	}
 
 	@Test
-	public void testGetZipContentsDirectoryInsteadOfFile() throws Exception {
+	public void testGetZipContentsDirectoryInsteadOfFile() {
 		// make sure we have a directory
 		assertTrue((new File(TEST_DIRECTORY).exists() && new File(TEST_DIRECTORY).isDirectory()) ||
 				new File(TEST_DIRECTORY).mkdirs());
@@ -172,7 +173,7 @@ public class ZipUtilsTest {
 	}
 
 	@Test
-	public void testGetZipContentsInvalidZipFile() throws Exception {
+	public void testGetZipContentsInvalidZipFile() {
 		try {
 			ZipUtils.getZipContentsRecursive("zipfileNotExist.zip!filename");
 			fail("Should catch exception here");
@@ -440,7 +441,7 @@ public class ZipUtilsTest {
 	}
 
 	@Test
-	public void testGetZipStringContentsDirectoryInsteadOfFile() throws Exception {
+	public void testGetZipStringContentsDirectoryInsteadOfFile() {
 		// make sure we have a directory
 		assertTrue((new File(TEST_DIRECTORY).exists() && new File(TEST_DIRECTORY).isDirectory()) ||
 				new File(TEST_DIRECTORY).mkdirs());
@@ -470,7 +471,7 @@ public class ZipUtilsTest {
 	}
 
 	@Test
-	public void testGetZipStringContentsInvalidZipFile() throws Exception {
+	public void testGetZipStringContentsInvalidZipFile() {
 		try {
 			ZipUtils.getZipStringContentsRecursive("zipfileNotExist.zip!filename");
 			fail("Should catch exception here");
@@ -556,7 +557,7 @@ public class ZipUtilsTest {
 		try {
 			ZipUtils.extractZip(zipfile, toDir);
 			fail("Should fail because file does not exist");
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException | NoSuchFileException e) {
 			TestHelpers.assertContains(e, "nonexistingfile.zip");
 		} finally {
 		    FileUtils.deleteDirectory(toDir);
@@ -624,7 +625,6 @@ public class ZipUtilsTest {
 	@Test
 	public void testReplaceInZipFailed() {
 		try {
-			//noinspection ConstantConditions
 			ZipUtils.replaceInZip(null, "somedata", null);
 			fail("Should catch exception here");
 		} catch (IOException e) {
@@ -687,12 +687,13 @@ public class ZipUtilsTest {
 
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
     				String data = IOUtils.toString(stream, "UTF-8");
-    				assertFalse("Should be different without encoding, expected: somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\nhad: " + data,
-    					"somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF".equals(data));
+					assertNotEquals("Should be different without encoding, expected: somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\nhad: " + data,
+							"somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF", data);
     			}
 
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
-    				assertEquals("Should be equal with same encoding", "somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF", IOUtils.toString(stream, "ISO-8859-1"));
+    				assertEquals("Should be equal with same encoding", "somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF",
+							IOUtils.toString(stream, "ISO-8859-1"));
     			}
     		}
 		} finally {
@@ -729,7 +730,7 @@ public class ZipUtilsTest {
     		ZipFileVisitor visitor = new ZipFileVisitor() {
 
     			@Override
-    			public void visit(ZipEntry entry, InputStream data) throws IOException {
+    			public void visit(ZipEntry entry, InputStream data) {
     				found.set(true);
     			}
     		};
@@ -754,7 +755,7 @@ public class ZipUtilsTest {
     		ZipFileVisitor visitor = new ZipFileVisitor() {
 
     			@Override
-    			public void visit(ZipEntry entry, InputStream data) throws IOException {
+    			public void visit(ZipEntry entry, InputStream data) {
     				found.set(true);
     			}
     		};

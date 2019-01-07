@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.NoSuchFileException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
@@ -369,7 +370,7 @@ public class ZipUtils {
 					}
 				}
 			}
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException | NoSuchFileException e) {
 			throw e;
 		} catch (IOException e) {
 			throw new IOException("While extracting file " + zip + " to " + toDir, e);
@@ -435,7 +436,7 @@ public class ZipUtils {
 	 * @throws IOException Thrown if files can not be read or any other error occurs while handling the Zip-files
 	 */
 	public static void replaceInZip(String zipFile, String data, String encoding) throws IOException {
-		if(zipFile == null || !isFileInZip(zipFile)) {
+		if(!isFileInZip(zipFile)) {
 			throw new IOException("Parameter should specify a file inside a ZIP file, but had: " + zipFile);
 		}
 
