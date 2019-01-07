@@ -1,22 +1,25 @@
 package org.dstadler.commons.zip;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ZipFileWalkerTest {
 	private final static Logger log = LoggerFactory.make();
@@ -106,7 +109,7 @@ public class ZipFileWalkerTest {
 			ZipFileWalker walker = new ZipFileWalker(new File("notexisting"));
 			walker.walk(null);
 			fail("Should catch exception here");
-		} catch (@SuppressWarnings("unused") FileNotFoundException e) {
+		} catch (@SuppressWarnings("unused") FileNotFoundException | NoSuchFileException e) {
 			// expected
 		}
 	}
