@@ -12,9 +12,6 @@ import java.util.logging.Logger;
 *
 * Note: properties for the mail server configuration are provided in a
 * separate object, see @link MailserverConfig.
-*
-* @author dominik.stadler
-*
 */
 public class EmailConfig {
 	private static final Logger logger = LoggerFactory.make();

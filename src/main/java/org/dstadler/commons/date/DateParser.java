@@ -13,8 +13,6 @@ import java.util.regex.Pattern;
  * Modelled after http://graphite.readthedocs.org/en/latest/render_api.html#from-until
  *
  * Note: Passing in absolute time is expected to be stated in the European timezone!
- *
- * @author cwat-dstadler
  */
 public class DateParser {
     private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT+2");

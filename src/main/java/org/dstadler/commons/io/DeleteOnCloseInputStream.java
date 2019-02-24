@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 /**
  * Small wrapper InputStream which removes the underlying file as soon
  * as the InputStream is closed.
- *
- * @author dominik.stadler
  */
 public class DeleteOnCloseInputStream extends FilterInputStream {
 	private final static Logger logger = Logger.getLogger(DeleteOnCloseInputStream.class.getName());
@@ -20,7 +18,7 @@ public class DeleteOnCloseInputStream extends FilterInputStream {
 	public DeleteOnCloseInputStream(InputStream stream, File file) {
 		super(stream);
 		if(stream == null) {
-			throw new NullPointerException("Delegate stream was passed null");	// NOPMD - fail early here with NullPointerException to show where the null value is coming from
+			throw new NullPointerException("Delegate stream was passed null with file " + file);	// NOPMD - fail early here with NullPointerException to show where the null value is coming from
 		}
 		this.file = file;
 	}

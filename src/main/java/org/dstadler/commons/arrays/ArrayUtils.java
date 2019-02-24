@@ -2,9 +2,6 @@ package org.dstadler.commons.arrays;
 
 /**
  * General utilities for arrays.
- *
- * @author dominik.stadler
- *
  */
 public class ArrayUtils {
 	/**
@@ -59,7 +56,7 @@ public class ArrayUtils {
 
 		StringBuilder b = new StringBuilder(prefix);
 		for (Object element : array) {
-			b.append(String.valueOf(element)).append(delimiter);
+			b.append(element).append(delimiter);
 		}
 
 		// cut off last delimiter

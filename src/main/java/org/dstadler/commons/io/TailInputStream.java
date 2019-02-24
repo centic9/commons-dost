@@ -22,7 +22,6 @@ import java.io.RandomAccessFile;
 /**
  * InputStream which returns the last n bytes from a stream, ensuring that
  * only full lines are returned.
- *
  */
 public class TailInputStream extends InputStream {
 

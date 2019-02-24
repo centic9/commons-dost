@@ -16,8 +16,6 @@ import java.util.List;
 
 /**
  * Simple utility methods to run the dot-tool from Graphviz on a file.
- *
- * @author dominik.stadler
  */
 public class DotUtils {
 	public static String DOT_EXE = SystemUtils.IS_OS_WINDOWS ? "C:\\cygwin\\bin\\dot.exe" : "/usr/bin/dot";
@@ -54,13 +52,13 @@ public class DotUtils {
 	 *
 	 * @param writer A writer where the header is written to.
 	 * @param dpi The resulting resolution, can be 0 for using the default DPI-setting of dot
-	 * @param rankdir The direction of the graph, can be null
+	 * @param rankDir The direction of the graph, can be null
 	 * @param id The id of the graph, cannot be null, needs to start with a alphabetical character, can contain numbers, alphabetic characters and underscore only.
 	 * @param attribLines Additional attributes, can be null
 	 *
 	 * @throws IOException if writing to the Writer fails
 	 */
-    public static void writeHeader(Writer writer, int dpi, String rankdir, String id, List<String> attribLines) throws IOException {
+    public static void writeHeader(Writer writer, int dpi, String rankDir, String id, List<String> attribLines) throws IOException {
         // Default settings
         if (attribLines == null) {
             attribLines = new ArrayList<>();
@@ -75,7 +73,7 @@ public class DotUtils {
         if (dpi > 0) {
             header.append("dpi=").append(dpi).append(";\n");
         }
-        header.append("rankdir=").append(StringUtils.isNotBlank(rankdir) ? rankdir : "LR").append(";\n");
+        header.append("rankdir=").append(StringUtils.isNotBlank(rankDir) ? rankDir : "LR").append(";\n");
 
         // Additional lines
         for (String line : attribLines) {

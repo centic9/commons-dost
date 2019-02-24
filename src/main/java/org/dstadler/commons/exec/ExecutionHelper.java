@@ -22,8 +22,6 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
  * Use getCommandResult() for processes where the output is small as they will store the output in
  * memory. Use getCommandResultIntoStream() in order to properly stream out potentially large
  * amounts of output from the executable.
- *
- * @author dominik.stadler
  */
 public class ExecutionHelper {
 	private final static Logger log = LoggerFactory.make();

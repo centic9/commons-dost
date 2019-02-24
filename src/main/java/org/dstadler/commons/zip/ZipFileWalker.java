@@ -13,8 +13,6 @@ import org.apache.commons.io.input.CloseShieldInputStream;
 /**
  * File Walker for Zip-Files which can step down into nested zip-files while
  * looking for matches.
- *
- * @author dominik.stadler
  */
 public class ZipFileWalker {
 	private final File zip;

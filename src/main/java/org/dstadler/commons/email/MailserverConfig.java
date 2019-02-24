@@ -12,9 +12,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * The value "verificationEmail()" is just a way to remember the email that
  * was entered in the dialog across restarts, it is only
  * used for sending emails to verify that the configuration is okay.
- *
- * @author dominik.stadler
- *
  */
 public class MailserverConfig {
 	//private static final Log logger = LogFactory.getLog(MailserverConfig.class);

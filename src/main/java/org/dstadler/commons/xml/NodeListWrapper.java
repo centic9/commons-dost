@@ -14,9 +14,6 @@ import org.w3c.dom.NodeList;
  *
  * Note: some methods are not implemented yet, only the most basic ones are done currently.
  * Also this is a read-only List, so any method that would change the List is not supported as well.
- *
- * @author dominik.stadler
- *
  */
 public class NodeListWrapper implements List<Node> {
 	private final class LocalIterator implements Iterator<Node> {

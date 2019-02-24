@@ -52,9 +52,7 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
  * Helper class which configures a {@link HttpClient} instance
  * for usage with BasicAuthentication user/pwd and also
  * disables SSL verification to work with self-signed SSL certificates
- * on webpages.
- *
- * @author dominik.stadler
+ * on web pages.
  */
 public class HttpClientWrapper implements Closeable {
 	private final static Logger log = LoggerFactory.make();
@@ -297,7 +295,7 @@ public class HttpClientWrapper implements Closeable {
 
 	        };
 
-			builder = builder.setSSLSocketFactory(sslsf);
+			builder.setSSLSocketFactory(sslsf);
 			//builder = builder.setHostnameVerifier(new AllowAllHostnameVerifier());
 		} catch (GeneralSecurityException e) {
 			log.log(Level.WARNING, "Could not create SSLSocketFactory for accepting all certificates", e);

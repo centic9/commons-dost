@@ -14,8 +14,6 @@ import java.util.Map;
  * It also supports an "adjustmentFactor", i.e. a constant value which is applied
  * to the base value and also all dynamic values whenever the value is queried
  * via getValue() or getDynamicMeasures().
- *
- * @author dominik.stadler
  */
 public class Measure {
 	private double value;

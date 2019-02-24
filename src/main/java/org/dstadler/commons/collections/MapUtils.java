@@ -9,8 +9,6 @@ import java.util.Map.Entry;
 
 /**
  * Some helper methods related to Maps, e.g. sorting by value.
- *
- * @author dominik.stadler
  */
 public final class MapUtils {
     // private constructor to prevent instantiation of this class

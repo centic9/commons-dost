@@ -14,8 +14,6 @@ import java.util.logging.Logger;
  *
  * This class can be subclassed, e.g. to filter some lines from
  * processing.
- *
- * @author dominik.stadler
  */
 public class BufferingLogOutputStream extends LogOutputStream {
     private final static Logger log = LoggerFactory.make();

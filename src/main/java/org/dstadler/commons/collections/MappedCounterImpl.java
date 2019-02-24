@@ -14,8 +14,6 @@ import java.util.Set;
  * @param <T> The type of the key for the mapped counter, often this
  *           will be String, but any type that can be used as key for
  *           a HashMap will work here.
- *
- * @author dominik.stadler
  */
 public class MappedCounterImpl<T> implements MappedCounter<T> {
 

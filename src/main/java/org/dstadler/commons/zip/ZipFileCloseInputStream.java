@@ -8,8 +8,6 @@ import java.util.zip.ZipFile;
 /**
  * Small wrapper InputStream which closes the underlying zip-file as soon
  * as the InputStream is closed.
- *
- * @author dominik.stadler
  */
 public class ZipFileCloseInputStream extends FilterInputStream {
 	private final ZipFile zipFile;

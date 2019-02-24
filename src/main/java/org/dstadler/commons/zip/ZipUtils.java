@@ -26,8 +26,7 @@ import org.dstadler.commons.io.DeleteOnCloseInputStream;
 
 
 /**
- *
- * @author dominik.stadler
+ * Various utilities related to handling Zip-files.
  */
 public class ZipUtils {
     private final static Logger logger = Logger.getLogger(ZipUtils.class.getName());

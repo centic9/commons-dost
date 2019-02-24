@@ -17,9 +17,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Can read some information off of the list of Dashboards returned by the dynaTrace XML reporting.
- *
- * @author dominik.stadler
- *
  */
 public class DashboardXMLContentHandler extends DefaultHandler {
 	private final static Logger log = Logger.getLogger(DashboardXMLContentHandler.class.getName());
