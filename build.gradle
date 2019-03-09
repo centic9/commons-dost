@@ -54,7 +54,7 @@ dependencies {
 	testCompile 'org.dstadler:commons-test:1.0.0.15'
 }
 
-task wrapper(type: Wrapper) {
+wrapper {
     gradleVersion = '4.10.3'
 }
 
