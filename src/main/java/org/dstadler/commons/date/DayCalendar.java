@@ -57,17 +57,39 @@ public class DayCalendar extends GregorianCalendar {
     }
 
     /**
+     * Constructs a <code>GregorianCalendar</code> with the given date set
+     * in the default time zone with the default locale.
+     *
+     * @param year the value used to set the <code>YEAR</code> calendar field in the calendar.
+     * @param month the value used to set the <code>MONTH</code> calendar field in the calendar.
+     * Month value is 0-based. e.g., 0 for January.
+     * @param dayOfMonth the value used to set the <code>DAY_OF_MONTH</code> calendar field in the calendar.
+
      * @see java.util.GregorianCalendar#GregorianCalendar(int, int, int)
      */
-    public DayCalendar( int y, int m, int d ) {
-        super( y, m, d );
+    public DayCalendar( int year, int month, int dayOfMonth ) {
+        super( year, month, dayOfMonth );
     }
 
     /**
+     * Constructs a GregorianCalendar with the given date
+     * and time set for the default time zone with the default locale.
+     *
+     * @param year the value used to set the <code>YEAR</code> calendar field in the calendar.
+     * @param month the value used to set the <code>MONTH</code> calendar field in the calendar.
+     * Month value is 0-based. e.g., 0 for January.
+     * @param dayOfMonth the value used to set the <code>DAY_OF_MONTH</code> calendar field in the calendar.
+     * @param hourOfDay the value used to set the <code>HOUR_OF_DAY</code> calendar field
+     * in the calendar.
+     * @param minute the value used to set the <code>MINUTE</code> calendar field
+     * in the calendar.
+     * @param second the value used to set the <code>SECOND</code> calendar field
+     * in the calendar.
+
      * @see java.util.GregorianCalendar#GregorianCalendar(int, int, int, int, int, int)
      */
-    public DayCalendar( int y, int m, int d, int h, int min, int s ) {
-        super( y, m, d, h, min, s );
+    public DayCalendar( int year, int month, int dayOfMonth, int hourOfDay, int minute, int second ) {
+        super( year, month, dayOfMonth, hourOfDay, minute, second );
     }
 
     /**

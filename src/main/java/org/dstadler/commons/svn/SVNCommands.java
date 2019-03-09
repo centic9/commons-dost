@@ -63,6 +63,9 @@ public class SVNCommands {
      * @param baseUrl       The SVN url to connect to
      * @param user          The SVN user or null if the default user from the machine should be used
      * @param pwd           The SVN password or null if the default user from the machine should be used   @return A mapping of revision numbers to the {@link LogEntry}.
+     *
+     * @return All matching log-entries as map of timestamp to {@link LogEntry}
+     *
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      * @throws SAXException If the resulting SVN XML log output could not be parsed
@@ -84,6 +87,9 @@ public class SVNCommands {
      * @param baseUrl       The SVN url to connect to
      * @param user          The SVN user or null if the default user from the machine should be used
      * @param pwd           The SVN password or null if the default user from the machine should be used   @return A mapping of revision numbers to the {@link LogEntry}.
+     *
+     * @return All matching log-entries as map of timestamp to {@link LogEntry}
+     *
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      * @throws SAXException If the resulting SVN XML log output could not be parsed
@@ -105,6 +111,9 @@ public class SVNCommands {
      * @param baseUrl       The SVN url to connect to
      * @param user      The SVN user or null if the default user from the machine should be used
      * @param pwd       The SVN password or null if the default user from the machine should be used   @return A mapping of revision numbers to the {@link LogEntry}.
+     *
+     * @return All matching log-entries as map of timestamp to {@link LogEntry}
+     *
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      * @throws SAXException If the resulting SVN XML log output could not be parsed
@@ -126,6 +135,9 @@ public class SVNCommands {
      * @param baseUrl       The SVN url to connect to
      * @param user          The SVN user or null if the default user from the machine should be used
      * @param pwd           The SVN password or null if the default user from the machine should be used   @return The result of the "svn log -xml" call, should be closed by the caller
+     *
+     * @return An InputStream which provides the XML-log response
+     *
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
@@ -146,16 +158,14 @@ public class SVNCommands {
      * @param baseUrl       The SVN url to connect to
      * @param user          The SVN user or null if the default user from the machine should be used
      * @param pwd           The SVN password or null if the default user from the machine should be used   @return A stream that can be used to read the XML data, should be closed by the caller
+     *
+     * @return An InputStream which provides the XML-log response
+     *
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
     public static InputStream getBranchLogStream(String[] branches, long startRevision, long endRevision, String baseUrl, String user, String pwd) throws IOException {
-        CommandLine cmdLine = new CommandLine(SVN_CMD);
-        cmdLine.addArgument(CMD_LOG);
-        cmdLine.addArgument(OPT_XML);
-        addDefaultArguments(cmdLine, user, pwd);
-        cmdLine.addArgument("-v");    // to get paths as well
-        cmdLine.addArgument("-r");
+        CommandLine cmdLine = getCommandLineForXMLLog(user, pwd);
         cmdLine.addArgument(startRevision + ":" + (endRevision != -1 ? endRevision : "HEAD")); // use HEAD if no valid endRevision given (= -1)
         cmdLine.addArgument(baseUrl + branches[0]);
 
@@ -175,6 +185,9 @@ public class SVNCommands {
      * @param baseUrl       The SVN url to connect to
      * @param user      The SVN user or null if the default user from the machine should be used
      * @param pwd       The SVN password or null if the default user from the machine should be used   @return A stream that can be used to read the XML data, should be closed by the caller
+     *
+     * @return An InputStream which provides the XML-log response
+     *
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
@@ -182,16 +195,21 @@ public class SVNCommands {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ", Locale.ROOT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+        CommandLine cmdLine = getCommandLineForXMLLog(user, pwd);
+        cmdLine.addArgument("{" + dateFormat.format(startDate) + "}:{" + dateFormat.format(endDate) + "}");
+        cmdLine.addArgument(baseUrl + branches[0]);
+
+        return ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 120000);
+    }
+
+    private static CommandLine getCommandLineForXMLLog(String user, String pwd) {
         CommandLine cmdLine = new CommandLine(SVN_CMD);
         cmdLine.addArgument(CMD_LOG);
         cmdLine.addArgument(OPT_XML);
         addDefaultArguments(cmdLine, user, pwd);
         cmdLine.addArgument("-v");    // to get paths as well
         cmdLine.addArgument("-r");
-        cmdLine.addArgument("{" + dateFormat.format(startDate) + "}:{" + dateFormat.format(endDate) + "}");
-        cmdLine.addArgument(baseUrl + branches[0]);
-
-        return ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 120000);
+        return cmdLine;
     }
 
     /**
@@ -202,6 +220,9 @@ public class SVNCommands {
      * @param baseUrl       The SVN url to connect to
      * @param user The SVN user or null if the default user from the machine should be used
      * @param pwd  The SVN password or null if the default user from the machine should be used   @return The contents of the file.
+     *
+     * @return An InputStream which provides the content of the revision of the specified file
+     *
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
@@ -739,7 +760,7 @@ public class SVNCommands {
         cmdLine.addArgument("cp");
         addDefaultArguments(cmdLine, null, null);
         if (revision > 0) {
-            cmdLine.addArgument("-r" + Long.toString(revision));
+            cmdLine.addArgument("-r" + revision);
         }
         cmdLine.addArgument("-m");
         cmdLine.addArgument("Branch automatically created from " + base + (revision > 0 ? AT_REVISION + revision : ""));

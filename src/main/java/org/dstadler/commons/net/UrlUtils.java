@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,6 +38,8 @@ public class UrlUtils {
      * Download data from an URL.
      *
      * @param sUrl The full URL used to download the content.
+     * @param timeout The timeout in milliseconds that is used for both
+     *         connection timeout and read timeout.
      *
      * @return The resulting data, e.g. a HTML string.
      *
@@ -228,14 +231,17 @@ public class UrlUtils {
             }
 
             // actually read the contents, even if we are not using it to simulate a full download of the data
-            try (ByteArrayOutputStream memStream = new ByteArrayOutputStream(connection.getContentLength() == -1 ? 40000 : connection.getContentLength())) {
+            try (ByteArrayOutputStream memStream = new ByteArrayOutputStream(connection.getContentLength() == -1 ?
+                    40000 : connection.getContentLength())) {
                 try (InputStream in = connection.getInputStream()) {
                     IOUtils.copy(in, memStream);
                 }
 
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "Received data, size: " + memStream.size() + " (" + connection.getContentLength() + ") first bytes: " +
-                            replaceInvalidChars(new String(memStream.toByteArray(), 0, Math.min(memStream.size(), REPORT_PEEK_COUNT), "US-ASCII")));
+                    LOGGER.log(Level.FINE, "Received data, size: " + memStream.size() +
+                            " (" + connection.getContentLength() + ") first bytes: " +
+                            replaceInvalidChars(new String(memStream.toByteArray(), 0,
+                                    Math.min(memStream.size(), REPORT_PEEK_COUNT), StandardCharsets.US_ASCII)));
                 }
 
                 return memStream.toByteArray();
@@ -325,11 +331,14 @@ public class UrlUtils {
      * @param destinationUrl the destination URL to check for availability
      * @param fireRequest if true a request will be sent to the given URL in addition to opening the
      *        connection
+     * @param ignoreHTTPSHostCheck if specified true, a HostnameVerifier is registered which accepts all host-names
+     *                             during SSL handshake
      * @param timeout Timeout in milliseconds after which the call fails because of timeout.
      * @return <code>true</code> if a connection could be set up and the response was received
      * @throws IllegalArgumentException if the destination URL is invalid
      */
-    public static boolean isAvailable(String destinationUrl, boolean fireRequest, boolean ignoreHTTPSHostCheck, int timeout) throws IllegalArgumentException {
+    public static boolean isAvailable(String destinationUrl, boolean fireRequest, boolean ignoreHTTPSHostCheck,
+                                      int timeout) throws IllegalArgumentException {
         return getAccessError(destinationUrl, fireRequest, ignoreHTTPSHostCheck, timeout, null) == null;
     }
 
@@ -339,12 +348,15 @@ public class UrlUtils {
      * @param destinationUrl the destination URL to check for availability
      * @param fireRequest if true a request will be sent to the given URL in addition to opening the
      *        connection
+     * @param ignoreHTTPSHostCheck if specified true, a HostnameVerifier is registered which accepts all host-names
+     *                             during SSL handshake
      * @param timeout Timeout in milliseconds after which the call fails because of timeout.
      * @param sslFactory The SSLFactory to use for the connection, this allows to support custom SSL certificates
      * @return <code>true</code> if a connection could be set up and the response was received
      * @throws IllegalArgumentException if the destination URL is invalid
      */
-    public static boolean isAvailable(String destinationUrl, boolean fireRequest, boolean ignoreHTTPSHostCheck, int timeout, SSLSocketFactory sslFactory) throws IllegalArgumentException {
+    public static boolean isAvailable(String destinationUrl, boolean fireRequest, boolean ignoreHTTPSHostCheck,
+                                      int timeout, SSLSocketFactory sslFactory) throws IllegalArgumentException {
         return getAccessError(destinationUrl, fireRequest, ignoreHTTPSHostCheck, timeout, sslFactory) == null;
     }
 
@@ -353,7 +365,8 @@ public class UrlUtils {
     * @param destinationUrl the destination URL to check for availability
     * @param fireRequest if true a request will be sent to the given URL in addition to opening the
     *        connection
-    * @param ignoreHTTPSHostCheck if specified true, a HostnameVerifier is registered which accepts all hostnames during SSL handshake
+    * @param ignoreHTTPSHostCheck if specified true, a HostnameVerifier is registered which accepts all host-names
+     *                             during SSL handshake
     * @param timeout Timeout in milliseconds after which the call fails because of timeout.
     * @return null if connection works, an error message if some problem happens.
      * @throws IllegalArgumentException if the destination URL is invalid
@@ -367,7 +380,8 @@ public class UrlUtils {
      * @param destinationUrl the destination URL to check for availability
      * @param fireRequest if true a request will be sent to the given URL in addition to opening the
      *        connection
-     * @param ignoreHTTPSHostCheck if specified true, a HostnameVerifier is registered which accepts all hostnames during SSL handshake
+     * @param ignoreHTTPSHostCheck if specified true, a HostnameVerifier is registered which accepts all host-names
+     *                             during SSL handshake
      * @param timeout Timeout in milliseconds after which the call fails because of timeout.
      * @param sslFactory The SSLFactory to use for the connection, this allows to support custom SSL certificates
      * @return null if connection works, an error message if some problem happens.

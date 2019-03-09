@@ -134,6 +134,10 @@ public class NanoHTTPD
 
 		/**
 		 * Basic constructor.
+		 *
+		 * @param status The HTTP status code to report
+		 * @param mimeType The mime-type of the response
+		 * @param data The contents of hte response
 		 */
 		public Response( String status, String mimeType, InputStream data )
 		{
@@ -143,8 +147,12 @@ public class NanoHTTPD
 		}
 
 		/**
-		 * Convenience method that makes an InputStream out of
+		 * Convenience method that creates a {@link Response} out of
 		 * given text.
+		 *
+		 * @param status The HTTP status code to report
+		 * @param mimeType The mime-type of the response
+		 * @param txt The contents of the response
 		 */
 		public Response( String status, String mimeType, String txt )
 		{
@@ -159,6 +167,9 @@ public class NanoHTTPD
 
 		/**
 		 * Adds given line to the header.
+		 *
+		 * @param name The name of the HTTP header
+		 * @param value The value of the HTTP header
 		 */
 		public void addHeader( String name, String value )
 		{
@@ -296,6 +307,9 @@ public class NanoHTTPD
 
 	/**
 	 * Starts as a standalone file server and waits for Enter.
+	 *
+	 * @param args The commandline arguments, e.g. for specifying the port
+	 *
 	 * @throws IOException If starting the web-server fails.
 	 */
 	@SuppressForbidden(reason = "Allow to exit the application with a return code here")
@@ -665,6 +679,13 @@ public class NanoHTTPD
 	/**
 	 * Serves file from homeDir and its' subdirectories (only).
 	 * Uses only URI, ignores all headers and HTTP parameters.
+	 *
+	 * @param uriIn Which file to serve
+	 * @param header HTTP headers, currently ignored
+	 * @param homeDir The base-dir from where to server the file
+	 * @param allowDirectoryListing If contents of directories can be listed
+	 *
+	 * @return The resulting response-object.
 	 */
 	public Response serveFile( String uriIn, Properties header, File homeDir,
 							   boolean allowDirectoryListing )
@@ -790,7 +811,7 @@ public class NanoHTTPD
         	String u = uri.substring( 0, uri.length()-1 );
         	int slash = u.lastIndexOf( '/' );
         	if ( slash >= 0 && slash  < u.length()) {
-        		msg.append("<b><a href=\"").append(uri.substring(0, slash + 1)).append("\">..</a></b><br/>");
+        		msg.append("<b><a href=\"").append(uri, 0, slash + 1).append("\">..</a></b><br/>");
         	}
         }
 

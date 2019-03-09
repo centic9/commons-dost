@@ -28,40 +28,11 @@ public class Utils {
 
 		StringBuilder str = new StringBuilder("http://");
 
-		int i1;
-		// loop until we have a valid first item
-		while (true)
-		{
-			i1 = rand.nextInt(256);
-			// see IP-Adress in Wikipedia at http://de.wikipedia.org/wiki/IP-Adresse
-			if(i1 != 0 && i1 != 10 && i1 != 14 && i1 != 39
-					&& i1 != 127 &&
-					i1 < 224	// alles oberhalb ist reserviert!
-			) {
-				break;
-			}
-		}
+		int i1 = loopForFirstItem();
 		str.append(i1);
 		str.append('.');
 
-		int i2;
-		// then loop on the second item until we have a valid first and second item
-		while (true)
-		{
-			i2 = rand.nextInt(256);
-			// see IP-Adress in Wikipedia at http://de.wikipedia.org/wiki/IP-Adresse
-			if(
-					(i1 != 128 || i2 != 0) &&
-					(i1 != 169 || i2 != 254) &&
-					(i1 != 172 || i2 < 16 || i2 > 31) &&
-					(i1 != 191 || i2 != 255) &&
-					(i1 != 192 || i2 != 168) &&
-					(i1 != 198 || i2 != 18) &&
-					(i1 != 198 || i2 != 19)
-				) {
-				break;
-			}
-		}
+		int i2 = loopForSecondItem(i1);
 		str.append(i2);
 		str.append('.');
 
@@ -83,39 +54,40 @@ CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
 		//return "http://213.165.65.50/";
 	}
 
-	public static IP getRandomIP() {
-		int i1;
-		// loop until we have a valid first item
-		while (true)
-		{
+	private static int loopForFirstItem() {
+		int i1;// loop until we have a valid first item
+		do {
 			i1 = rand.nextInt(256);
 			// see IP-Adress in Wikipedia at http://de.wikipedia.org/wiki/IP-Adresse
-			if(i1 != 0 && i1 != 10 && i1 != 14 && i1 != 39
-					&& i1 != 127 &&
-					i1 < 224	// alles oberhalb ist reserviert!
-			) {
-				break;
-			}
-		}
+		} while (i1 == 0 || i1 == 10 || i1 == 14 || i1 == 39
+				|| i1 == 127 ||
+                // alles oberhalb ist reserviert!
+				i1 >= 224);
+		return i1;
+	}
 
-		int i2;
+	private static int loopForSecondItem(int i1) {
 		// then loop on the second item until we have a valid first and second item
-		while (true)
-		{
+		int i2;
+		do {
 			i2 = rand.nextInt(256);
 			// see IP-Adress in Wikipedia at http://de.wikipedia.org/wiki/IP-Adresse
-			if(
-					(i1 != 128 || i2 != 0) &&
-					(i1 != 169 || i2 != 254) &&
-					(i1 != 172 || i2 < 16 || i2 > 31) &&
-					(i1 != 191 || i2 != 255) &&
-					(i1 != 192 || i2 != 168) &&
-					(i1 != 198 || i2 != 18) &&
-					(i1 != 198 || i2 != 19)
-				) {
-				break;
-			}
-		}
+		} while ((i1 == 128 && i2 == 0) ||
+				(i1 == 169 && i2 == 254) ||
+				(i1 == 172 && i2 >= 16 && i2 <= 31) ||
+				(i1 == 191 && i2 == 255) ||
+				(i1 == 192 && i2 == 168) ||
+				(i1 == 198 && i2 == 18) ||
+				(i1 == 198 && i2 == 19));
+		return i2;
+	}
+
+	public static IP getRandomIP() {
+		// loop until we have a valid first item
+		int i1 = loopForFirstItem();
+
+		// then loop on the second item until we have a valid first and second item
+		int i2 = loopForSecondItem(i1);
 
 		/*
 CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
@@ -154,6 +126,7 @@ CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
 			return true;
 		}
 
+		//noinspection RedundantIfStatement
 		if(e.toString().contains("Server returned HTTP response code: 401")) {
 			return true;
 		}
@@ -175,6 +148,10 @@ CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
 
 	/**
 	 * Test URL and report if it can be read.
+	 *
+	 * @param sUrl The URL to test
+	 * @param gCount A counter which is incremented for each call and is used for reporting rate of calls
+	 * @param start Start-timestamp for reporting rate of calls.
 	 *
 	 * @return true if the URL is valid and can be read, false if an error occurs when reading from
 	 * it.
@@ -200,7 +177,9 @@ CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
 			con = url.openConnection();
 			con.setConnectTimeout(10000);
 			con.setReadTimeout(10000);
-			con.getInputStream().read();
+			if(-1 == con.getInputStream().read()) {
+				return false;
+			}
 		} catch (IOException e) {
 			// don't print out time out as it is expected here
 			if(Utils.isIgnorableException(e)) {
