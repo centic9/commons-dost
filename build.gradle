@@ -51,7 +51,7 @@ dependencies {
 	compile 'net.java.dev.jna:jna:3.4.0'
 
 	testCompile 'junit:junit:4.12'
-	testCompile 'org.dstadler:commons-test:1.0.0.15'
+	testCompile 'org.dstadler:commons-test:1.0.0.16'
 }
 
 wrapper {
