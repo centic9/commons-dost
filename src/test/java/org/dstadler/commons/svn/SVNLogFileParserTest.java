@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -191,7 +192,8 @@ public class SVNLogFileParserTest {
 
 	@Test
 	public void testParserProblem() throws SAXException, IOException {
-		Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {}).parseContent(new ByteArrayInputStream(XML.getBytes("UTF-8")));
+		Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {}).
+				parseContent(new ByteArrayInputStream(XML.getBytes(StandardCharsets.UTF_8)));
 		assertNotNull(parsed);
 
 		assertTrue("Had: " + parsed, parsed.containsKey(431200L));

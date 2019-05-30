@@ -18,6 +18,7 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -222,7 +223,7 @@ public class NanoHTTPDTest {
 
 		try (Socket socket = new Socket("localhost", port)) {
 			// write some bits
-			socket.getOutputStream().write("POST index.html\n".getBytes("UTF-8"));
+			socket.getOutputStream().write("POST index.html\n".getBytes(StandardCharsets.UTF_8));
 
 			// wait some time to trigger the timeout
 			Thread.sleep(2000);
