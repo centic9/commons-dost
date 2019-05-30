@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,9 +44,9 @@ public class HttpClientWrapperTest {
     @Before
     public void setUp() {
         if(withAuth) {
-            wrapper = new HttpClientWrapper("", null, 10000);
+            wrapper = new HttpClientWrapper("", null, 1000);
         } else {
-            wrapper = new HttpClientWrapper(10000);
+            wrapper = new HttpClientWrapper(1000);
         }
     }
 
@@ -55,7 +56,7 @@ public class HttpClientWrapperTest {
     }
 
     @Test
-    public void testHttpClientWrapperSimpleGet() throws Exception {
+    public void testSimpleGet() throws Exception {
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -64,7 +65,7 @@ public class HttpClientWrapperTest {
     }
 
     @Test
-    public void testHttpClientWrapperSimpleGetWithBody() throws Exception {
+    public void testSimpleGetWithBody() throws Exception {
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -73,7 +74,7 @@ public class HttpClientWrapperTest {
     }
 
     @Test
-    public void testHttpClientWrapperSimpleGetStream() throws Exception {
+    public void testSimpleGetStream() throws Exception {
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -227,6 +228,26 @@ public class HttpClientWrapperTest {
             try (HttpClientWrapper client = new HttpClientWrapper("", null, 10_000)) {
                 assertNotNull(client);
             }
+        }
+    }
+
+    @Test
+    public void testSimplePost() throws Exception {
+        assertNotNull(wrapper.getHttpClient());
+
+        try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
+            assertEquals("ok", wrapper.simplePost("http://localhost:" + server.getPort(), "\n\r"));
+        }
+
+        try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
+            assertEquals("ok", wrapper.simplePost("http://localhost:" + server.getPort(), "some body\n\r"));
+        }
+
+        try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
+            assertEquals("ok", wrapper.simplePost("http://localhost:" + server.getPort(), null));
+            fail("Body 'null' currently fails because the MockRESTServer cannot handle it");
+        } catch (SocketTimeoutException e) {
+            // expected here
         }
     }
 }

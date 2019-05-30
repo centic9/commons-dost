@@ -33,6 +33,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -251,7 +252,38 @@ public class HttpClientWrapper implements Closeable {
 		}
 	}
 
-    private HttpClientBuilder createSSLSocketFactory(HttpClientBuilder builder) {
+	public String simplePost(String url, String body) throws IOException {
+		// Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
+		final AuthCache authCache = new BasicAuthCache();
+		final BasicScheme basicAuth = new BasicScheme();
+
+		// Generate BASIC scheme object and add it to the local auth cache
+		URL cacheUrl = new URL(url);
+		HttpHost targetHost = new HttpHost(cacheUrl.getHost(), cacheUrl.getPort(), cacheUrl.getProtocol());
+		authCache.put(targetHost, basicAuth);
+
+		// Add AuthCache to the execution context
+		HttpClientContext context = HttpClientContext.create();
+		//context.setCredentialsProvider(credsProvider);
+		context.setAuthCache(authCache);
+
+		final HttpPost httpPost = new HttpPost(url);
+		if(body != null) {
+			httpPost.setEntity(new StringEntity(body));
+		}
+		try (CloseableHttpResponse response = httpClient.execute(targetHost, httpPost, context)) {
+			HttpEntity entity = HttpClientWrapper.checkAndFetch(response, url);
+
+			try {
+				return IOUtils.toString(entity.getContent(), "UTF-8");
+			} finally {
+				// ensure all content is taken out to free resources
+				EntityUtils.consume(entity);
+			}
+		}
+	}
+
+	private HttpClientBuilder createSSLSocketFactory(HttpClientBuilder builder) {
 		try {
 	        // Trust all certs, even self-signed and invalid hostnames, ...
 	        final SSLContext sslcontext = SSLContext.getInstance("TLS");
