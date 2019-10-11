@@ -40,7 +40,7 @@ http://github.com/centic9/commons-test for more details.
 
 ### Release it
 
-    ./gradlew release
+    ./gradlew release closeAndReleaseRepository
 
 #### Licensing
 * commons-dost is licensed under the [BSD 2-Clause License].

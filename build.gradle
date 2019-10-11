@@ -10,6 +10,7 @@ buildscript {
 plugins {
 	// https://github.com/researchgate/gradle-release
 	id 'net.researchgate.release' version '2.6.0'
+    id 'io.codearte.nexus-staging' version '0.21.1'
 }
 
 apply plugin: 'java'
@@ -22,6 +23,7 @@ apply plugin: 'codenarc'
 // not used currently: apply plugin: 'jdepend'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'io.codearte.nexus-staging'
 
 sourceCompatibility = 1.8
 group = 'org.dstadler'
@@ -51,7 +53,7 @@ dependencies {
 	compile 'net.java.dev.jna:jna:3.4.0'
 
 	testCompile 'junit:junit:4.12'
-	testCompile 'org.dstadler:commons-test:1.0.0.16'
+	testCompile 'org.dstadler:commons-test:1.0.0.18'
 }
 
 wrapper {
@@ -86,7 +88,7 @@ test {
 }
 
 jacoco {
-	toolVersion = '0.8.3'
+	toolVersion = '0.8.4'
 }
 
 jacocoTestReport {
