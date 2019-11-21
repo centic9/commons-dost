@@ -1,6 +1,7 @@
 package org.dstadler.commons.http;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -20,6 +21,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -394,5 +396,32 @@ public class HttpClientWrapper implements Closeable {
         }
 
         return response.getEntity();
+	}
+
+	/**
+	 * Download the data from the given URL to a local file.
+	 *
+	 * Copying is done incrementally to allow to download large files
+	 * without exceed memory.
+	 *
+	 * Creates directories if necessary.
+	 *
+	 * @param url The URL to download
+	 * @param destination The destination for the file
+	 * @param timeoutMs Socket/HTTP-timeout in milliseconds
+	 *
+	 * @throws IOException If accessing the URL or downloading data fails
+	 * @throws IllegalStateException If writing the file fails
+	 */
+	public static void downloadFile(String url, File destination, int timeoutMs) throws IOException, IllegalStateException {
+		try (HttpClientWrapper client = new HttpClientWrapper(timeoutMs)) {
+			client.simpleGet(url, inputStream -> {
+				try {
+					FileUtils.copyInputStreamToFile(inputStream, destination);
+				} catch (IOException e) {
+					throw new IllegalStateException(e);
+				}
+			});
+		}
 	}
 }

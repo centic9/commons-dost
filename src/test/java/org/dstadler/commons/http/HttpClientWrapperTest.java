@@ -6,12 +6,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -248,6 +250,22 @@ public class HttpClientWrapperTest {
             fail("Body 'null' currently fails because the MockRESTServer cannot handle it");
         } catch (SocketTimeoutException e) {
             // expected here
+        }
+    }
+
+    @Test
+    public void testDownloadFile() throws IOException {
+        File tempFile = File.createTempFile("HttpClientWrapperDownloadFile", ".tst");
+        assertTrue(tempFile.delete());
+        try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok, file content")) {
+            HttpClientWrapper.downloadFile("http://localhost:" + server.getPort(), tempFile, 60_000);
+
+            assertTrue(tempFile.exists());
+            assertEquals("ok, file content", FileUtils.readFileToString(tempFile, "UTF-8"));
+        } finally {
+            if(tempFile.exists()) {
+                assertTrue(tempFile.delete());
+            }
         }
     }
 }
