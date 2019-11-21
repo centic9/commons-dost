@@ -41,6 +41,9 @@ http://github.com/centic9/commons-test for more details.
 ### Release it
 
     ./gradlew release closeAndReleaseRepository
+    
+* This should automatically release the new version on MavenCentral
+* Afterwards go to https://github.com/centic9/commons-dost/releases and add release-notes
 
 #### Licensing
 * commons-dost is licensed under the [BSD 2-Clause License].
