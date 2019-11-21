@@ -6,17 +6,23 @@ import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 
+import org.apache.commons.lang3.SystemUtils;
+
 /**
  * Creates a Thread Dump of all Java Threads
  */
 public class ThreadDump {
-	private static ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+	public static final String NEWLINE = System.getProperty("line.separator");
+
+	private static final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 	private ThreadInfo [] infos;
+	public static final String THREADDUMP_START =	"----- BEGIN THREAD DUMP -----";
+	public static final String THREADDUMP_END =	"------ END THREAD DUMP ------";
 
 	/**
 	 * Creates a Thread Dump of all Java Threads
-	 * @param  lockedMonitors if true, dump all locked monitors.
-	 * @param  lockedSynchronizers if true, dump all locked
+	 * @param  lockedMonitors if <code>true</code>, dump all locked monitors.
+	 * @param  lockedSynchronizers if <code>true</code>, dump all locked
 	 *             ownable synchronizers.
 	 */
 	public ThreadDump(boolean lockedMonitors, boolean lockedSynchronizers) {
@@ -32,9 +38,17 @@ public class ThreadDump {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		sb.append(NEWLINE);
+		sb.append(THREADDUMP_START);
+		sb.append(NEWLINE);
+		sb.append("Full thread dump ").append(SystemUtils.JAVA_VERSION).append('(').append(SystemUtils.JAVA_VM_INFO).append("):");
+		sb.append(NEWLINE);
+
 		for (ThreadInfo info : infos) {
 			sb.append(threadInfoToString(info));
 		}
+
+		sb.append(THREADDUMP_END);
 		return sb.toString();
 	}
 
@@ -44,14 +58,28 @@ public class ThreadDump {
 	 * @param info the ThreadInfo object to stringify
 	 * @return a string representation of the ThreadInfo object passed
 	 */
-	private static String threadInfoToString(ThreadInfo info) {
-		StringBuilder sb = new StringBuilder(100).append("\"").append(info.getThreadName()).append("\"")
-				.append(" Id=").append(info.getThreadId()).append(" ").append(info.getThreadState());
-		if (info.getLockName() != null) {
-			sb.append(" on ").append(info.getLockName());
+	public static String threadInfoToString(ThreadInfo info) {
+		StringBuilder sb = new StringBuilder("\"")
+				.append(info.getThreadName())
+				.append("\" #")
+				.append(info.getThreadId())
+				.append(" tid=")
+				.append(toHexString(info.getThreadId()));
+
+		final String lockName = info.getLockName();
+
+		if (lockName != null) {
+			String action = " waiting on condition";
+			if (lockName.contains("Object.wait")) {
+				action = " in Object.wait()";
+			}
+			sb.append(action);
 		}
+		sb.append(" [").append(toHexString(info.hashCode())).append("]\n");
+		sb.append("   java.lang.Thread.State: ").append(info.getThreadState());
 		if (info.getLockOwnerName() != null) {
-			sb.append(" owned by \"").append(info.getLockOwnerName()).append("\" Id=").append(info.getLockOwnerId());
+			sb.append("(on lock owned by \"");
+			sb.append(info.getLockOwnerName()).append("\" <").append(toHexString(info.getLockOwnerId())).append(">)");
 		}
 		if (info.isSuspended()) {
 			sb.append(" (suspended)");
@@ -64,32 +92,28 @@ public class ThreadDump {
 		StackTraceElement [] stackTrace = info.getStackTrace();
 		for (int i = 0; i < stackTrace.length; i++) {
 			StackTraceElement ste = stackTrace[i];
-			sb.append("\tat ").append(ste.toString());
+			sb.append("\tat ").append(ste);
 			sb.append('\n');
 			if (i == 0 && info.getLockInfo() != null) {
 				Thread.State ts = info.getThreadState();
+				LockInfo lockInfo = info.getLockInfo();
+				long lockId = lockInfo.getIdentityHashCode();
 				switch (ts) {
-				case BLOCKED:
-					sb.append("\t-  blocked on ").append(info.getLockInfo());
-					sb.append('\n');
-					break;
-				case WAITING:
-					sb.append("\t-  waiting on ").append(info.getLockInfo());
-					sb.append('\n');
-					break;
-				case TIMED_WAITING:
-					sb.append("\t-  waiting on ").append(info.getLockInfo());
-					sb.append('\n');
-					break;
-				default:
+					case BLOCKED:
+						sb.append("\t- waiting to lock ").append('<').append(toHexString(lockId)).append("> (a ").append(lockInfo.getClassName()).append(")\n");
+						break;
+					case WAITING:
+					case TIMED_WAITING:
+						sb.append("\t- parking to wait for ").append('<').append(toHexString(lockId)).append("> (a ").append(lockInfo.getClassName()).append(")\n");
+						break;
+					default:
 				}
 			}
 
 			MonitorInfo [] lockedMonitors = info.getLockedMonitors();
 			for (MonitorInfo mi : lockedMonitors) {
 				if (mi.getLockedStackDepth() == i) {
-					sb.append("\t-  locked ").append(mi);
-					sb.append('\n');
+					sb.append("\t- locked ").append('<').append(toHexString(mi.getIdentityHashCode())).append("> (a ").append(mi.getClassName()).append(")\n");
 				}
 			}
 		}
@@ -105,5 +129,14 @@ public class ThreadDump {
 		}
 		sb.append('\n');
 		return sb.toString();
+	}
+
+	/**
+	 * @param value a {@code long} to be converted to a string
+	 * @return a string representation of the {@code long} argument in hexadecimal that begins with
+	 *         the radix indicator <code>0x</code> and is left padded with <code>0</code>
+	 */
+	public static String toHexString(final long value) {
+		return String.format("%#018x", value);
 	}
 }

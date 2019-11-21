@@ -17,6 +17,7 @@ Here an (incomplete) list of bits and pieces in this lib:
 * SVNLogFileParser - Parse the XML output of 'svn log --xml ...'
 * ZipFileCloseInputStream - Close a ZipFile as soon as the related InputStream (usually returned by the ZipFile) is closed
 * ZipUtils - utilities for accessing content in Zip files recursively, i.e. access a file in a zip file inside a zip file.
+* ThreadDump - get a printable output of all stack-traces similar to the output of the `jstack` tool
 
 Please note that some testing related pieces were moved into their own library to better separate these things. Look at
 http://github.com/centic9/commons-test for more details.
