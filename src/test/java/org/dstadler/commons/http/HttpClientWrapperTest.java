@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -26,6 +27,7 @@ import org.dstadler.commons.testing.TestHelpers;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -267,6 +269,38 @@ public class HttpClientWrapperTest {
             if(tempFile.exists()) {
                 assertTrue(tempFile.delete());
             }
+        }
+    }
+
+    @Ignore("Only for testing buffering when downloading to a file, but it simply did not have much effect")
+    @Test
+    public void testDownloadSpeed() throws IOException {
+        long start = System.currentTimeMillis();
+        for(int i = 0;i < 10;i++) {
+            HttpClientWrapper.downloadFile("http://dstadler.org/example-debug.apk", new File("/tmp/example-debug.apk"), 60_000);
+            System.out.println("Iteration " + i + ": " + (System.currentTimeMillis() - start));
+        }
+
+        System.out.println("Overall: " + (System.currentTimeMillis() - start) + ", avg: " + ((double)(System.currentTimeMillis() - start))/10);
+
+        start = System.currentTimeMillis();
+        for(int i = 0;i < 10;i++) {
+            downloadWithBuffer("http://dstadler.org/example-debug.apk", new File("/tmp/example-debug.apk"), 60_000);
+            System.out.println("Buffer: Iteration " + i + ": " + (System.currentTimeMillis() - start));
+        }
+
+        System.out.println("Buffer: Overall: " + (System.currentTimeMillis() - start) + ", avg: " + ((double)(System.currentTimeMillis() - start))/10);
+    }
+
+    private void downloadWithBuffer(String url, File destination, int timeoutMs) throws IOException, IllegalStateException {
+        try (HttpClientWrapper client = new HttpClientWrapper(timeoutMs)) {
+            client.simpleGet(url, inputStream -> {
+                try {
+                    FileUtils.copyInputStreamToFile(new BufferedInputStream(inputStream, 100*1024), destination);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
         }
     }
 }
