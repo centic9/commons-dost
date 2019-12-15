@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
@@ -43,7 +44,7 @@ public class ZipFileWalkerTest {
 
                 log.info("File: " + file);
                 if(file.getAbsolutePath().endsWith(".log")) {
-                    assertEquals(LOGLINE, IOUtils.toString(content, "UTF-8"));
+                    assertEquals(LOGLINE, IOUtils.toString(content, StandardCharsets.UTF_8));
                     found.set(true);
                 }
 
@@ -71,7 +72,7 @@ public class ZipFileWalkerTest {
 
                 log.info("File: " + file);
                 if(file.getAbsolutePath().endsWith(".log")) {
-                    assertEquals(LOGLINE, IOUtils.toString(content, "UTF-8"));
+                    assertEquals(LOGLINE, IOUtils.toString(content, StandardCharsets.UTF_8));
                     found.set(true);
                 }
 

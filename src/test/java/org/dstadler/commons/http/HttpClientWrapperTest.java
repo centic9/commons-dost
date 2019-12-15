@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
@@ -83,7 +84,7 @@ public class HttpClientWrapperTest {
             final AtomicReference<String> str = new AtomicReference<>();
             wrapper.simpleGet("http://localhost:" + server.getPort(), inputStream -> {
                 try {
-                    str.set(IOUtils.toString(inputStream, "UTF-8"));
+                    str.set(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
@@ -105,7 +106,7 @@ public class HttpClientWrapperTest {
                 HttpEntity entity = HttpClientWrapper.checkAndFetch(response, "http://localhost:" + server.getPort());
 
                 try {
-                    String string = IOUtils.toString(entity.getContent(), "UTF-8");
+                    String string = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
                     assertNotNull(string);
                 } finally {
                     // ensure all content is taken out to free resources

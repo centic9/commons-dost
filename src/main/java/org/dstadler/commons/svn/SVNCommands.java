@@ -3,6 +3,7 @@ package org.dstadler.commons.svn;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,7 +130,7 @@ public class SVNCommands {
     /**
      * Same as {@link #getBranchLogStream(String[], long, long, String, String, String)}
      * but always uses SVN HEAD revision as end revision.
-     * 
+     *
      * @param branches The list of branches to fetch logs for, currently only the first entry is used!
      * @param startRevision The SVN revision to use as starting point for the log-entries.
      * @param baseUrl       The SVN url to connect to
@@ -284,7 +285,7 @@ public class SVNCommands {
         cmdLine.addArgument(baseUrl + branch);
 
         try (InputStream inStr = ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 120000)) {
-            String xml = IOUtils.toString(inStr, "UTF-8");
+            String xml = IOUtils.toString(inStr, StandardCharsets.UTF_8);
             log.info("XML:\n" + xml);
 
             // read the revision
@@ -316,7 +317,7 @@ public class SVNCommands {
         cmdLine.addArgument(baseUrl + branch);
 
         try (InputStream inStr = ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 120000)) {
-            String info = IOUtils.toString(inStr, "UTF-8");
+            String info = IOUtils.toString(inStr, StandardCharsets.UTF_8);
             log.info("Info:\n" + info);
 
 			/* svn info http://...
@@ -399,7 +400,7 @@ public class SVNCommands {
      * root-dir. Be careful to not run this on a working copy with other relevant changes!
      *
      * @param comment The comment to use for the commit
-     * @param directory The local working directory 
+     * @param directory The local working directory
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
@@ -423,7 +424,7 @@ public class SVNCommands {
                 //cmdLine.addArgument(".");	// current dir
 
                 try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, directory, 0, 120000)) {
-                    log.info("Svn-Commit reported:\n" + IOUtils.toString(result, "UTF-8"));
+                    log.info("Svn-Commit reported:\n" + IOUtils.toString(result, StandardCharsets.UTF_8));
                 }
                 return;
             } catch (IOException e) {
@@ -459,9 +460,9 @@ public class SVNCommands {
     }
 
     /**
-     * Performs a "svn up" in the given local working directory. 
+     * Performs a "svn up" in the given local working directory.
      *
-     * @param directory The local working directory 
+     * @param directory The local working directory
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
@@ -738,14 +739,14 @@ public class SVNCommands {
     }
 
     protected static String extractResult(InputStream result) throws IOException {
-        String string = IOUtils.toString(result, "UTF-8").trim();
+        String string = IOUtils.toString(result, StandardCharsets.UTF_8).trim();
         // don't include single newlines in the log-output
         return string.equals("\n") ? "" : string;
     }
 
     /**
      * Make a branch by calling the "svn cp" operation.
-     * 
+     *
      * @param base The source of the SVN copy operation
      * @param branch The name and location of the new branch
      * @param revision The revision to base the branch off

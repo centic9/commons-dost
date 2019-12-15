@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -149,7 +150,7 @@ public class HttpClientWrapper implements Closeable {
 		final AtomicReference<String> str = new AtomicReference<>();
 		simpleGetInternal(url, inputStream -> {
             try {
-                str.set(IOUtils.toString(inputStream, "UTF-8"));
+                str.set(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
@@ -170,7 +171,7 @@ public class HttpClientWrapper implements Closeable {
 		final AtomicReference<String> str = new AtomicReference<>();
 		simpleGetInternal(url, inputStream -> {
             try {
-                str.set(IOUtils.toString(inputStream, "UTF-8"));
+                str.set(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
@@ -277,7 +278,7 @@ public class HttpClientWrapper implements Closeable {
 			HttpEntity entity = HttpClientWrapper.checkAndFetch(response, url);
 
 			try {
-				return IOUtils.toString(entity.getContent(), "UTF-8");
+				return IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
 			} finally {
 				// ensure all content is taken out to free resources
 				EntityUtils.consume(entity);
@@ -389,7 +390,7 @@ public class HttpClientWrapper implements Closeable {
         if(statusCode > 206) {
 			String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " +
 					response.getStatusLine().getReasonPhrase() + "\n" +
-					StringUtils.abbreviate(IOUtils.toString(response.getEntity().getContent(), "UTF-8"), 1024);
+					StringUtils.abbreviate(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8), 1024);
             log.warning(msg);
 
             throw new IOException(msg);

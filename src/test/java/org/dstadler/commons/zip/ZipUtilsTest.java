@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class ZipUtilsTest {
 			FileUtils.writeStringToFile(file, "somedata", "UTF-8");
 
 			try (InputStream zipContents = ZipUtils.getZipContentsRecursive(file.getAbsolutePath())) {
-				assertEquals("somedata", IOUtils.toString(zipContents, "UTF-8"));
+				assertEquals("somedata", IOUtils.toString(zipContents, StandardCharsets.UTF_8));
 			}
 		} finally {
 			assertTrue(file.exists());
@@ -76,7 +77,7 @@ public class ZipUtilsTest {
 			}
 
 			try (InputStream zipContents = ZipUtils.getZipContentsRecursive(zipfile.getAbsolutePath() + "!filename")) {
-				assertEquals("somedata", IOUtils.toString(zipContents, "UTF-8"));
+				assertEquals("somedata", IOUtils.toString(zipContents, StandardCharsets.UTF_8));
 			}
 		} finally {
 			assertTrue(zipfile.exists());
@@ -96,7 +97,7 @@ public class ZipUtilsTest {
 		try {
     		try (InputStream zipContents = ZipUtils.getZipContentsRecursive(zipfile2.getAbsolutePath() + "!nested.zip!filename")) {
     			assertEquals("somedata",
-    					IOUtils.toString(zipContents, "UTF-8"));
+    					IOUtils.toString(zipContents, StandardCharsets.UTF_8));
     		}
 		} finally {
 		    assertTrue(zipfile2.exists());
@@ -666,7 +667,7 @@ public class ZipUtilsTest {
     		try (ZipFile checkZip = new ZipFile(zipfile)) {
     			assertNotNull(checkZip.getEntry("nested.zip"));
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
-    				assertEquals("somenewdata", IOUtils.toString(stream, "UTF-8"));
+    				assertEquals("somenewdata", IOUtils.toString(stream, StandardCharsets.UTF_8));
     			}
     		}
 		} finally {
@@ -686,14 +687,14 @@ public class ZipUtilsTest {
     			assertNotNull(checkZip.getEntry("nested.zip"));
 
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
-    				String data = IOUtils.toString(stream, "UTF-8");
+    				String data = IOUtils.toString(stream, StandardCharsets.UTF_8);
 					assertNotEquals("Should be different without encoding, expected: somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\nhad: " + data,
 							"somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF", data);
     			}
 
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
     				assertEquals("Should be equal with same encoding", "somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF",
-							IOUtils.toString(stream, "ISO-8859-1"));
+							IOUtils.toString(stream, StandardCharsets.ISO_8859_1));
     			}
     		}
 		} finally {
@@ -712,7 +713,7 @@ public class ZipUtilsTest {
     		try (ZipFile checkZip = new ZipFile(zipfile)) {
     			assertNotNull(checkZip.getEntry("newfile.zip"));
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("newfile.zip"))) {
-    				assertEquals("somemorenewdata", IOUtils.toString(stream, "UTF-8"));
+    				assertEquals("somemorenewdata", IOUtils.toString(stream, StandardCharsets.UTF_8));
     			}
     		}
         } finally {

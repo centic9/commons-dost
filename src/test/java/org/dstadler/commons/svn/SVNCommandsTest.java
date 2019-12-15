@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -146,7 +147,7 @@ public class SVNCommandsTest {
         assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
 
         InputStream str = SVNCommands.getBranchLogStream(new String[]{""}, 0, BASE_URL, USERNAME, PASSWORD);
-        String result = IOUtils.toString(str, "UTF-8");
+        String result = IOUtils.toString(str, StandardCharsets.UTF_8);
         assertNotNull(result);
         assertTrue(result.contains("revision=\"1\""));
         assertTrue(result.contains("/README"));
@@ -170,7 +171,7 @@ public class SVNCommandsTest {
     public void testSVNDirectAccess() throws IOException {
         assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
 
-        String content = IOUtils.toString(SVNCommands.getRemoteFileContent("/README", 1, BASE_URL, USERNAME, PASSWORD), "UTF-8");
+        String content = IOUtils.toString(SVNCommands.getRemoteFileContent("/README", 1, BASE_URL, USERNAME, PASSWORD), StandardCharsets.UTF_8);
         assertNotNull(content);
         assertTrue(content.contains("test content"));
     }
@@ -205,7 +206,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             // check that the necessary structures were created
@@ -229,7 +230,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             // check that the necessary structures were created
@@ -247,7 +248,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             try {
@@ -269,7 +270,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             assertFalse(SVNCommands.branchExists("/not_existing", BASE_URL));
@@ -287,7 +288,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             SVNCommands.copyBranch("/", "/newbranch", 1, BASE_URL);
@@ -304,7 +305,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             SVNCommands.update(tempDir);
@@ -321,7 +322,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             assertFalse(SVNCommands.verifyNoPendingChanges(tempDir));
@@ -342,7 +343,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             SVNCommands.revertAll(tempDir);
@@ -359,7 +360,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             SVNCommands.commitMergeInfo("some merge", tempDir);
@@ -376,7 +377,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             assertEquals("", SVNCommands.getConflicts(tempDir));
@@ -393,7 +394,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             long rev = SVNCommands.getLastRevision("", BASE_URL, USERNAME, PASSWORD);
@@ -411,7 +412,7 @@ public class SVNCommandsTest {
         try {
             assertTrue(tempDir.delete());
             try (InputStream stream = SVNCommands.checkout(BASE_URL, tempDir, USERNAME, PASSWORD)) {
-                System.out.println(IOUtils.toString(stream, "UTF-8"));
+                System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
             // add some minimal content

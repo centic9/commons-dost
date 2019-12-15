@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.util.Enumeration;
 import java.util.List;
@@ -264,7 +265,7 @@ public class ZipUtils {
 			try {
 				try (InputStream str = new FileInputStream(file)) {
 					if (str.available() > 0) {
-						return IOUtils.toString(str, "UTF-8");
+						return IOUtils.toString(str, StandardCharsets.UTF_8);
 					}
 
 					return "";
@@ -316,7 +317,7 @@ public class ZipUtils {
 
 			try (InputStream str = zipfile.getInputStream(entry)) {
 				if (str.available() > 0) {
-					return IOUtils.toString(str, "UTF-8");
+					return IOUtils.toString(str, StandardCharsets.UTF_8);
 				}
 
 				return "";

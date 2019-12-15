@@ -14,6 +14,7 @@ import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 /**
@@ -107,7 +108,7 @@ public class MetricsUtils {
             HttpEntity entity = HttpClientWrapper.checkAndFetch(response, url);
 
             try {
-                log.info("Had result when sending document to Elasticsearch at " + url + ": " + IOUtils.toString(entity.getContent(), "UTF-8"));
+                log.info("Had result when sending document to Elasticsearch at " + url + ": " + IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
             } finally {
                 // ensure all content is taken out to free resources
                 EntityUtils.consume(entity);

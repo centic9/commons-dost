@@ -210,7 +210,7 @@ public class NanoHTTPDTest {
 			// wait some time to trigger the timeout
 			Thread.sleep(2000);
 
-			assertTrue(IOUtils.toString(socket.getInputStream(), "UTF-8").startsWith("HTTP/1.0 500 Internal Server Error"));
+			assertTrue(IOUtils.toString(socket.getInputStream(), StandardCharsets.UTF_8).startsWith("HTTP/1.0 500 Internal Server Error"));
 		}
 
 		httpd.stop();
@@ -228,7 +228,7 @@ public class NanoHTTPDTest {
 			// wait some time to trigger the timeout
 			Thread.sleep(2000);
 
-			assertTrue(IOUtils.toString(socket.getInputStream(), "UTF-8").startsWith("HTTP/1.0 500 Internal Server Error"));
+			assertTrue(IOUtils.toString(socket.getInputStream(), StandardCharsets.UTF_8).startsWith("HTTP/1.0 500 Internal Server Error"));
 		}
 
 		httpd.stop();
@@ -253,7 +253,7 @@ public class NanoHTTPDTest {
 			String data;
 
 			// this test can only run for UTF-8
-			if(Charset.defaultCharset().equals(Charset.forName("UTF-8"))) {
+			if(Charset.defaultCharset().equals(StandardCharsets.UTF_8)) {
 				data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
 				assertEquals("Failed whit default charset: " + Charset.defaultCharset(), "<html>\u00E4</html>", data);
 			}
