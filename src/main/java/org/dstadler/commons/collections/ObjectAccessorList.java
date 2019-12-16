@@ -14,7 +14,7 @@ import java.util.function.Function;
  * The implementation uses an accessor function to extract a property from the underlying list, e.g. it can
  * be constructed as follows:
  *
- * List&lt;String> list = new ObjectAccessorList&lt;>(originalList, MyObject::getStringProperty());
+ * List&lt;String&gt; list = new ObjectAccessorList&lt;&gt;(originalList, MyObject::getStringProperty());
  *
  * Some reading methods also throw UnsupportedOperationException, mostly they cannot be implemented
  * without an "inverse" operation from R to E.
