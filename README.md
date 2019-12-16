@@ -18,6 +18,9 @@ Here an (incomplete) list of bits and pieces in this lib:
 * ZipFileCloseInputStream - Close a ZipFile as soon as the related InputStream (usually returned by the ZipFile) is closed
 * ZipUtils - utilities for accessing content in Zip files recursively, i.e. access a file in a zip file inside a zip file.
 * ThreadDump - get a printable output of all stack-traces similar to the output of the `jstack` tool
+* ObjectAccessorList - a list which wraps another list and allows to transparently access single properties of the 
+type of object contained in the original list.
+* UnsupportedCollection and UnsupportedList as base implementations of Collection and List where all methods throw an exception
 
 Please note that some testing related pieces were moved into their own library to better separate these things. Look at
 http://github.com/centic9/commons-test for more details.
