@@ -415,6 +415,7 @@ public class HttpClientWrapper implements Closeable {
 	 * @throws IllegalStateException If writing the file fails
 	 */
 	public static void downloadFile(String url, File destination, int timeoutMs) throws IOException, IllegalStateException {
+		log.info("Downloading from " + url + " to " + destination);
 		try (HttpClientWrapper client = new HttpClientWrapper(timeoutMs)) {
 			client.simpleGet(url, inputStream -> {
 				try {
