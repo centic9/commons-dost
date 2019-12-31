@@ -1,25 +1,12 @@
 package org.dstadler.commons.http;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.util.EntityUtils;
 import org.dstadler.commons.net.UrlUtils;
 import org.dstadler.commons.testing.MockRESTServer;
@@ -31,6 +18,22 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
 public class HttpClientWrapperTest {
@@ -301,6 +304,23 @@ public class HttpClientWrapperTest {
                     throw new IllegalStateException(e);
                 }
             });
+        }
+    }
+
+    @Test(expected = IOException.class)
+    public void testEmptyResponseEntity() throws IOException {
+        try (MockRESTServer server = new MockRESTServer("404", "application/html", "")) {
+            try (HttpClientWrapper httpClient = new HttpClientWrapper(10_000)) {
+                String url = "http://localhost:" + server.getPort();
+                final HttpUriRequest httpGet = new HttpHead(url);
+                try (CloseableHttpResponse response = httpClient.getHttpClient().execute(httpGet)) {
+
+                    assertNull("Entity is null in this case", response.getEntity());
+
+                    // this will throw an IOException, previously we caught a NullPointerException
+                    HttpClientWrapper.checkAndFetch(response, url);
+                }
+            }
         }
     }
 }

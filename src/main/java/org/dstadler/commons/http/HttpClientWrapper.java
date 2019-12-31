@@ -390,7 +390,7 @@ public class HttpClientWrapper implements Closeable {
         if(statusCode > 206) {
 			String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " +
 					response.getStatusLine().getReasonPhrase() + "\n" +
-					StringUtils.abbreviate(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8), 1024);
+					(response.getEntity() == null ? "" : StringUtils.abbreviate(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8), 1024));
             log.warning(msg);
 
             throw new IOException(msg);
