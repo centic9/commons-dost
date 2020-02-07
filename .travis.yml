@@ -1,5 +1,3 @@
-# Use xenial to still have OpenJDK 8 available
-dist: xenial
 language: java
 jdk:
   - openjdk8
