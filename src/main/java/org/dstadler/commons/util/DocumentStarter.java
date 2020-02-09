@@ -95,117 +95,18 @@ public class DocumentStarter {
 
 		final String localHref = href;
 		if(SystemUtils.IS_OS_UNIX) {
-            Runtime.getRuntime().exec("gnome-open" + ClientConstants.DWS + href);
-		} else
-		/*String platform = SWT.getPlatform();
-		if(ClientConstants.PLATFORM_WIN32.equals(platform))*/ {
-/*			if (checkForBadFileName(url)) {
-				// is share or badname that can not be launched by start command
-				Program.launch(localHref);
-			}
-			else*/ {
-				// is local
-					Runtime.getRuntime().exec(ArrayUtils.addAll(ClientConstants.CMD_C_START_ARRAY, localHref.replace("&", "^&")));
-				/*}
-				catch (Exception e) {
-					//fallback
-					Program.launch(localHref);
-				}*/
-			}
-		}
-		/*else if(ClientConstants.PLATFORM_CARBON.equals(platform)) {
 			try {
-				Runtime.getRuntime().exec(ClientConstants.USR_BIN_OPEN + localHref);
+				Runtime.getRuntime().exec("gnome-open " + href);
+			} catch (IOException e) {
+				// try kde-open if gnome-open did not work
+				Runtime.getRuntime().exec("kde-open " + href);
 			}
-			catch(IOException e) {
-				logger.log(Level.WARNING, "Exception occurred while opening URL: " + localHref, e); //$NON-NLS-1$
-			}
+		} else {
+			Runtime.getRuntime().exec(ArrayUtils.addAll(ClientConstants.CMD_C_START_ARRAY, localHref.replace("&", "^&")));
 		}
-		else  {
-			Thread launcher = new Thread() {
-				@Override
-				public void run() {
-					String encodedLocalHref = urlEncodeForSpaces(localHref.toCharArray());
-					try {
-						if(webBrowserOpened) {
-							Runtime.getRuntime().exec(webBrowser + ClientConstants.REMOTE_OPEN_URL + encodedLocalHref + ClientConstants.RRBRA);
-							return;
-						}
-					}
-					catch (IOException e) {
-		    			logger.log(Level.WARNING, "Exception occurred while opening URL: " + encodedLocalHref, e); //$NON-NLS-1$
-					}
-
-					webBrowserOpened = true;
-					try {
-						Process p = openWebBrowser(encodedLocalHref);
-						if(p != null) {
-							try {
-								int ret = p.waitFor();
-								if(ret != 0) {
-									String msg = "Non-succesful response from external application, this indicates that there is no platform support for opening report files of this type."; //$NON-NLS-1$
-			    	    			logger.log(Level.WARNING, msg);
-									throw new IllegalArgumentException();
-								}
-							} catch (InterruptedException e) {
-		    	    			logger.log(Level.WARNING, "Exception occurred while waiting for process to start, URL: " + encodedLocalHref, e); //$NON-NLS-1$
-							}
-						}
-					}
-					catch(IOException _ex) {
-						String msg = "Exception occurred while opening URL: " + encodedLocalHref; //$NON-NLS-1$
-		    			logger.log(Level.WARNING, msg, _ex);
-						throw new IllegalArgumentException(msg);
-					}
-				}*/
-
-			/*};
-			launcher.start();
-		}*/
 	}
 
 	public static boolean isDisabledForTest() {
 		return "true".equalsIgnoreCase(System.getProperty(PROPERTY_DOCUMENT_STARTER_DISABLE));
 	}
-
-	/*private String urlEncodeForSpaces(char input[]) {
-	    StringBuffer retu = new StringBuffer(input.length);
-	    for (char element : input) {
-			if(element == ' ') {
-				retu.append(ClientConstants.FORMAT_STRING_PERCENT_20);
-			}
-			else {
-				retu.append(element);
-			}
-		}
-
-	    return retu.toString();
-	}*/
-
-	/*private Process openWebBrowser(String href) throws IOException {
-		String webBrowser;
-		Process p = null;
-	    //if (webBrowser == null) {
-	    	for(String browser : ClientConstants.BROWSER_CHOICES) {
-				try {
-					logger.info("Trying to run command '" + browser + "' to open url: " + href); //$NON-NLS-1$ //$NON-NLS-2$
-	                webBrowser = browser;
-	                p = Runtime.getRuntime().exec(webBrowser + ClientConstants.DWS + href);
-
-	                // if we got here without error, we have found a useable application
-	                break;
-	            }
-	            catch(IOException _ex) {
-	                // ignore as we have more items to check
-	            	//webBrowser = ClientConstants.BROWSER_MOZILLA;
-	            }
-	    	}
-		//}
-
-	    if (p == null) {
-	    	webBrowser = ClientConstants.BROWSER_FIREFOX;
-	        p = Runtime.getRuntime().exec(webBrowser + ClientConstants.WS + href);
-	    }
-	    return p;
-	}*/
 }
