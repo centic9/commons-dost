@@ -5,7 +5,7 @@ jdk:
 # not available yet  - openjdk11
 
 before_install:
- - chmod +x gradlew
+ - chmod +x gradlew gradle/wrapper/gradle-wrapper.jar
 
 install: ./gradlew checkSnapshotDependencies compileJava
 script: ./gradlew check jacocoTestReport javadoc javadocJar sourcesJar checkSnapshotDependencies
