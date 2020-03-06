@@ -7,7 +7,10 @@ jdk:
 before_install:
  - chmod +x gradlew gradle/wrapper/gradle-wrapper.jar
 
-install: ./gradlew checkSnapshotDependencies compileJava
+install: 
+- gradle wrapper
+- ./gradlew checkSnapshotDependencies compileJava
+
 script: ./gradlew check jacocoTestReport javadoc javadocJar sourcesJar checkSnapshotDependencies
 
 after_failure:
