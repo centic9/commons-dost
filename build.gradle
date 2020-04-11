@@ -35,7 +35,7 @@ repositories {
 
 forbiddenApis {
 	suppressAnnotations = ['org.dstadler.commons.util.SuppressForbidden']
-	bundledSignatures = [ 'jdk-reflection', 'commons-io-unsafe-2.6', 'jdk-reflection' ]
+	bundledSignatures = [ 'jdk-reflection', 'commons-io-unsafe-2.6', 'jdk-internal' ]
 	signaturesFiles += files('config/forbidden-apis/http-signatures.txt')
 }
 forbiddenApisMain {
