@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/centic9/commons-dost.svg)](https://travis-ci.org/centic9/commons-dost) [![Gradle Status](https://gradleupdate.appspot.com/centic9/commons-dost/status.svg?branch=master)](https://gradleupdate.appspot.com/centic9/commons-dost/status)
-[![Release](https://img.shields.io/github/release/centic9/commons-dost.svg)](https://github.com/centic9/commons-dost/releases)
+[![Release](https://img.shields.io/github/v/release/centic9/commons-dost.svg)](https://github.com/centic9/commons-dost/releases)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost) [![Maven Central](https://img.shields.io/maven-central/v/org.dstadler/commons-dost.svg)](https://maven-badges.herokuapp.com/maven-central/org.dstadler/commons-dost)
 
 This is a small library of code-pieces that I find useful in many of my projects. 
