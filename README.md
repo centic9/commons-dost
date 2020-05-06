@@ -53,4 +53,4 @@ http://github.com/centic9/commons-test for more details.
 * commons-dost is licensed under the [BSD 2-Clause License].
 * A few pieces are imported from other sources, the source-files contain the necessary license pieces/references.
 
-[BSD 2-Clause License]: http://www.opensource.org/licenses/bsd-license.php
+[BSD 2-Clause License]: https://www.opensource.org/licenses/bsd-license.php
