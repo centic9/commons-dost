@@ -3,13 +3,13 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'de.thetaphi:forbiddenapis:2.7'
+		classpath 'de.thetaphi:forbiddenapis:3.0.1'
 	}
 }
 
 plugins {
-	// https://github.com/researchgate/gradle-release
-	id 'net.researchgate.release' version '2.8.1'
+    // https://github.com/researchgate/gradle-release
+    id 'net.researchgate.release' version '2.8.1'
     id 'io.codearte.nexus-staging' version '0.21.2'
 }
 
@@ -35,7 +35,7 @@ repositories {
 
 forbiddenApis {
 	suppressAnnotations = ['org.dstadler.commons.util.SuppressForbidden']
-	bundledSignatures = [ 'jdk-reflection', 'commons-io-unsafe-2.6', 'jdk-internal' ]
+	bundledSignatures = [ 'jdk-reflection', 'commons-io-unsafe-2.7', 'jdk-internal' ]
 	signaturesFiles += files('config/forbidden-apis/http-signatures.txt')
 }
 forbiddenApisMain {
@@ -45,7 +45,7 @@ forbiddenApisMain {
 }
 
 dependencies {
-	compile 'commons-io:commons-io:2.6'
+	compile 'commons-io:commons-io:2.7'
 	compile 'org.apache.commons:commons-lang3:3.10'
     compile 'org.apache.commons:commons-text:1.8'
 	compile 'org.apache.httpcomponents:httpclient:4.5.12'
@@ -75,7 +75,7 @@ task adjustWrapperPropertiesFile {
 wrapper.finalizedBy adjustWrapperPropertiesFile
 
 test {
-	maxHeapSize = "12m"
+	maxHeapSize = "32m"
 	systemProperties = System.properties
 
 	// enable to show standard out and standard error of the test JVM(s) on the console
@@ -89,13 +89,13 @@ test {
 }
 
 jacoco {
-	toolVersion = '0.8.5'
+    toolVersion = '0.8.5'
 }
 
 jacocoTestReport {
     reports {
         xml.enabled true
-	}
+    }
 }
 
 task sourcesJar(type: Jar) {
@@ -153,7 +153,7 @@ uploadArchives {
         licenses {
           license {
             name 'BSD 2-Clause License'
-            url 'http://www.opensource.org/licenses/bsd-license.php'
+            url 'https://www.opensource.org/licenses/bsd-license.php'
           }
         }
 
