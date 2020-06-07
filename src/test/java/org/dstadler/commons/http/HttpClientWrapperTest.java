@@ -52,9 +52,9 @@ public class HttpClientWrapperTest {
     @Before
     public void setUp() {
         if(withAuth) {
-            wrapper = new HttpClientWrapper("", null, 1000);
+            wrapper = new HttpClientWrapper("", null, 10000);
         } else {
-            wrapper = new HttpClientWrapper(1000);
+            wrapper = new HttpClientWrapper(10000);
         }
     }
 
