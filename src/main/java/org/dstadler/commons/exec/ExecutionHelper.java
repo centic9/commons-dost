@@ -13,6 +13,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
@@ -70,7 +71,7 @@ public class ExecutionHelper {
 	public static InputStream getCommandResult(
 			CommandLine cmdLine, File dir, int expectedExit,
 			long timeout, InputStream input) throws IOException {
-		DefaultExecutor executor = getDefaultExecutor(dir, expectedExit, timeout);
+		Executor executor = getDefaultExecutor(dir, expectedExit, timeout);
 
 		try (ByteArrayOutputStream outStr = new ByteArrayOutputStream()) {
 			executor.setStreamHandler(new PumpStreamHandler(outStr, outStr, input));
@@ -121,13 +122,13 @@ public class ExecutionHelper {
 	public static void getCommandResultIntoStream(
 			CommandLine cmdLine, File dir, int expectedExit,
 			long timeout, OutputStream stream, Map<String,String> environment) throws IOException {
-		DefaultExecutor executor = getDefaultExecutor(dir, expectedExit, timeout);
+		Executor executor = getDefaultExecutor(dir, expectedExit, timeout);
 		executor.setStreamHandler(new PumpStreamHandler(stream));
 		execute(cmdLine, dir, executor, environment);
 	}
 
-	private static DefaultExecutor getDefaultExecutor(File dir, int expectedExit, long timeout) {
-		DefaultExecutor executor = new DefaultExecutor();
+	private static Executor getDefaultExecutor(File dir, int expectedExit, long timeout) {
+		Executor executor = new DefaultExecutor();
 		if(expectedExit != -1) {
 			executor.setExitValue(expectedExit);
 		} else {
@@ -140,7 +141,7 @@ public class ExecutionHelper {
 		return executor;
 	}
 
-	private static void execute(CommandLine cmdLine, File dir, DefaultExecutor executor,
+	private static void execute(CommandLine cmdLine, File dir, Executor executor,
 								Map<String,String> environment) throws IOException {
 		log.info("-Executing(" + dir + "): " + cmdLine);
 		try {
