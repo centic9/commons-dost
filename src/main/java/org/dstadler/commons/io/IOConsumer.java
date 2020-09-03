@@ -23,7 +23,7 @@ import java.util.function.Consumer;
      {@literal @}Override
      public void acceptWithException(HttpEntity entity) throws IOException {
          log.info("Had result for create: " +
-                 (entity != null ? IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8) : "<empty>"));
+                 (entity != null ? IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8) : "&lt;empty&gt;"));
      }
  }</code>
  */
