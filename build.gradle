@@ -46,7 +46,7 @@ forbiddenApisMain {
 }
 
 dependencies {
-	compile 'commons-io:commons-io:2.7'
+	compile 'commons-io:commons-io:2.8.0'
 	compile 'org.apache.commons:commons-lang3:3.11'
     compile 'org.apache.commons:commons-text:1.9'
 	compile 'org.apache.httpcomponents:httpclient:4.5.12'
