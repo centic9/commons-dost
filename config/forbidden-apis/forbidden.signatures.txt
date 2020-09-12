@@ -4,7 +4,7 @@
 # See https://github.com/policeman-tools/forbidden-apis/ for a description of this file
 #
 
-@ignoreUnresolvable
+@ignoreMissingClasses
 @defaultMessage Forbidden APIs
 
 java.lang.System#gc() @ Please do not try to stop the world
