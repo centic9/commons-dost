@@ -21,6 +21,7 @@ Here an (incomplete) list of bits and pieces in this lib:
 * ObjectAccessorList - a list which wraps another list and allows to transparently access single properties of the 
 type of object contained in the original list.
 * UnsupportedCollection and UnsupportedList as base implementations of Collection and List where all methods throw an exception
+* DocumentStarter - knows how to open documents of known file-types on different operating systems, usually by using platform-specific tools
 
 Please note that some testing related pieces were moved into their own library to better separate these things. Look at
 http://github.com/centic9/commons-test for more details.
