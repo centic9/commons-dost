@@ -48,7 +48,7 @@ http://github.com/centic9/commons-test for more details.
     ./gradlew --console=plain release && ./gradlew closeAndReleaseRepository
     
 * This should automatically release the new version on MavenCentral
-* Afterwards go to https://github.com/centic9/commons-dost/releases and add release-notes
+* Afterwards go to the [Github releases page](https://github.com/centic9/commons-dost/releases) and add release-notes
 
 ## Support this project
 
