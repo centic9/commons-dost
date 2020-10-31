@@ -55,6 +55,7 @@ http://github.com/centic9/commons-test for more details.
 If you find this library useful and would like to support it, you can [Sponsor the author](https://github.com/sponsors/centic9)
 
 ## Licensing
+
 * commons-dost is licensed under the [BSD 2-Clause License].
 * A few pieces are imported from other sources, the source-files contain the necessary license pieces/references.
 
