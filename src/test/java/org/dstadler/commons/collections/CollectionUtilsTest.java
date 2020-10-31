@@ -39,6 +39,17 @@ public class CollectionUtilsTest {
 
         longs.add(0, 832L);
         assertEquals("832,1023-3227", CollectionUtils.getCombinedText(longs));
+
+        longs.clear();
+        longs.add(0L);
+        longs.add(1L);
+        longs.add(2L);
+        assertEquals("0-2", CollectionUtils.getCombinedText(longs));
+
+        // initial MIN_VALUE is not supported due to implementation
+        longs.clear();
+        longs.add(Long.MIN_VALUE);
+        assertEquals("", CollectionUtils.getCombinedText(longs));
     }
 
     // helper method to get coverage of the unused constructor

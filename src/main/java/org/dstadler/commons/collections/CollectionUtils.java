@@ -31,14 +31,14 @@ public class CollectionUtils {
      */
     public static <T extends Number> String getCombinedText(Iterable<T> numbers) {
         StringBuilder text = new StringBuilder();
-        long prev = -1;
-        long start = -1;
+        long prev = Long.MIN_VALUE;
+        long start = Long.MIN_VALUE;
 
         for(T nr : numbers) {
             // check if the streak continues
             if(prev != nr.longValue() - 1) {
                 // do not detect a streak just on first iteration
-                if(prev != -1) {
+                if(prev != Long.MIN_VALUE) {
                     appendStreak(text, prev, start);
                 }
 
@@ -49,7 +49,7 @@ public class CollectionUtils {
         }
 
         // add the last range/nr
-        if(prev != -1) {
+        if(prev != Long.MIN_VALUE) {
             appendStreak(text, prev, start);
         }
 
