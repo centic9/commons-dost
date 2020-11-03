@@ -18,10 +18,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.dstadler.commons.http.HttpClientWrapper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Simple SAX Parser to handle XML data, it is usually subclassed to provide the
@@ -30,7 +30,7 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
  * @author dominik.stadler
  *
  */
-public abstract class AbstractSimpleContentHandler<K,V> extends DefaultHandler {
+public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> extends DefaultHandler {
 	private final static Logger log = LoggerFactory.make();
 
 	// use TreeMap to sort by key

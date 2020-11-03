@@ -2,7 +2,6 @@ package org.dstadler.commons.session;
 
 import java.util.logging.Logger;
 
-import org.xml.sax.SAXException;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.xml.AbstractSimpleContentHandler;
@@ -18,7 +17,7 @@ public class SessionXMLContentHandler extends AbstractSimpleContentHandler<Strin
 	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void endElement(String uri, String localName, String qName) throws SAXException {
+	public void endElement(String uri, String localName, String qName) {
 		if(localName.equals("sessionid")) {
 			String session = characters.toString();
 			configs.put(session, session);

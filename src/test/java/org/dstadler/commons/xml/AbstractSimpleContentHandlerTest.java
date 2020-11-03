@@ -45,7 +45,7 @@ public class AbstractSimpleContentHandlerTest {
 	public void testParseContentURLParseFails() throws Exception {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
 			@Override
-			public SortedMap<String, String> parseContent(InputStream strm) throws SAXException, IOException {
+			public SortedMap<String, String> parseContent(InputStream strm) throws IOException {
 				throw new IOException("testexception");
 			}
 		};

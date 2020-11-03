@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 import org.dstadler.commons.xml.AbstractSimpleContentHandler;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -86,7 +85,7 @@ public class SVNLogFileParser extends AbstractSimpleContentHandler<Long, LogEntr
 	 * Internal method used for XML parsing
      */
 	@Override
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+	public void startElement(String uri, String localName, String qName, Attributes attributes) {
 		if(localName.equals(TAG_LOG_ENTRY)) {
 			if (currentTags != null) {
 				throw new IllegalStateException("Should not have tags when a config starts in the XML, but had: " + currentTags);
@@ -104,7 +103,7 @@ public class SVNLogFileParser extends AbstractSimpleContentHandler<Long, LogEntr
 	 * Internal method used for XML parsing
 	 */
 	@Override
-	public void endElement(String uri, String localName, String qName) throws SAXException {
+	public void endElement(String uri, String localName, String qName) {
 		if(localName.equals(TAG_LOG_ENTRY)) {
 			if (currentTags.revision == 0) {
 				throw new IllegalStateException(
