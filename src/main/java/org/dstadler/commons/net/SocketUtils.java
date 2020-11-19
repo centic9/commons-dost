@@ -9,9 +9,6 @@ import org.dstadler.commons.util.SuppressForbidden;
 
 /**
  * Various utilities related to sockets.
- *
- * @author dominik.stadler
- *
  */
 public final class SocketUtils {
 	private static final Logger log = Logger.getLogger(SocketUtils.class.getName());
@@ -21,8 +18,9 @@ public final class SocketUtils {
 	}
 
 	/**
-	 * Method that is used to find the next available port. It used the two constants PORT_RANGE_START and
-	 * PORT_RANGE_END defined above to limit the range of ports that are tried.
+	 * Method that is used to find the next available port.
+	 *
+	 * It used the given port-range to limit the range of ports that are tried.
 	 *
 	 * @param portRangeStart The first port that is tried
 	 * @param portRangeEnd The last port that is tried
