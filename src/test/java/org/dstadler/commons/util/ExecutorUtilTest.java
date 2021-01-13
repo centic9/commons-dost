@@ -34,7 +34,7 @@ public class ExecutorUtilTest {
     }
 
     @Test
-    public void testShutdownWithThread() {
+    public void testShutdownWithThread() throws InterruptedException {
         ExecutorService executor = Executors.newSingleThreadExecutor(
                 ExecutorUtil.createThreadFactory("ExecutorTest"));
 
@@ -49,7 +49,10 @@ public class ExecutorUtilTest {
         assertNotNull("There should be a thread running now",
                 ExecutorUtil.lookupThread("ExecutorTest"));
 
-        ExecutorUtil.shutdownAndAwaitTermination(executor, 10);
+        ExecutorUtil.shutdownAndAwaitTermination(executor, 50);
+
+        // give the thread some time to stop
+        ThreadTestHelper.waitForThreadToFinishSubstring("ExecutorTest", 1000);
 
         ThreadTestHelper.assertNoThreadLeft(
                 "No thread expected after shutting down the executor, look at log for thread-dump",
