@@ -15,7 +15,7 @@ public class ThreadDump {
 	public static final String NEWLINE = System.getProperty("line.separator");
 
 	private static final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-	private ThreadInfo [] infos;
+	private final ThreadInfo [] infos;
 	public static final String THREADDUMP_START =	"----- BEGIN THREAD DUMP -----";
 	public static final String THREADDUMP_END =	"------ END THREAD DUMP ------";
 
