@@ -83,6 +83,10 @@ public class ExecutorUtilTest {
 
         ExecutorUtil.shutdownAndAwaitTermination(executor, 10);
 
+        // allow some time for thread to vanish from the list of threads, sometimes
+        // they can "linger" on for a short while...
+        ThreadTestHelper.waitForThreadToFinishSubstring("ExecutorTest");
+
         ThreadTestHelper.assertNoThreadLeft(
                 "No thread expected after shutting down the executor, look at log for thread-dump",
                 "ExecutorTest");
