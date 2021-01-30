@@ -1,6 +1,7 @@
 package org.dstadler.commons.thread;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.commons.util.SuppressForbidden;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,7 @@ public class ThreadUtils {
      * @throws InterruptedException If the currently executing thread
      *          was interrupted while waiting
      */
+    @SuppressForbidden(reason = "This method calls Thread.stop by definition")
     public static void stopThread(Thread thread, int joinTimeMs) throws InterruptedException {
         // let thread shut down on it's own first
         thread.join(1000);
