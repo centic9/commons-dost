@@ -22,11 +22,6 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 
-
-/**
- *
- * @author dominik.stadler
- */
 public class UrlUtilsTest {
     private static final Logger log = LoggerFactory.make();
 
@@ -120,7 +115,8 @@ public class UrlUtilsTest {
 		for (int port = PORT_RANGE_START; port < PORT_RANGE_END; port++) {
 			try {
 				try (ServerSocket sock = new ServerSocket(port)) {
-				    sock.close();
+					//noinspection RedundantExplicitClose
+					sock.close();
 				}
 				//
 				return port;
@@ -285,20 +281,21 @@ public class UrlUtilsTest {
 	}
 
 	@Test
-	public void testRunWithDifferentLoglevel() {
-		final AtomicReference<Exception> exception = new AtomicReference<>(null);
+	public void testRunWithDifferentLoglevel() throws Exception {
+		final AtomicReference<Exception> exc = new AtomicReference<>(null);
 		TestHelpers.runTestWithDifferentLogLevel(() -> {
             try {
                 testRetrieveDataString();
                 testIsAvailable();
                 testRetrieveDataPost();
             } catch (Exception e) {
-                exception.set(e);
+                exc.set(e);
             }
-
         }, UrlUtils.class.getName(), Level.FINE);
 
-		assertNull(exception.get());
+		if (exc.get() != null) {
+			throw exc.get();
+		}
 	}
 
     @Test
