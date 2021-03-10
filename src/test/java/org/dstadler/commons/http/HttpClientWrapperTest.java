@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.util.EntityUtils;
 import org.dstadler.commons.net.UrlUtils;
+import org.dstadler.commons.testing.MemoryLeakVerifier;
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.After;
@@ -35,8 +36,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * This test is very similar to HttpClientAsyncWrapperTest so that we verify both
+ * sync and async HttpClient in the same way
+ */
 @RunWith(Parameterized.class)
 public class HttpClientWrapperTest {
+    private static final MemoryLeakVerifier verifier = new MemoryLeakVerifier();
+
     private HttpClientWrapper wrapper;
 
     @Parameterized.Parameters(name = "UseAuth: {0}")
@@ -61,6 +68,8 @@ public class HttpClientWrapperTest {
     @After
     public void tearDown() throws IOException {
         wrapper.close();
+
+        verifier.assertGarbageCollected();
     }
 
     @Test
@@ -79,6 +88,10 @@ public class HttpClientWrapperTest {
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
             assertEquals("ok", wrapper.simpleGet("http://localhost:" + server.getPort(), "some body data"));
         }
+
+        try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
+            assertEquals("ok", wrapper.simpleGet("http://localhost:" + server.getPort(), (String)null));
+        }
     }
 
     @Test
@@ -86,8 +99,12 @@ public class HttpClientWrapperTest {
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
+            verifier.addObject(server);
+
             final AtomicReference<String> str = new AtomicReference<>();
             wrapper.simpleGet("http://localhost:" + server.getPort(), inputStream -> {
+                verifier.addObject(inputStream);
+
                 try {
                     str.set(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
                 } catch (IOException e) {
@@ -109,6 +126,12 @@ public class HttpClientWrapperTest {
             final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
             try (CloseableHttpResponse response = wrapper.getHttpClient().execute(httpGet)) {
                 HttpEntity entity = HttpClientWrapper.checkAndFetch(response, "http://localhost:" + server.getPort());
+
+                // ensure none of the objects stays in memory after the client is closed
+                verifier.addObject(httpGet);
+                verifier.addObject(response);
+                verifier.addObject(entity);
+                verifier.addObject(entity.getContent());
 
                 try {
                     String string = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
@@ -166,6 +189,9 @@ public class HttpClientWrapperTest {
             try {
                 final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
                 try (CloseableHttpResponse response = wrapper.getHttpClient().execute(httpGet)) {
+                    verifier.addObject(httpGet);
+                    verifier.addObject(response);
+
                     HttpClientWrapper.checkAndFetch(response, "http://localhost:" + server.getPort());
                 }
                 fail("Should throw an exception");
@@ -298,6 +324,8 @@ public class HttpClientWrapperTest {
     private void downloadWithBuffer(String url, File destination, int timeoutMs) throws IOException, IllegalStateException {
         try (HttpClientWrapper client = new HttpClientWrapper(timeoutMs)) {
             client.simpleGet(url, inputStream -> {
+                verifier.addObject(inputStream);
+
                 try {
                     FileUtils.copyInputStreamToFile(new BufferedInputStream(inputStream, 100*1024), destination);
                 } catch (IOException e) {
@@ -314,6 +342,8 @@ public class HttpClientWrapperTest {
                 String url = "http://localhost:" + server.getPort();
                 final HttpUriRequest httpGet = new HttpHead(url);
                 try (CloseableHttpResponse response = httpClient.getHttpClient().execute(httpGet)) {
+                    verifier.addObject(httpGet);
+                    verifier.addObject(response);
 
                     assertNull("Entity is null in this case", response.getEntity());
 
