@@ -1,27 +1,5 @@
 package org.dstadler.commons.http;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,26 +8,37 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -58,13 +47,10 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
  * disables SSL verification to work with self-signed SSL certificates
  * on web pages.
  */
-public class HttpClientWrapper implements Closeable {
+public class HttpClientWrapper extends AbstractClientWrapper implements Closeable {
 	private final static Logger log = LoggerFactory.make();
 
 	private final CloseableHttpClient httpClient;
-
-	private final int timeoutMs;
-	private final boolean withAuth;
 
 	/**
 	 * Construct the {@link HttpClient} with the given authentication values
@@ -75,7 +61,7 @@ public class HttpClientWrapper implements Closeable {
 	 * @param timeoutMs The timeout for socket connection and reading, specified in milliseconds
 	 */
 	public HttpClientWrapper(String user, String password, int timeoutMs) {
-		super();
+		super(timeoutMs, true);
 
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(
@@ -94,12 +80,10 @@ public class HttpClientWrapper implements Closeable {
 				.setDefaultRequestConfig(reqConfig);
 
 		// add a permissive SSL Socket Factory to the builder
-		builder = createSSLSocketFactory(builder);
+		createSSLSocketFactory(builder);
 
 		// finally create the HttpClient instance
 		this.httpClient = builder.build();
-		this.timeoutMs = timeoutMs;
-		this.withAuth = true;
 	}
 
     /**
@@ -109,7 +93,7 @@ public class HttpClientWrapper implements Closeable {
      * @param timeoutMs The timeout for socket connection and reading, specified in milliseconds
      */
 	public HttpClientWrapper(int timeoutMs) {
-		super();
+		super(timeoutMs, false);
 
 		RequestConfig reqConfig = RequestConfig.custom()
 			    .setSocketTimeout(timeoutMs)
@@ -122,12 +106,10 @@ public class HttpClientWrapper implements Closeable {
 				.setDefaultRequestConfig(reqConfig);
 
 		// add a permissive SSL Socket Factory to the builder
-		builder = createSSLSocketFactory(builder);
+		createSSLSocketFactory(builder);
 
 		// finally create the HttpClient instance
 		this.httpClient = builder.build();
-		this.timeoutMs = timeoutMs;
-		this.withAuth = false;
 	}
 
 	/**
@@ -139,106 +121,14 @@ public class HttpClientWrapper implements Closeable {
 		return httpClient;
 	}
 
-	/**
-	 * Perform a simple get-operation and return the resulting String.
-	 *
-	 * @param url The URL to query
-	 * @return The data returned when retrieving the data from the given url, converted to a String.
-	 * @throws IOException if the HTTP status code is not 200.
-	 */
-	public String simpleGet(String url) throws IOException {
-		final AtomicReference<String> str = new AtomicReference<>();
-		simpleGetInternal(url, inputStream -> {
-            try {
-                str.set(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }, null);
 
-		return str.get();
-	}
+	protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException {
+		final HttpUriRequest httpGet = getHttpGet(url, body);
 
-	/**
-	 * Perform a simple get-operation with a request body and return the resulting String.
-	 *
-	 * @param url The URL to query
-	 * @param body Additional data to send with the request as HTTP body
-	 * @return The data returned when retrieving the data from the given url, converted to a String.
-	 * @throws IOException if the HTTP status code is not 200.
-	 */
-	public String simpleGet(String url, String body) throws IOException {
-		final AtomicReference<String> str = new AtomicReference<>();
-		simpleGetInternal(url, inputStream -> {
-            try {
-                str.set(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }, body);
-
-		return str.get();
-	}
-
-	/**
-	 * Perform a simple get-operation and return the resulting byte-array.
-	 *
-	 * @param url The URL to query
-	 * @return The data returned when retrieving the data from the given url.
-	 * @throws IOException if the HTTP status code is not 200.
-	 */
-	public byte[] simpleGetBytes(String url) throws IOException {
-		final AtomicReference<byte[]> bytes = new AtomicReference<>();
-		simpleGetInternal(url, inputStream -> {
-            try {
-                bytes.set(IOUtils.toByteArray(inputStream));
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }, null);
-
-		return bytes.get();
-	}
-
-	/**
-	 * Perform a simple get-operation and passes the resulting InputStream to the given Consumer
-	 *
-	 * @param url The URL to query
-	 * @param consumer A Consumer which receives the InputStream and can process the data
-	 *                 on-the-fly in streaming fashion without retrieving all of the data into memory
-	 *                 at once.
-	 *
-	 * @throws IOException if the HTTP status code is not 200.
-	 */
-	public void simpleGet(String url, Consumer<InputStream> consumer) throws IOException {
-		simpleGetInternal(url, consumer, null);
-	}
-
-	private void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException {
-        final HttpUriRequest httpGet;
-        if(body == null) {
-            httpGet = new HttpGet(url);
-        } else {
-            httpGet = new HttpGetWithBody(url);
-            ((HttpGetWithBody)httpGet).setEntity(new StringEntity(body));
-        }
-
-        final CloseableHttpResponse execute;
+		final CloseableHttpResponse execute;
         if(withAuth) {
-            // Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
-            AuthCache authCache = new BasicAuthCache();
-            BasicScheme basicAuth = new BasicScheme();
-
-            // Generate BASIC scheme object and add it to the local auth cache
-            URL cacheUrl = new URL(url);
-            HttpHost targetHost = new HttpHost(cacheUrl.getHost(), cacheUrl.getPort(), cacheUrl.getProtocol());
-            authCache.put(targetHost, basicAuth);
-
-            // Add AuthCache to the execution context
-            HttpClientContext context = HttpClientContext.create();
-            //context.setCredentialsProvider(credsProvider);
-            context.setAuthCache(authCache);
-
+			HttpClientContext context = HttpClientContext.create();
+			HttpHost targetHost = getHttpHostWithAuth(url, context);
             execute = httpClient.execute(targetHost, httpGet, context);
         } else {
             execute = httpClient.execute(httpGet);
@@ -256,19 +146,8 @@ public class HttpClientWrapper implements Closeable {
 	}
 
 	public String simplePost(String url, String body) throws IOException {
-		// Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
-		final AuthCache authCache = new BasicAuthCache();
-		final BasicScheme basicAuth = new BasicScheme();
-
-		// Generate BASIC scheme object and add it to the local auth cache
-		URL cacheUrl = new URL(url);
-		HttpHost targetHost = new HttpHost(cacheUrl.getHost(), cacheUrl.getPort(), cacheUrl.getProtocol());
-		authCache.put(targetHost, basicAuth);
-
-		// Add AuthCache to the execution context
 		HttpClientContext context = HttpClientContext.create();
-		//context.setCredentialsProvider(credsProvider);
-		context.setAuthCache(authCache);
+		HttpHost targetHost = getHttpHostWithAuth(url, context);
 
 		final HttpPost httpPost = new HttpPost(url);
 		if(body != null) {
@@ -286,29 +165,10 @@ public class HttpClientWrapper implements Closeable {
 		}
 	}
 
-	private HttpClientBuilder createSSLSocketFactory(HttpClientBuilder builder) {
+	private void createSSLSocketFactory(HttpClientBuilder builder) {
 		try {
 	        // Trust all certs, even self-signed and invalid hostnames, ...
-	        final SSLContext sslcontext = SSLContext.getInstance("TLS");
-	        sslcontext.init(null,
-	        		new TrustManager[] { new X509TrustManager() {
-                        @Override
-						public X509Certificate[] getAcceptedIssuers() {
-                            return null;
-                        }
-
-                        @Override
-						public void checkClientTrusted(
-                                X509Certificate[] certs, String authType) {
-                        	//
-                        }
-
-                        @Override
-						public void checkServerTrusted(
-                                X509Certificate[] certs, String authType) {
-                        	//
-                        }
-                    } }, new SecureRandom());
+	        final SSLContext sslcontext = createSSLContext();
 
 	        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
 	                sslcontext,
@@ -335,7 +195,6 @@ public class HttpClientWrapper implements Closeable {
 		} catch (GeneralSecurityException e) {
 			log.log(Level.WARNING, "Could not create SSLSocketFactory for accepting all certificates", e);
 		}
-		return builder;
 	}
 
 	@Override
