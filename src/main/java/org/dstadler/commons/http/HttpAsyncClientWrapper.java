@@ -206,7 +206,7 @@ public class HttpAsyncClientWrapper extends AbstractClientWrapper implements Clo
      * 		a HTTP code other than 200.
      */
     public static String retrieveData(String url, String user, String password, int timeoutMs) throws IOException {
-        try (HttpClientWrapper wrapper = new HttpClientWrapper(user, password, timeoutMs)) {
+        try (HttpAsyncClientWrapper wrapper = new HttpAsyncClientWrapper(user, password, timeoutMs)) {
             return wrapper.simpleGet(url);
         }
     }
