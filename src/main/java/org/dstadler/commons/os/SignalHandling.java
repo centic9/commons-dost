@@ -1,5 +1,6 @@
 package org.dstadler.commons.os;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -48,7 +49,7 @@ public class SignalHandling {
     private static void installSignalHandler(Consumer<Object> shutdownHook, String packageName, String handlerName) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Class<?> signalHandlerClazz = Class.forName(packageName + "." + handlerName);
         Class<?> signalClazz = Class.forName(packageName + ".Signal");
-        Method handleMethod = signalClazz.getDeclaredMethod("handle", signalClazz, signalHandlerClazz);
+        Method handleMethod = signalClazz.getMethod("handle", signalClazz, signalHandlerClazz);
 
         //noinspection SuspiciousInvocationHandlerImplementation
         Object handlerProxy = Proxy.newProxyInstance(signalHandlerClazz.getClassLoader(),
@@ -57,12 +58,9 @@ public class SignalHandling {
                     return null;
                 });
 
-        handleMethod.invoke(null,
-                signalClazz.getDeclaredConstructor(String.class).newInstance("INT"),
-                handlerProxy);
-        handleMethod.invoke(null,
-                signalClazz.getDeclaredConstructor(String.class).newInstance("TERM"),
-                handlerProxy);
+        Constructor<?> constructor = signalClazz.getConstructor(String.class);
+        handleMethod.invoke(null, constructor.newInstance("INT"), handlerProxy);
+        handleMethod.invoke(null, constructor.newInstance("TERM"), handlerProxy);
 
         log.info("Installed signal-handler from '" + packageName + "' via reflection");
     }
