@@ -1,26 +1,54 @@
 package org.dstadler.commons.logging.log4j;
 
-import java.io.File;
-
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.RollingFileAppender;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
+import org.apache.logging.log4j.core.appender.RollingFileAppender;
+import org.apache.logging.log4j.core.appender.rolling.RollingFileManager;
+import org.apache.logging.log4j.core.appender.rolling.TriggeringPolicy;
+import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.junit.Test;
 
-import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import java.io.File;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertNotNull;
 
 public class Log4jUtilsTest {
 	@Test
 	public void testRolloverLogfile() throws Exception {
 		Log4jUtils.rolloverLogfile();
 
+		// ensure some loggers are created
+		Logger logger = Logger.getLogger("somelogger");
+
 		// add appender to cover more
-		Logger.getLogger("somelogger");
-		Logger.getRootLogger().addAppender(new ConsoleAppender());
-		final RollingFileAppender rollingFileAppender = new RollingFileAppender();
 		File file = File.createTempFile("log4j", ".log");
-		rollingFileAppender.setFile(file.getAbsolutePath());
-		Logger.getRootLogger().addAppender(rollingFileAppender);
+		final RollingFileAppender rollingFileAppender = RollingFileAppender.newBuilder().
+				withFileName(file.getAbsolutePath()).
+				setName("test-roll").
+				withFilePattern("*").
+				withPolicy(new TriggeringPolicy() {
+					@Override
+					public void initialize(RollingFileManager manager) {
+					}
+
+					@Override
+					public boolean isTriggeringEvent(LogEvent logEvent) {
+						return true;
+					}
+				}).
+				build();
+		assertNotNull(rollingFileAppender);
+
+		((org.apache.logging.log4j.core.Logger)LogManager.getRootLogger()).addAppender(rollingFileAppender);
+		((org.apache.logging.log4j.core.Logger)LogManager.getRootLogger()).addAppender(ConsoleAppender.newBuilder().
+				setName("test-append").
+				build());
+
+		logger.info("Some test log");
+		LogManager.getRootLogger().log(Level.WARN, "Some root-log");
 
 		Log4jUtils.rolloverLogfile();
 
