@@ -20,11 +20,6 @@ import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Test;
 
-
-/**
- *
- * @author dominik.stadler
- */
 public class LoggerFactoryTest {
 
 	/**

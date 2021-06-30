@@ -6,8 +6,6 @@ import java.io.InputStream;
 
 /**
  * Interface for handling output of searches for matching files.
- *
- * @author dominik.stadler
  */
 public interface OutputHandler {
 	/**

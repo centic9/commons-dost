@@ -50,7 +50,6 @@ public class LoggerFactory {
 	 * Note: Call this method at the very first after main
 	 *
 	 * @throws IOException If the file "logging.properties" is not found in the classpath.
-	 * @author dstadler
 	 */
 	public static void initLogging() throws IOException {
 		sendCommonsLogToJDKLog();

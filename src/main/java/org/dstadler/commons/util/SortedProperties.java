@@ -9,9 +9,6 @@ import java.util.Vector;
  * Helper class to write Java properties sorted
  *
  * See http://www.rgagnon.com/javadetails/java-0614.html
- *
- * @author dominik.stadler
- *
  */
 public class SortedProperties extends Properties {
 	private static final long serialVersionUID = 1L;

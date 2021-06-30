@@ -11,8 +11,6 @@ import org.xml.sax.Attributes;
  * An XML SAX Parser which converts an SVN XML-Log into a Map&lt;Long, LogEntry&gt;
  * where the key is the subversion revision number and the value provides information
  * about the SVN log entry.
- *
- * @author dominik.stadler
  */
 public class SVNLogFileParser extends AbstractSimpleContentHandler<Long, LogEntry> {
 	// number of paths to store with the LogEntry, if set too high, applications will go OOM...

@@ -3,7 +3,6 @@ package org.dstadler.commons.svn;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,16 +17,11 @@ import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-
-/**
- *
- * @author dominik.stadler
- */
 public class SVNLogFileParserTest {
 
 	@Test
 	public void test() throws SAXException, IOException {
-		try (InputStream inStr = new FileInputStream(new File("src/test/data/svnlog.xml"))) {
+		try (InputStream inStr = new FileInputStream("src/test/data/svnlog.xml")) {
 			Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {}).parseContent(inStr);
 			assertNotNull(parsed);
 
@@ -41,7 +35,7 @@ public class SVNLogFileParserTest {
 
 	@Test
 	public void testWithPaths() throws SAXException, IOException {
-		try (InputStream inStr = new FileInputStream(new File("src/test/data/svnlogwithpath.xml"))) {
+		try (InputStream inStr = new FileInputStream("src/test/data/svnlogwithpath.xml")) {
 			Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {"/trunk/CommonCrawl"}).parseContent(inStr);
 			assertNotNull(parsed);
 
@@ -104,7 +98,7 @@ public class SVNLogFileParserTest {
 
 	@Test
 	public void testWithDifferentPathLimit() throws SAXException, IOException {
-		try (InputStream inStr = new FileInputStream(new File("src/test/data/svnlogwithpath.xml"))) {
+		try (InputStream inStr = new FileInputStream("src/test/data/svnlogwithpath.xml")) {
 			Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {"/trunk/CommonCrawl"}, null, 2).parseContent(inStr);
 			assertNotNull(parsed);
 
@@ -125,7 +119,7 @@ public class SVNLogFileParserTest {
 
 	@Test
 	public void testWithLogEntryRunnable() throws SAXException, IOException {
-		try (InputStream inStr = new FileInputStream(new File("src/test/data/svnlogwithpath.xml"))) {
+		try (InputStream inStr = new FileInputStream("src/test/data/svnlogwithpath.xml")) {
 		    final AtomicInteger count = new AtomicInteger(0);
 			Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {"/trunk/CommonCrawl"}, entry -> {
                 count.incrementAndGet();
@@ -143,7 +137,7 @@ public class SVNLogFileParserTest {
 
 	@Test
 	public void testInvalidXML1InvalidNesting() throws SAXException, IOException {
-		try (InputStream inStr = new FileInputStream(new File("src/test/data/svnlogfail1.xml"))) {
+		try (InputStream inStr = new FileInputStream("src/test/data/svnlogfail1.xml")) {
 			new SVNLogFileParser(new String[] {}).parseContent(inStr);
 			fail("Should catch exception here");
 		} catch (IllegalStateException e) {
@@ -153,7 +147,7 @@ public class SVNLogFileParserTest {
 
 	@Test
 	public void testInvalidXML2NoRevision() throws SAXException, IOException {
-		try (InputStream inStr = new FileInputStream(new File("src/test/data/svnlogfail2.xml"))) {
+		try (InputStream inStr = new FileInputStream("src/test/data/svnlogfail2.xml")) {
 			new SVNLogFileParser(new String[] {}).parseContent(inStr);
 			fail("Should catch exception here");
 		} catch (IllegalStateException e) {

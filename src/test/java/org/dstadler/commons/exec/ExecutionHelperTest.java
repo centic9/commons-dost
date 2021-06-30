@@ -18,11 +18,6 @@ import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
-
-/**
- *
- * @author dominik.stadler
- */
 public class ExecutionHelperTest {
 	private final static Logger log = LoggerFactory.make();
 

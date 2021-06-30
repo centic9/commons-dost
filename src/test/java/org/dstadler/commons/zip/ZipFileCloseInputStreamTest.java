@@ -17,12 +17,6 @@ import org.apache.commons.io.IOUtils;
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Test;
 
-
-
-/**
- *
- * @author dominik.stadler
- */
 public class ZipFileCloseInputStreamTest {
 
 	@Test
@@ -132,7 +126,7 @@ public class ZipFileCloseInputStreamTest {
 				try (InputStream input = new FileInputStream(file) {
 
 					@Override
-					public synchronized void reset() throws IOException {
+					public synchronized void reset() {
 						// just do nothing to make reset() supported here
 					}
 				}) {

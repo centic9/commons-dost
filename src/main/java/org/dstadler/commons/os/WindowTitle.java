@@ -7,9 +7,6 @@ import com.sun.jna.Platform;
 /**
  * Small helper class that can be used to set the console title
  * on Windows.
- *
- * @author dominik.stadler
- *
  */
 public class WindowTitle {
 	/**

@@ -18,11 +18,6 @@ import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.junit.Assume;
 import org.junit.Test;
 
-
-/**
- *
- * @author dominik.stadler
- */
 public class UtilsTest {
 
 	private static final int NUMBER_OF_RUNS = 100000;

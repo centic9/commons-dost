@@ -8,8 +8,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Data object for one SVN changelog
- *
- * @author dominik.stadler
  */
 public class LogEntry {
 	public final static String MORE = "...";

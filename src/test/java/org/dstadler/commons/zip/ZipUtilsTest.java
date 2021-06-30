@@ -32,11 +32,6 @@ import org.dstadler.commons.zip.ZipUtils.ZipFileVisitor;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
-/**
- *
- * @author dominik.stadler
- */
 public class ZipUtilsTest {
 	private static final String TEST_DIRECTORY = "directory123";
 

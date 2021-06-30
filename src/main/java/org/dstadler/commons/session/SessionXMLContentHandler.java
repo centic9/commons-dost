@@ -7,8 +7,7 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.xml.AbstractSimpleContentHandler;
 
 /**
- * @author dominik.stadler
- *
+ * XML Parser for parsing XML-documents with tags "sessionid"
  */
 public class SessionXMLContentHandler extends AbstractSimpleContentHandler<String, String> {
 	private final static Logger log = LoggerFactory.make();

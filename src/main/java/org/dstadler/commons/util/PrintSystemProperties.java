@@ -5,9 +5,6 @@ import java.io.IOException;
 
 /**
  * A simple application which prints out the current Java system properties.
- *
- * @author dominik.stadler
- *
  */
 public class PrintSystemProperties {
 	public static void main(String[] args) throws IOException  {

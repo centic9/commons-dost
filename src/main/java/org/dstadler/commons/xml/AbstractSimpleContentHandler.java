@@ -26,9 +26,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 /**
  * Simple SAX Parser to handle XML data, it is usually subclassed to provide the
  * missing pieces of information to actually collect some information out of the XML data.
- *
- * @author dominik.stadler
- *
  */
 public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> extends DefaultHandler {
 	private final static Logger log = LoggerFactory.make();
@@ -108,7 +105,7 @@ public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> ex
 	}
 
 	@Override
-	public void fatalError(SAXParseException exception) throws SAXException {
+	public void fatalError(SAXParseException exception) {
 		log.log(Level.SEVERE, "Error in SAX Parsing", exception);
 	}
 

@@ -6,10 +6,6 @@ import org.junit.Test;
 
 import org.dstadler.commons.testing.TestHelpers;
 
-/**
- *
- * @author dominik.stadler
- */
 public class IPTest {
 	@Test
 	public void testIP() {

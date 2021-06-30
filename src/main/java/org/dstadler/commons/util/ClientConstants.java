@@ -2,9 +2,6 @@ package org.dstadler.commons.util;
 
 /**
  * Just copied from general ClientConstants to not introduce a dependency here.
- *
- * @author dominik.stadler
- *
  */
 public class ClientConstants {
     public static final String DOT = ".";

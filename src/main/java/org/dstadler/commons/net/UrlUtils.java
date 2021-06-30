@@ -23,8 +23,6 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
  * Collection of simple utility-methods for accessing network resources.
  *
  * For more sophisticated access use {@link org.dstadler.commons.http.HttpClientWrapper}.
- *
- * @author dominik.stadler
  */
 public class UrlUtils {
     private static final Logger LOGGER = LoggerFactory.make();

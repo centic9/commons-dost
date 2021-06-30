@@ -31,8 +31,6 @@ java.util.logging.ConsoleHandler.formatter=org.dstadler.commons.logging.jdk.Brie
  *
  * and set the following system property:
  *  -Djava.util.logging.config.file=logging.properties
- *
- * @author dominik.stadler
  */
 public class BriefLogFormatter extends Formatter {
 
