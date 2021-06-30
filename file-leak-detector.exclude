@@ -1,10 +1,9 @@
 # Logging
-org.apache.log4j.FileAppender.setFile
 java.util.logging.Level.getLocalizedLevelName
 java.util.logging.Logger$1.run
 java.util.logging.LogManager$4.run
 
-# Security 
+# Security
 javax.crypto.JceSecurity.setupJurisdictionPolicies
 sun.security.jca.ProviderConfig.doLoadProvider
 com.sun.org.apache.xerces.internal.utils.SecuritySupport$7.run
