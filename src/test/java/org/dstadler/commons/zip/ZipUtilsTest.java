@@ -55,15 +55,8 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testGetZipContentsRecursive1() throws Exception {
-		/*
-		 * File file = File.createTempFile("somefile", ".txt");
-		 * FileUtils.writeStringToFile(file, "somedata");
-		 */
 		File zipfile = File.createTempFile("zipfile", ".zip");
 		try {
-
-			// assertEquals("somedata", IOUtils.toString(ZipUtils.getZipContentsRecursive(file.getAbsolutePath())));
-			// ZipFile zip = new ZipFile(zipfile);
 			ZipEntry entry = new ZipEntry("filename");
 
 			try (ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile))) {
@@ -83,10 +76,6 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testGetZipContentsRecursive2() throws Exception {
-		/*
-		 * File file = File.createTempFile("somefile", ".txt");
-		 * FileUtils.writeStringToFile(file, "somedata");
-		 */
 		File zipfile2 = createNestedZip();
 
 		try {
@@ -189,6 +178,7 @@ public class ZipUtilsTest {
 		assertTrue(ZipUtils.isZip("file.ear"));
 		assertTrue(ZipUtils.isZip("file.jar"));
 		assertTrue(ZipUtils.isZip("file.aar"));
+		assertTrue(ZipUtils.isZip("file.jmod"));
 
 		assertFalse(ZipUtils.isZip("file.some"));
 		assertFalse(ZipUtils.isZip("file.zip.gz"));
@@ -250,8 +240,6 @@ public class ZipUtilsTest {
 		try
 		{
 			{ // write inner zip file
-				// assertEquals("somedata", IOUtils.toString(ZipUtils.getZipContentsRecursive(file.getAbsolutePath())));
-				// ZipFile zip = new ZipFile(zipfile);
 				ZipEntry entry = new ZipEntry("filename");
 
 				try (ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile))) {
@@ -359,15 +347,8 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testGetZipStringContentsRecursive1() throws Exception {
-		/*
-		 * File file = File.createTempFile("somefile", ".txt");
-		 * FileUtils.writeStringToFile(file, "somedata");
-		 */
 		File zipfile = File.createTempFile("zipfile", ".zip");
-
 		try {
-			// assertEquals("somedata", IOUtils.toString(ZipUtils.getZipStringContentsRecursive(file.getAbsolutePath())));
-			// ZipFile zip = new ZipFile(zipfile);
 			ZipEntry entry = new ZipEntry("filename");
 
 			try (ZipOutputStream zipout = new ZipOutputStream(new FileOutputStream(zipfile))) {
@@ -383,14 +364,10 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testGetZipStringContentsRecursive2() throws Exception {
-		/*
-		 * File file = File.createTempFile("somefile", ".txt");
-		 * FileUtils.writeStringToFile(file, "somedata");
-		 */
 		File zipfile2 = createNestedZip();
 
 		try {
-		assertEquals("somedata",
+			assertEquals("somedata",
 				ZipUtils.getZipStringContentsRecursive(zipfile2.getAbsolutePath() + "!nested.zip!filename"));
 		} finally {
 		    assertTrue(zipfile2.exists());

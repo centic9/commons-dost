@@ -42,7 +42,7 @@ public class ZipUtils {
 		".zip",
 
 		// Java archives
-		".jar", ".war", ".ear",
+		".jar", ".war", ".ear", ".jmod",
 
 		// Axis2 Services archives
 		".aar",
@@ -102,7 +102,7 @@ public class ZipUtils {
 	 * @param zipName Name of the file to read, mainly used for building the resulting pointer into the zip-file
 	 * @param zipInput An InputStream which is positioned at the beginning of the zip-file contents
 	 * @param searchFilter A {@link FileFilter} which determines if files in the zip-file are matched
-	 * @param results A existing list where found matches are added to.
+	 * @param results A modifiable list, any found matches are added to this list.
 	 *
 	 * @throws IOException
 	 *         If the ZIP file cannot be read, e.g. if it is corrupted.
