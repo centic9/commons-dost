@@ -249,6 +249,7 @@ public class HttpClientWrapper extends AbstractClientWrapper implements Closeabl
         if(statusCode > 206) {
 			String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " +
 					response.getStatusLine().getReasonPhrase() + "\n" +
+					(response.getFirstHeader("Location") == null ? "" : response.getFirstHeader("Location") + "\n") +
 					(response.getEntity() == null ? "" : StringUtils.abbreviate(IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8), 1024));
             log.warning(msg);
 
