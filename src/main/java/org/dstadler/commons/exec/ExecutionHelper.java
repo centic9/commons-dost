@@ -15,6 +15,7 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.dstadler.commons.arrays.ArrayUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
 /**
@@ -42,7 +43,7 @@ public class ExecutionHelper {
 	 * @return An InputStream which provides the output of the command.
      *
      * @throws IOException Execution of sub-process failed or the
-     *          sub-process returned a exit value indicating a failure
+     *          sub-process returned an exit value indicating a failure
 	 */
 	public static InputStream getCommandResult(
 			CommandLine cmdLine, File dir, int expectedExit,
@@ -66,7 +67,7 @@ public class ExecutionHelper {
 	 * @return An InputStream which provides the output of the command.
      *
      * @throws IOException Execution of sub-process failed or the
-     *          sub-process returned a exit value indicating a failure
+     *          sub-process returned an exit value indicating a failure
 	 */
 	public static InputStream getCommandResult(
 			CommandLine cmdLine, File dir, int expectedExit,
@@ -80,7 +81,7 @@ public class ExecutionHelper {
 
 				return new ByteArrayInputStream(outStr.toByteArray());
 			} catch (IOException e) {
-				log.warning("Had output before error: " + new String(outStr.toByteArray()));
+				log.warning("Had output before error: " + outStr);
 				throw new IOException(e);
 			}
 		}
@@ -97,7 +98,7 @@ public class ExecutionHelper {
 	 * @param stream An OutputStream which receives the output of the executed command
      *
      * @throws IOException Execution of sub-process failed or the
-     *          sub-process returned a exit value indicating a failure
+     *          sub-process returned an exit value indicating a failure
 	 */
 	public static void getCommandResultIntoStream(
 			CommandLine cmdLine, File dir, int expectedExit,
@@ -117,7 +118,7 @@ public class ExecutionHelper {
 	 * @param environment Environment variables that should be set for the execution of the command
 	 *
 	 * @throws IOException Execution of subprocess failed or the
-     *          subprocess returned a exit value indicating a failure
+     *          subprocess returned an exit value indicating a failure
 	 */
 	public static void getCommandResultIntoStream(
 			CommandLine cmdLine, File dir, int expectedExit,
@@ -143,7 +144,7 @@ public class ExecutionHelper {
 
 	private static void execute(CommandLine cmdLine, File dir, Executor executor,
 								Map<String,String> environment) throws IOException {
-		log.info("-Executing(" + dir + "): " + cmdLine);
+		log.info("-Executing(" + dir + "): " + ArrayUtils.toString(cmdLine.toStrings(), " ", "", ""));
 		try {
 			int exitValue = executor.execute(cmdLine, environment);
 			if (exitValue != 0) {

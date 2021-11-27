@@ -48,7 +48,6 @@ public class ExecutionHelperTest {
 		}
 	}
 
-
 	@Test
 	public void testGetCommandResultIgnoreExitValueStatus() throws IOException {
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -57,7 +56,9 @@ public class ExecutionHelperTest {
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
         	assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result, StandardCharsets.UTF_8));
+			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
+			log.info("Svn-Status reported:\n" + output);
+			TestHelpers.assertNotContains(output, "status");
 		}
 	}
 
@@ -68,7 +69,9 @@ public class ExecutionHelperTest {
 
         try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
         	assertNotNull(result);
-            log.info("Svn-Update reported:\n" + IOUtils.toString(result, StandardCharsets.UTF_8));
+			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
+			log.info("Svn-Help reported:\n" + output);
+			TestHelpers.assertContains(output, "help");
         }
     }
 
@@ -79,7 +82,22 @@ public class ExecutionHelperTest {
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result, StandardCharsets.UTF_8));
+			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
+			log.info("Svn reported:\n" + output);
+			TestHelpers.assertContains(output, "notexists");
+		}
+	}
+
+    @Test
+	public void testGetCommandResultIgnoreExitValueArgumentWithBlanks() throws IOException {
+		CommandLine cmdLine = new CommandLine(SVN_CMD);
+		cmdLine.addArgument("notexists and more notexists");
+
+		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
+			assertNotNull(result);
+			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
+			log.info("Svn reported:\n" + output);
+			TestHelpers.assertContains(output, "\"notexists and more notexists\"");
 		}
 	}
 
@@ -91,7 +109,9 @@ public class ExecutionHelperTest {
 		log.info("Working dir: " + new File(".").getAbsolutePath());
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000, new ByteArrayInputStream(new byte[] {}))) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result, StandardCharsets.UTF_8));
+			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
+			log.info("Svn-Help reported:\n" + output);
+			TestHelpers.assertContains(output, "help");
 		}
 	}
 
@@ -121,7 +141,9 @@ public class ExecutionHelperTest {
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000, new ByteArrayInputStream(new byte[] {}))) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result, StandardCharsets.UTF_8));
+			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
+			log.info("Svn-status reported:\n" + output);
+			TestHelpers.assertNotContains(output, "status");
 		}
 	}
 
@@ -132,7 +154,9 @@ public class ExecutionHelperTest {
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000, new ByteArrayInputStream(new byte[] {}))) {
 			assertNotNull(result);
-			log.info("Svn-Update reported:\n" + IOUtils.toString(result, StandardCharsets.UTF_8));
+			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
+			log.info("Svn reported:\n" + output);
+			TestHelpers.assertContains(output, "notexists");
 		}
 	}
 
