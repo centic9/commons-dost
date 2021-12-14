@@ -49,6 +49,18 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
+	public void testGetCommandResultFailureNoOutput() {
+		CommandLine cmdLine = new CommandLine("/bin/false");
+
+		try {
+			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000);
+			fail("Should throw exception");
+		} catch (IOException e) {
+			TestHelpers.assertContains(e, "Process exited with an error: 1", "/bin/false");
+		}
+	}
+
+	@Test
 	public void testGetCommandResultIgnoreExitValueStatus() throws IOException {
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("status");
