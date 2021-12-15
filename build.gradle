@@ -177,3 +177,13 @@ uploadArchives {
 }
 
 afterReleaseBuild.dependsOn uploadArchives
+
+// settings for the task 'closeAndReleaseRepository'
+nexusStaging {
+    // retrieved via Gradle Task 'getStagingProfile'
+    stagingProfileId = 'b1687c5b3e1bd'
+
+    // use a much longer timeout as Nexus is sometimes very slow
+    numberOfRetries = 180
+    delayBetweenRetriesInMillis = 30000
+}
