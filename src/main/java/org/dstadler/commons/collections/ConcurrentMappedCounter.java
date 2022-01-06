@@ -18,13 +18,20 @@ public class ConcurrentMappedCounter<T> implements MappedCounter<T> {
     private final MappedCounter<T> counter = new MappedCounterImpl<>();
 
     @Override
-    public void addInt(T k, int v) {
+    public void add(T k, long v) {
         synchronized (counter) {
-            counter.addInt(k, v);
+            counter.add(k, v);
         }
     }
 
-    @Override
+	@Override
+	public void inc(T k) {
+		synchronized (counter) {
+			counter.inc(k);
+		}
+	}
+
+	@Override
     public void count(Collection<T> items) {
         synchronized (counter) {
             counter.count(items);
@@ -32,14 +39,14 @@ public class ConcurrentMappedCounter<T> implements MappedCounter<T> {
     }
 
     @Override
-    public int get(T k) {
+    public long get(T k) {
         synchronized (counter) {
             return counter.get(k);
         }
     }
 
     @Override
-    public int remove(T key) {
+    public long remove(T key) {
         synchronized (counter) {
             return counter.remove(key);
         }
@@ -53,7 +60,7 @@ public class ConcurrentMappedCounter<T> implements MappedCounter<T> {
     }
 
     @Override
-    public Set<Map.Entry<T, Integer>> entries() {
+    public Set<Map.Entry<T, Long>> entries() {
         synchronized (counter) {
             return counter.entries();
         }
@@ -67,14 +74,14 @@ public class ConcurrentMappedCounter<T> implements MappedCounter<T> {
     }
 
     @Override
-    public Map<T, Integer> sortedMap() {
+    public Map<T, Long> sortedMap() {
         synchronized (counter) {
             return counter.sortedMap();
         }
     }
 
     @Override
-    public int sum() {
+    public long sum() {
         synchronized (counter) {
             return counter.sum();
         }
@@ -82,6 +89,6 @@ public class ConcurrentMappedCounter<T> implements MappedCounter<T> {
 
     @Override
     public String toString() {
-        return "Concurrent: " + counter.toString();
+        return "Concurrent: " + counter;
     }
 }

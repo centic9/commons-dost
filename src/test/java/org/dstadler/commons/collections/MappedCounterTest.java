@@ -15,8 +15,8 @@ import org.junit.Test;
 public class MappedCounterTest {
     protected <T> MappedCounter<T> createCounter() {
         return new MappedCounterImpl<>();
-    } 
-    
+    }
+
     @Test
     public void test() {
         MappedCounter<String> counter = createCounter();
@@ -24,25 +24,25 @@ public class MappedCounterTest {
         assertNotNull(counter.keys());
         assertNotNull(counter.entries());
 
-        counter.addInt("test", 1);
+        counter.add("test", 1);
         assertEquals(1, counter.get("test"));
 
-        counter.addInt("test", 2);
+        counter.add("test", 2);
         assertEquals(3, counter.get("test"));
 
-        counter.addInt("other", 14);
-        counter.addInt("third", 5);
+        counter.add("other", 14);
+        counter.add("third", 5);
         assertEquals(3, counter.get("test"));
         assertEquals(14, counter.get("other"));
         assertEquals(5, counter.get("third"));
 
-        Map<String, Integer> sortedMap = counter.sortedMap();
-        Iterator<Entry<String, Integer>> iterator = sortedMap.entrySet().iterator();
+        Map<String, Long> sortedMap = counter.sortedMap();
+        Iterator<Entry<String, Long>> iterator = sortedMap.entrySet().iterator();
 
         // sorted by decreasing value
-        assertEquals(Integer.valueOf(14), iterator.next().getValue());
-        assertEquals(Integer.valueOf(5), iterator.next().getValue());
-        assertEquals(Integer.valueOf(3), iterator.next().getValue());
+        assertEquals(Long.valueOf(14), iterator.next().getValue());
+        assertEquals(Long.valueOf(5), iterator.next().getValue());
+        assertEquals(Long.valueOf(3), iterator.next().getValue());
 
         assertEquals(22, counter.sum());
     }
@@ -51,12 +51,12 @@ public class MappedCounterTest {
     public void testSortedMapSorted() {
         MappedCounter<String> counter = createCounter();
 
-        counter.addInt("test", 1);
+        counter.add("test", 1);
         assertEquals(1, counter.get("test"));
-        counter.addInt("other", 1);
-        counter.addInt("third", 1);
-        counter.addInt("fourth", 1);
-        counter.addInt("fifth", 1);
+        counter.add("other", 1);
+        counter.add("third", 1);
+        counter.add("fourth", 1);
+        counter.add("fifth", 1);
         assertEquals(1, counter.get("test"));
         assertEquals(1, counter.get("other"));
         assertEquals(1, counter.get("third"));
@@ -74,25 +74,25 @@ public class MappedCounterTest {
         assertNotNull(counter.keys());
         assertNotNull(counter.entries());
 
-        counter.addInt(26, 1);
+        counter.add(26, 1);
         assertEquals(1, counter.get(26));
 
-        counter.addInt(26, 2);
+        counter.add(26, 2);
         assertEquals(3, counter.get(26));
 
-        counter.addInt(88, 14);
-        counter.addInt(-3432, 5);
+        counter.add(88, 14);
+        counter.add(-3432, 5);
         assertEquals(3, counter.get(26));
         assertEquals(14, counter.get(88));
         assertEquals(5, counter.get(-3432));
 
-        Map<Integer, Integer> sortedMap = counter.sortedMap();
-        Iterator<Entry<Integer, Integer>> iterator = sortedMap.entrySet().iterator();
+        Map<Integer, Long> sortedMap = counter.sortedMap();
+        Iterator<Entry<Integer, Long>> iterator = sortedMap.entrySet().iterator();
 
         // sorted by decreasing value
-        assertEquals(Integer.valueOf(14), iterator.next().getValue());
-        assertEquals(Integer.valueOf(5), iterator.next().getValue());
-        assertEquals(Integer.valueOf(3), iterator.next().getValue());
+        assertEquals(Long.valueOf(14), iterator.next().getValue());
+        assertEquals(Long.valueOf(5), iterator.next().getValue());
+        assertEquals(Long.valueOf(3), iterator.next().getValue());
     }
 
     @Test
@@ -100,8 +100,8 @@ public class MappedCounterTest {
         MappedCounter<String> counter = createCounter();
         TestHelpers.ToStringTest(counter);
 
-        counter.addInt("Str1", 3);
-        counter.addInt("Str4", 6);
+        counter.add("Str1", 3);
+        counter.add("Str4", 6);
 
         TestHelpers.ToStringTest(counter);
 
@@ -113,8 +113,8 @@ public class MappedCounterTest {
         MappedCounter<Integer> counter = createCounter();
         TestHelpers.ToStringTest(counter);
 
-        counter.addInt(234, 3);
-        counter.addInt(754, 6);
+        counter.add(234, 3);
+        counter.add(754, 6);
 
         TestHelpers.ToStringTest(counter);
 
@@ -128,7 +128,7 @@ public class MappedCounterTest {
         assertNotNull(counter.keys());
         assertNotNull(counter.entries());
 
-        counter.addInt("test", 1);
+        counter.add("test", 1);
         assertEquals(1, counter.get("test"));
 
         counter.remove("test");
@@ -165,25 +165,25 @@ public class MappedCounterTest {
     public void testNullKey() {
         MappedCounter<String> counter = createCounter();
 
-        counter.addInt(null, 1);
+        counter.add(null, 1);
 
         assertEquals(1, counter.get(null));
         assertEquals("{null=1}", counter.sortedMap().toString());
 
-        counter.addInt("some", 2);
-        counter.addInt("more", 3);
+        counter.add("some", 2);
+        counter.add("more", 3);
 
         assertEquals(1, counter.get(null));
         assertEquals("{more=3, some=2, null=1}", counter.sortedMap().toString());
 
         // NPE with the same value
-        counter.addInt("other", 1);
+        counter.add("other", 1);
 
         assertEquals(1, counter.get(null));
         assertEquals("{more=3, some=2, null=1, other=1}", counter.sortedMap().toString());
 
         // NPE with the same value
-        counter.addInt("third", 1);
+        counter.add("third", 1);
 
         assertEquals(1, counter.get(null));
         assertEquals("{more=3, some=2, null=1, other=1, third=1}", counter.sortedMap().toString());
@@ -197,9 +197,9 @@ public class MappedCounterTest {
     public void testWithComparable() {
         MappedCounter<TestEnum> counter = new MappedCounterImpl<>();
 
-        counter.addInt(TestEnum.C, 1);
-        counter.addInt(TestEnum.B, 1);
-        counter.addInt(TestEnum.A, 1);
+        counter.add(TestEnum.C, 1);
+        counter.add(TestEnum.B, 1);
+        counter.add(TestEnum.A, 1);
 
         // sorted by enum-order as Enum is a comparable
         assertEquals("{A=1, C=1, B=1}", counter.sortedMap().toString());

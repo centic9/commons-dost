@@ -18,10 +18,10 @@ import java.util.Set;
 public class MappedCounterImpl<T> implements MappedCounter<T> {
 
     // sort on values, highest value first
-    private Map<T, Integer> map = new HashMap<>();
+    private final Map<T, Long> map = new HashMap<>();
 
     @Override
-    public void addInt(T k, int v) {
+    public void add(T k, long v) {
         if (!map.containsKey(k)) {
             map.put(k, v);
         } else {
@@ -29,20 +29,29 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
         }
     }
 
-    @Override
+	@Override
+	public void inc(T k) {
+		if (!map.containsKey(k)) {
+			map.put(k, 1L);
+		} else {
+			map.put(k, map.get(k) + 1);
+		}
+	}
+
+	@Override
     public void count(Collection<T> items) {
         for(T item : items) {
-            addInt(item, 1);
+            add(item, 1);
         }
     }
 
     @Override
-    public int get(T k) {
-        return map.getOrDefault(k, 0);
+    public long get(T k) {
+        return map.getOrDefault(k, 0L);
     }
 
     @Override
-    public int remove(T key) {
+    public long remove(T key) {
         return map.remove(key);
     }
 
@@ -52,7 +61,7 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
     }
 
     @Override
-    public Set<Map.Entry<T, Integer>> entries() {
+    public Set<Map.Entry<T, Long>> entries() {
         return map.entrySet();
     }
 
@@ -62,8 +71,8 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
     }
 
     @Override
-    public Map<T, Integer> sortedMap() {
-        List<Map.Entry<T, Integer>> list = new LinkedList<>(map.entrySet());
+    public Map<T, Long> sortedMap() {
+        List<Map.Entry<T, Long>> list = new LinkedList<>(map.entrySet());
         list.sort((o1, o2) -> {
             // reverse ordering to get highest values first
             int ret = (-1) * o1.getValue().compareTo(o2.getValue());
@@ -84,24 +93,24 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
             }
 
             if(key1 instanceof Comparable) {
-                //noinspection unchecked
+				//noinspection unchecked,rawtypes
                 return ((Comparable)key1).compareTo(key2);
             } else {
                 return key1.toString().compareTo(key2.toString());
             }
         });
 
-        Map<T, Integer> result = new LinkedHashMap<>();
-        for (Map.Entry<T, Integer> entry : list) {
+        Map<T, Long> result = new LinkedHashMap<>();
+        for (Map.Entry<T, Long> entry : list) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
     }
 
     @Override
-    public int sum() {
-        int sum = 0;
-        for(Integer i : map.values()) {
+    public long sum() {
+        long sum = 0;
+        for(Long i : map.values()) {
             sum += i;
         }
         return sum;

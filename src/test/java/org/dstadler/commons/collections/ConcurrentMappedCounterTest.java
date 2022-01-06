@@ -39,15 +39,15 @@ public class ConcurrentMappedCounterTest extends MappedCounterTest {
             @Override
             public void run(int threadNum, int iter) {
                 String key = "iter" + iter;
-                counter.addInt(key, 1);
-                counter.addInt("sum", 1);
+                counter.add(key, 1);
+                counter.add("sum", 1);
 
                 assertTrue(counter.get(key) > 0);
                 assertTrue(counter.get("sum") > 0);
                 assertTrue(counter.keys().size() > 0);
                 assertTrue(counter.entries().size() > 0);
 
-                Map<String, Integer> sortedMap = counter.sortedMap();
+                Map<String, Long> sortedMap = counter.sortedMap();
                 assertTrue(sortedMap.containsKey("sum"));
                 assertTrue(sortedMap.containsKey(key));
 

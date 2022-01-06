@@ -20,7 +20,14 @@ public interface MappedCounter<T> {
 	 * @param k The key for which to add a value
 	 * @param v The amount to add
 	 */
-	void addInt(T k, int v);
+	void add(T k, long v);
+
+	/**
+	 * Increase the value for the given key by one.
+	 *
+	 * @param k The key for which to increment the value
+	 */
+	void inc(T k);
 
 	/**
 	 * Add one for each item in the collection.
@@ -36,7 +43,7 @@ public interface MappedCounter<T> {
 	 *
 	 * @return The current count for the key, 0 if no call was made with that key yet.
 	 */
-	int get(T k);
+	long get(T k);
 
 	/**
 	 * Remove the given key and return the value that was associated with it.
@@ -45,7 +52,7 @@ public interface MappedCounter<T> {
 	 *
 	 * @return The value that was assigned to this key
 	 */
-    int remove(T key);
+    long remove(T key);
 
 	/**
 	 * @return The set of keys that are currently stored in the counter
@@ -55,12 +62,12 @@ public interface MappedCounter<T> {
 	/**
 	 * @return The unsorted keys and their assigned count.
 	 */
-	Set<Map.Entry<T, Integer>> entries();
+	Set<Map.Entry<T, Long>> entries();
 
 	/**
 	 * @return The sum of all values of all currently held keys.
 	 */
-	int sum();
+	long sum();
 
 	/**
 	 * Remove all keys.
@@ -77,7 +84,7 @@ public interface MappedCounter<T> {
 	 *
 	 * @return A sorted map.
 	 */
-	Map<T, Integer> sortedMap();
+	Map<T, Long> sortedMap();
 
 	/**
 	 * @return A string-representation of all keys and their
