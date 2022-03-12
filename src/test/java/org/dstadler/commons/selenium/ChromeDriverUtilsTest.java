@@ -45,4 +45,10 @@ public class ChromeDriverUtilsTest {
         ChromeDriverUtils.configureMatchingChromeDriver();
         assertEquals(driverFile, System.getProperty(PROPERTY_CHROME_DRIVER));
     }
+
+	// helper method to get coverage of the unused constructor
+	@Test
+	public void testPrivateConstructor() throws Exception {
+		org.dstadler.commons.testing.PrivateConstructorCoverage.executePrivateConstructor(ChromeDriverUtils.class);
+	}
 }

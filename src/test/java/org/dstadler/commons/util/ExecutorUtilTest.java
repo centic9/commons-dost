@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertNotNull;
@@ -115,4 +116,23 @@ public class ExecutorUtilTest {
 
         assertNull("Had unexpected exception: " + exc.get(), exc.get());
     }
+
+	@Test
+	public void testThreadFactoryUnhandledException() throws InterruptedException {
+		ThreadFactory factory = ExecutorUtil.createThreadFactory("test-thread");
+		assertNotNull(factory);
+
+		Thread thread = factory.newThread(() -> {
+			throw new IllegalStateException("Test-exception");
+		});
+
+		thread.start();
+		thread.join();
+	}
+
+	// helper method to get coverage of the unused constructor
+	@Test
+	public void testPrivateConstructor() throws Exception {
+		org.dstadler.commons.testing.PrivateConstructorCoverage.executePrivateConstructor(ExecutorUtil.class);
+	}
 }

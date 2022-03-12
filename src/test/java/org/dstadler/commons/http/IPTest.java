@@ -29,6 +29,14 @@ public class IPTest {
 	}
 
 	@Test
+	public void testReturnCode() {
+		IP ip = new IP(-1, -1, -1, -1);
+		assertEquals(0, ip.getReturnCode());
+		ip.setReturnCode(1);
+		assertEquals(1, ip.getReturnCode());
+	}
+
+	@Test
 	public void testEqualsHashCode() {
 		IP ip = new IP(1, 2, 3, 4);
 		IP equ = new IP(1, 2, 3, 4);

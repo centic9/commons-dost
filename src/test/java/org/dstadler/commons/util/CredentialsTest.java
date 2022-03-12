@@ -1,16 +1,16 @@
 package org.dstadler.commons.util;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
 
 public class CredentialsTest {
 
@@ -61,5 +61,21 @@ public class CredentialsTest {
 		} catch (@SuppressWarnings("unused") IllegalStateException e) {
 			// expected here
 		}
+	}
+
+
+	@Test
+	public void testLoadInvalidFile() throws IOException {
+		Credentials.loadProperties(new File("invalid"));
+
+		Credentials.loadProperties(new File("invalid!§\"$%$%=(/?)_:;,.-__;:Ä'Ö#äö+ü*Ü+`¸¸^°!"));
+
+		Credentials.loadProperties(new File("."));
+	}
+
+	// helper method to get coverage of the unused constructor
+	@Test
+	public void testPrivateConstructor() throws Exception {
+		org.dstadler.commons.testing.PrivateConstructorCoverage.executePrivateConstructor(Credentials.class);
 	}
 }
