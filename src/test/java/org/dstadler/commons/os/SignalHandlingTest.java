@@ -11,4 +11,10 @@ public class SignalHandlingTest {
     public void testShutdownHook() {
         SignalHandling.setShutdownHook((a) -> log.info("Had shutdown hook: " + a));
     }
+
+	// helper method to get coverage of the unused constructor
+	@Test
+	public void testPrivateConstructor() throws Exception {
+		org.dstadler.commons.testing.PrivateConstructorCoverage.executePrivateConstructor(SignalHandling.class);
+	}
 }

@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class MovingAverageTest {
 
@@ -97,4 +98,11 @@ public class MovingAverageTest {
         assertArrayEquals(new long[] {6, 7, 8}, avg.getWindow());
         assertEquals(8, avg.getLast());
     }
+
+	@Test
+	public void testInvalidSize() {
+		assertThrows(IllegalArgumentException.class, () -> new MovingAverage(0));
+		assertThrows(IllegalArgumentException.class, () -> new MovingAverage(-1));
+		assertThrows(IllegalArgumentException.class, () -> new MovingAverage(Integer.MIN_VALUE));
+	}
 }

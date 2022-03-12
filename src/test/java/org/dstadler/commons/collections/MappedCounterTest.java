@@ -65,6 +65,11 @@ public class MappedCounterTest {
 
         assertEquals("{fifth=1, fourth=1, other=1, test=1, third=1}", counter.sortedMap().toString());
         assertEquals(5, counter.sum());
+
+		counter.inc("other");
+		assertEquals(2, counter.get("other"));
+		assertEquals("{other=2, fifth=1, fourth=1, test=1, third=1}", counter.sortedMap().toString());
+		assertEquals(6, counter.sum());
     }
 
     @Test
@@ -203,5 +208,18 @@ public class MappedCounterTest {
 
         // sorted by enum-order as Enum is a comparable
         assertEquals("{A=1, C=1, B=1}", counter.sortedMap().toString());
+    }
+
+    @Test
+    public void testWithNonComparable() {
+        MappedCounter<Object> counter = new MappedCounterImpl<>();
+
+        counter.add(new Object(), 1);
+        counter.add(new Object(), 1);
+        counter.add(new Object(), 1);
+
+        // sorted by enum-order as Enum is a comparable
+        assertEquals("{java.lang.Object=1, java.lang.Object=1, java.lang.Object=1}",
+				counter.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
     }
 }

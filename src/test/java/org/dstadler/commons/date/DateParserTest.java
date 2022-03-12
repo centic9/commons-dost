@@ -1,6 +1,7 @@
 package org.dstadler.commons.date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import java.util.Date;
@@ -16,7 +17,7 @@ import org.dstadler.commons.testing.TestHelpers;
 public class DateParserTest {
 
 	@Test
-	public void testParseURLDateRelative() throws Exception {
+	public void testParseURLDateRelative() {
 		Date now = new Date();
 		assertEquals(now, DateParser.parseURLDate(null, now));
 		assertEquals(now, DateParser.parseURLDate("", now));
@@ -42,7 +43,7 @@ public class DateParserTest {
 	}
 
 	@Test
-	public void testParseURLDateAbsolute() throws Exception {
+	public void testParseURLDateAbsolute() {
 		assertEquals(1304215200000L, DateParser.parseURLDate("04:00 20110501", null).getTime());
 		assertEquals(1304215200000L, DateParser.parseURLDate("04:00 110501", null).getTime());
 		assertEquals("Expected " + new Date(1304200800000L) + " but got: " + DateParser.parseURLDate("2011-05-01", null),
@@ -53,7 +54,7 @@ public class DateParserTest {
 	}
 
 	@Test
-	public void testInvalidInput() throws Exception {
+	public void testInvalidInput() {
 		try {
 			DateParser.parseURLDate("asdflaqworthgawer", null);
 			fail("Should catch exception here");
@@ -80,6 +81,12 @@ public class DateParserTest {
 	@Test
 	public void testPrivateConstructor() throws Exception {
 		PrivateConstructorCoverage.executePrivateConstructor(DateParser.class);
+	}
+
+	@Test
+	public void testComputeTimeAgoAsStringFailsInTheFuture() {
+		assertThrows(IllegalArgumentException.class,
+				() -> DateParser.computeTimeAgoString(System.currentTimeMillis() + 100_000, ""));
 	}
 
 	@Test

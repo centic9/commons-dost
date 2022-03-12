@@ -16,7 +16,7 @@ import org.junit.Test;
  */
 public class ConcurrentMappedCounterTest extends MappedCounterTest {
     private static final int NUMBER_OF_THREADS = 20;
-    private static final int NUMBER_OF_TESTS = 1000;
+    private static final int NUMBER_OF_TESTS = 500;
 
     @Override
     protected <T> MappedCounter<T> createCounter() {
@@ -41,6 +41,7 @@ public class ConcurrentMappedCounterTest extends MappedCounterTest {
                 String key = "iter" + iter;
                 counter.add(key, 1);
                 counter.add("sum", 1);
+				counter.inc(key);
 
                 assertTrue(counter.get(key) > 0);
                 assertTrue(counter.get("sum") > 0);
@@ -62,9 +63,8 @@ public class ConcurrentMappedCounterTest extends MappedCounterTest {
         });
 
         assertEquals(NUMBER_OF_THREADS*NUMBER_OF_TESTS, counter.get("sum"));
-        assertEquals(NUMBER_OF_THREADS, counter.get("iter1"));
+        assertEquals(NUMBER_OF_THREADS*2, counter.get("iter1"));
 
-        assertEquals(NUMBER_OF_THREADS*NUMBER_OF_TESTS * 2, counter.sum());
+        assertEquals(NUMBER_OF_THREADS*NUMBER_OF_TESTS * 3, counter.sum());
     }
-
 }
