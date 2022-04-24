@@ -40,12 +40,12 @@ http://github.com/centic9/commons-test for more details.
 
 ### Grab it
 
-    git clone git://github.com/centic9/commons-dost
+    git clone https://github.com/centic9/commons-dost.git
 
 ### Build it and run tests
 
-	cd commons-dost
-	./gradlew check jacocoTestReport
+    cd commons-dost
+    ./gradlew check jacocoTestReport
 
 ### Release it
 
