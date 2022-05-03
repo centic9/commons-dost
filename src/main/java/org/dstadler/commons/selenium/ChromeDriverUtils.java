@@ -41,13 +41,25 @@ public class ChromeDriverUtils {
 
     /**
      * Check which version of chrome is installed and based on its version
-     * try to fetch the matching chromedriver and configure it in the system
-     * properties as necessary.
+     * try to fetch the matching chromedriver and configure it via system
+     * properties.
      *
      * @throws java.io.IOException If fetching data or storing data in files fails.
      */
     public static void configureMatchingChromeDriver() throws IOException {
-        String chromeVersion = getGoogleChromeVersion();
+        configureMatchingChromeDriver(getGoogleChromeVersion());
+    }
+
+    /**
+     * For a given major version of chrome, try to fetch the matching chromedriver
+     * and configure it via system properties.
+     *
+     * @param chromeVersion The version of chrome, e.g. "100" or "101.0.4951.54"
+     * @throws java.io.IOException If fetching data or storing data in files fails.
+     */
+    public static void configureMatchingChromeDriver(String chromeVersion) throws IOException {
+		checkState(StringUtils.isNotBlank(chromeVersion), "Need a version of chrome to configure, but had '" +
+						chromeVersion + "'");
 
         // See https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection
         //
@@ -58,7 +70,12 @@ public class ChromeDriverUtils {
         // https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_win32.zip
 
         String versionUrl = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_" + chromeVersion;
-        String driverVersion = IOUtils.toString(new URL(versionUrl), StandardCharsets.UTF_8);
+        final String driverVersion;
+        try {
+            driverVersion = IOUtils.toString(new URL(versionUrl), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new IOException("Failed for " + versionUrl, e);
+        }
         checkState(StringUtils.isNotBlank(driverVersion),
                 "Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
 
@@ -107,13 +124,19 @@ public class ChromeDriverUtils {
     protected static String getGoogleChromeVersion() throws IOException {
         OutputStream out = new ByteArrayOutputStream();
         // Google Chrome 91.0.4472.77
-        CommandLine cmdLine = new CommandLine("google-chrome-stable");
+        CommandLine cmdLine = new CommandLine(SystemUtils.IS_OS_WINDOWS ?
+                "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" :
+                "google-chrome-stable");
         cmdLine.addArgument("--version");
         ExecutionHelper.getCommandResultIntoStream(cmdLine, new File("."), 0, 10_000, out);
         // cut out the leading text
         String version = StringUtils.removeStart(out.toString(), "Google Chrome ").trim();
         // cut off the trailing patch-level
-        version = version.substring(0, version.lastIndexOf('.'));
+        try {
+            version = version.substring(0, version.lastIndexOf('.'));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Failed for '" + out + "'", e);
+        }
 
         log.info("Found Google Chrome version '" + version + "' from running with --version: '" + out.toString().trim() + "'");
 
@@ -123,14 +146,14 @@ public class ChromeDriverUtils {
     /**
      * Clean up any system property or otherwise held information.
      */
-	@SuppressForbidden(reason = "This is provided on purpose here")
+    @SuppressForbidden(reason = "This is provided on purpose here")
     protected static void cleanUp() {
         System.clearProperty(PROPERTY_CHROME_DRIVER);
     }
 
-	private static void checkState(boolean expression, Object errorMessage) {
-		if (!expression) {
-			throw new IllegalStateException(String.valueOf(errorMessage));
-		}
-	}
+    private static void checkState(boolean expression, Object errorMessage) {
+        if (!expression) {
+            throw new IllegalStateException(String.valueOf(errorMessage));
+        }
+    }
 }

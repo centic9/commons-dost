@@ -46,6 +46,25 @@ public class ChromeDriverUtilsTest {
         assertEquals(driverFile, System.getProperty(PROPERTY_CHROME_DRIVER));
     }
 
+    @Test
+    public void testConfigureMatchingChromeDriverWithVersion() throws IOException {
+        assertTrue("System property for chrome-driver should not be set before starting this test",
+                StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)));
+
+        ChromeDriverUtils.configureMatchingChromeDriver("100");
+
+        String driverFile = System.getProperty(PROPERTY_CHROME_DRIVER);
+        assertTrue("System property for chrome-driver should be set now",
+                StringUtils.isNotBlank(driverFile));
+
+        assertTrue("Did not find file " + driverFile,
+                new File(driverFile).exists());
+
+        // running it again does not change the result
+        ChromeDriverUtils.configureMatchingChromeDriver("100");
+        assertEquals(driverFile, System.getProperty(PROPERTY_CHROME_DRIVER));
+    }
+
 	// helper method to get coverage of the unused constructor
 	@Test
 	public void testPrivateConstructor() throws Exception {
