@@ -146,14 +146,18 @@ public class ExecutionHelper {
 
 	private static void execute(CommandLine cmdLine, File dir, Executor executor,
 								Map<String,String> environment) throws IOException {
-		log.info("-Executing(" + dir + "): " + ArrayUtils.toString(cmdLine.toStrings(), " ", "", ""));
+		log.info("-Executing(" + dir + "): " + toString(cmdLine));
 		try {
 			int exitValue = executor.execute(cmdLine, environment);
 			if (exitValue != 0) {
 				log.info("Had exit code " + exitValue + " when calling " + cmdLine);
 			}
 		} catch (ExecuteException e) {
-			throw new ExecuteException("While executing (" + dir + "); " + cmdLine, e.getExitValue(), e);
+			throw new ExecuteException("While executing (" + dir + "); " + toString(cmdLine), e.getExitValue(), e);
 		}
+	}
+
+	private static String toString(CommandLine cmdLine) {
+		return ArrayUtils.toString(cmdLine.toStrings(), " ", "", "");
 	}
 }
