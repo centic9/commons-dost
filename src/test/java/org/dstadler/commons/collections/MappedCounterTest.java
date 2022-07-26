@@ -136,7 +136,12 @@ public class MappedCounterTest {
         counter.add("test", 1);
         assertEquals(1, counter.get("test"));
 
-        counter.remove("test");
+        assertEquals(1, counter.remove("test"));
+        assertEquals(0, counter.get("test"));
+
+        counter.add("test", 2);
+        assertEquals(2, counter.get("test"));
+        assertEquals(2, counter.remove("test"));
         assertEquals(0, counter.get("test"));
     }
 
@@ -196,6 +201,45 @@ public class MappedCounterTest {
 
     private enum TestEnum {
         A, C, B
+    }
+
+    @Test
+    public void testSortedNonComparable() {
+        MappedCounter<Integer> counter = createCounter();
+
+        for (int i = 0; i < 1000; i++) {
+            counter.add(i, 1);
+        }
+
+        Map<Integer, Long> map = counter.sortedMap();
+        int i = 0;
+        for (Entry<Integer, Long> entry : map.entrySet()) {
+            assertEquals(Integer.valueOf(i), entry.getKey());
+            assertEquals(Long.valueOf(1L), entry.getValue());
+
+            i++;
+        }
+        assertEquals(1000, i);
+    }
+
+    @Test
+    public void testSortedNonComparableValue() {
+        MappedCounter<Integer> counter = createCounter();
+
+        for (int i = 0; i < 1000; i++) {
+            counter.add(i, i);
+        }
+
+        Map<Integer, Long> map = counter.sortedMap();
+        int i = 1000;
+        for (Entry<Integer, Long> entry : map.entrySet()) {
+            i--;
+
+            assertEquals(Integer.valueOf(i), entry.getKey());
+            assertEquals(Long.valueOf(i), entry.getValue());
+        }
+
+        assertEquals(0, i);
     }
 
     @Test
