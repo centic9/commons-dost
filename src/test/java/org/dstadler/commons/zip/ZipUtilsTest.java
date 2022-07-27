@@ -486,7 +486,11 @@ public class ZipUtilsTest {
 
 		try {
     		try {
-    			ZipUtils.extractZip(zipfile2, new File("notexists"));
+				File invalidDir = new File("notexists");
+				assertFalse("Directory should not exist: " + invalidDir.getAbsolutePath(),
+						invalidDir.exists());
+
+				ZipUtils.extractZip(zipfile2, invalidDir);
     			fail("Should catch exception here");
     		} catch (IOException e) {
     			TestHelpers.assertContains(e, "notexists", "does not exist");
@@ -567,7 +571,11 @@ public class ZipUtilsTest {
 
 		try (InputStream stream = new FileInputStream(zipfile2)){
     		try {
-    			ZipUtils.extractZip(stream, new File("notexists"));
+				File invalidDir = new File("notexists");
+				assertFalse("Directory should not exist: " + invalidDir.getAbsolutePath(),
+						invalidDir.exists());
+
+				ZipUtils.extractZip(stream, invalidDir);
     			fail("Should catch exception here");
     		} catch (IOException e) {
     			TestHelpers.assertContains(e, "notexists", "does not exist");
