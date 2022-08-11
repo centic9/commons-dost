@@ -1,6 +1,8 @@
 package org.dstadler.commons.exec;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,11 +14,11 @@ import java.util.logging.Logger;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
+import org.apache.commons.lang3.SystemUtils;
+import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
-import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.junit.Test;
 
 public class ExecutionHelperTest {
 	private final static Logger log = LoggerFactory.make();
@@ -56,7 +58,11 @@ public class ExecutionHelperTest {
 			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000);
 			fail("Should throw exception");
 		} catch (IOException e) {
-			TestHelpers.assertContains(e, "Process exited with an error: 1", "/bin/false");
+			if (SystemUtils.IS_OS_WINDOWS) {
+				TestHelpers.assertContains(e, "The system cannot find the file specified", "\\bin\\false");
+			} else {
+				TestHelpers.assertContains(e, "Process exited with an error: 1", "/bin/false");
+			}
 		}
 	}
 
@@ -109,7 +115,7 @@ public class ExecutionHelperTest {
 			assertNotNull(result);
 			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
 			log.info("Svn reported:\n" + output);
-			TestHelpers.assertContains(output, "\"notexists and more notexists\"");
+			TestHelpers.assertContains(output.replace("'", "\""), "\"notexists and more notexists\"");
 		}
 	}
 
