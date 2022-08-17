@@ -32,7 +32,7 @@ import org.dstadler.commons.zip.ZipUtils;
  * This class automates this by determining the local version
  * of the chrome-browser (by execution it with "--version") and
  * then looking for the matching version of chrome-driver on
- * https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection
+ * <a href="https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection">this page</a>
  */
 public class ChromeDriverUtils {
     private static final Logger log = LoggerFactory.make();
@@ -124,13 +124,29 @@ public class ChromeDriverUtils {
     protected static String getGoogleChromeVersion() throws IOException {
         OutputStream out = new ByteArrayOutputStream();
         // Google Chrome 91.0.4472.77
-        CommandLine cmdLine = new CommandLine(SystemUtils.IS_OS_WINDOWS ?
-                "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe" :
-                "google-chrome-stable");
-        cmdLine.addArgument("--version");
-        ExecutionHelper.getCommandResultIntoStream(cmdLine, new File("."), 0, 10_000, out);
-        // cut out the leading text
-        String version = StringUtils.removeStart(out.toString(), "Google Chrome ").trim();
+		String version = null;
+		if (SystemUtils.IS_OS_WINDOWS) {
+			CommandLine cmdLine = new CommandLine("reg");
+			cmdLine.addArgument("query");
+			cmdLine.addArgument("\"HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon\"");
+			cmdLine.addArgument("/v");
+			cmdLine.addArgument("version");
+
+			ExecutionHelper.getCommandResultIntoStream(cmdLine, new File("."), 0, 10_000, out);
+			// cut out the leading text
+			version = out.toString().replace("HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon", "").
+					replace("version", "").
+					replace("REG_SZ", "").
+					trim();
+		} else {
+			CommandLine cmdLine = new CommandLine("google-chrome-stable");
+			cmdLine.addArgument("--version");
+
+			ExecutionHelper.getCommandResultIntoStream(cmdLine, new File("."), 0, 10_000, out);
+			// cut out the leading text
+			version = StringUtils.removeStart(out.toString(), "Google Chrome ").trim();
+		}
+
         // cut off the trailing patch-level
         try {
             version = version.substring(0, version.lastIndexOf('.'));
