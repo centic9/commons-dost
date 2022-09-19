@@ -91,42 +91,55 @@ public class DateParserTest {
 
 	@Test
 	public void testComputeTimeAgoAsString() {
-		assertEquals("6 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (6 * 60 * 1000), ""));
-		assertEquals("2 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (2 * 60 * 1000), ""));
-		assertEquals("1 h", DateParser.computeTimeAgoString(System.currentTimeMillis()- (60 * 60 * 1000), ""));
-		assertEquals("3 h, 5 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (185 * 60 * 1000), ""));
-		assertEquals("23 h, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (23 * 60 * 60 * 1000) - (59*60*1000), ""));
-		assertEquals("24 h", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000), ""));
-		assertEquals("23 h, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000)+1, ""));
-		assertEquals("1 day", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000)-1, ""));
-		assertEquals("1 day, 3 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000)- (3*60*1000), ""));
-		assertEquals("1 day, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000)- (59*60*1000), ""));
-		assertEquals("1 day, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000)- (59*60*1000) - (59*1000), ""));
-		assertEquals("1 day, 1 h", DateParser.computeTimeAgoString(System.currentTimeMillis()- (25 * 60 * 60 * 1000), ""));
-		assertEquals("1 day, 4 h", DateParser.computeTimeAgoString(System.currentTimeMillis()- (28 * 60 * 60 * 1000), ""));
-		assertEquals("18 days, 14 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(18) - TimeUnit.HOURS.toMillis(14), ""));
-		assertEquals("", DateParser.computeTimeAgoString(System.currentTimeMillis(), ""));
-		assertEquals("34 s", DateParser.computeTimeAgoString(System.currentTimeMillis()- (34*1000), ""));
-		assertEquals("19 h, 52 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (29*1000 + 52*60*1000 + 19*60*60*1000), ""));
-		assertEquals("19 h", DateParser.computeTimeAgoString(System.currentTimeMillis()- (19*60*60*1000), ""));
+		assertEquals("6 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (6 * 60 * 1000), ""));
+		assertEquals("2 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (2 * 60 * 1000), ""));
+		assertEquals("1 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (60 * 60 * 1000), ""));
+		assertEquals("3 h, 5 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (185 * 60 * 1000), ""));
+		assertEquals("23 h, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (23 * 60 * 60 * 1000) - (59*60*1000), ""));
+		assertEquals("1 day", DateParser.computeTimeAgoString(System.currentTimeMillis() - (24 * 60 * 60 * 1000), ""));
+		assertEquals("23 h, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (24 * 60 * 60 * 1000)+1, ""));
+		assertEquals("1 day", DateParser.computeTimeAgoString(System.currentTimeMillis() - (24 * 60 * 60 * 1000)-1, ""));
+		assertEquals("1 day, 3 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (24 * 60 * 60 * 1000)- (3*60*1000), ""));
+		assertEquals("1 day, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (24 * 60 * 60 * 1000)- (59*60*1000), ""));
+		assertEquals("1 day, 59 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (24 * 60 * 60 * 1000)- (59*60*1000) - (59*1000), ""));
+		assertEquals("1 day, 1 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (25 * 60 * 60 * 1000), ""));
+		assertEquals("1 day, 4 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (28 * 60 * 60 * 1000), ""));
+		assertEquals("2 weeks, 4 days, 14 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(18) - TimeUnit.HOURS.toMillis(14), ""));
+		assertEquals("0 s", DateParser.computeTimeAgoString(System.currentTimeMillis(), ""));
+		assertEquals("34 s", DateParser.computeTimeAgoString(System.currentTimeMillis() - (34*1000), ""));
+		assertEquals("19 h, 52 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (29*1000 + 52*60*1000 + 19*60*60*1000), ""));
+		assertEquals("19 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (19*60*60*1000), ""));
 
-		assertEquals("6 min ago", DateParser.computeTimeAgoString(System.currentTimeMillis()- (6 * 60 * 1000), " ago"));
+		assertEquals("6 min ago", DateParser.computeTimeAgoString(System.currentTimeMillis() - (6 * 60 * 1000), " ago"));
 
-		assertEquals("1 day, 1 min", DateParser.computeTimeAgoString(System.currentTimeMillis()- (24 * 60 * 60 * 1000) - (60*1000), ""));
+		assertEquals("1 day, 1 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (24 * 60 * 60 * 1000) - (60*1000), ""));
 	}
 
 	@Test
 	public void testReadableTime() {
+		assertEquals("1 s", DateParser.timeToReadable(1000));
 		assertEquals("6 min", DateParser.timeToReadable(6 * 60 * 1000));
 		assertEquals("2 min", DateParser.timeToReadable(2 * 60 * 1000));
 		assertEquals("1 h", DateParser.timeToReadable(60 * 60 * 1000));
 		assertEquals("3 h, 5 min", DateParser.timeToReadable(185 * 60 * 1000));
+		assertEquals("1 day", DateParser.timeToReadable(DateParser.ONE_DAY));
 		assertEquals("1 day, 4 h", DateParser.timeToReadable(28 * 60 * 60 * 1000));
-		assertEquals("18 days, 14 h", DateParser.timeToReadable(TimeUnit.DAYS.toMillis(18) + TimeUnit.HOURS.toMillis(14)));
-		assertEquals("", DateParser.timeToReadable(0));
+		assertEquals("1 week", DateParser.timeToReadable(DateParser.ONE_WEEK));
+		assertEquals("2 weeks, 4 days, 14 h", DateParser.timeToReadable(TimeUnit.DAYS.toMillis(18) + TimeUnit.HOURS.toMillis(14)));
 		assertEquals("34 s", DateParser.timeToReadable(34*1000));
 		assertEquals("19 h, 52 min", DateParser.timeToReadable(29*1000 + 52*60*1000 + 19*60*60*1000));
 		assertEquals("19 h", DateParser.timeToReadable(19*60*60*1000));
+
+		// try a few "unusual" values
+		assertEquals("", DateParser.timeToReadable(Long.MIN_VALUE));
+		assertEquals("15250284452 weeks, 3 days, 7 h", DateParser.timeToReadable(Long.MAX_VALUE));
+		assertEquals("", DateParser.timeToReadable(-1));
+		assertEquals("0 s", DateParser.timeToReadable(0));
+		assertEquals("15250284452 weeks, 3 days, 7 h", DateParser.timeToReadable((long)Double.POSITIVE_INFINITY));
+		assertEquals("", DateParser.timeToReadable((long)Double.NEGATIVE_INFINITY));
+		//noinspection ConstantConditions
+		assertEquals("0 s", DateParser.timeToReadable((long)Double.MIN_VALUE));
+		assertEquals("15250284452 weeks, 3 days, 7 h", DateParser.timeToReadable((long)Double.MAX_VALUE));
 
 		assertEquals("6 min ago", DateParser.timeToReadable(6 * 60 * 1000, " ago"));
 	}

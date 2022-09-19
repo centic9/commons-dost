@@ -10,14 +10,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Modelled after http://graphite.readthedocs.org/en/latest/render_api.html#from-until
+ * Modelled after <a href="http://graphite.readthedocs.org/en/latest/render_api.html#from-until">Graphite from-to parameter</a>
  *
  * Note: Passing in absolute time is expected to be stated in the European timezone!
  */
 public class DateParser {
     private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT+2");
 
-    private final static Pattern RELATIVE_TIME_PATTERN = Pattern.compile("([0-9]+)(s|second|seconds|min|minute|minutes|h|hour|hours|d|day|days|w|week|weeks|mon|month|months|y|year|years)");
+    private final static Pattern RELATIVE_TIME_PATTERN = Pattern.compile("(\\d+)(s|second|seconds|min|minute|minutes|h|hour|hours|d|day|days|w|week|weeks|mon|month|months|y|year|years)");
 
     private final static Map<String, Integer> UNIT_CONVERSION_TABLE = new HashMap<>();
     static {
@@ -44,10 +44,10 @@ public class DateParser {
         UNIT_CONVERSION_TABLE.put("years", 365*24*60*60);
     }
 
-    private static FastDateFormat[] DATE_PARSERS = new FastDateFormat[] {
+    private static final FastDateFormat[] DATE_PARSERS = new FastDateFormat[] {
         // note: the order here is important to not parse things incorrectly!
         // SimpleDateFormat will use a fairly matching format as well, so we
-        // need to put the most complex formats in front to avoid wrong parsing.
+        // need to put the most complex formats to the front to avoid wrong parsing.
         FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.S" /* Z */, TIME_ZONE, Locale.GERMANY),
         FastDateFormat.getInstance("yyyy-MM-dd", TIME_ZONE),
         FastDateFormat.getInstance("yyyyMMdd", TIME_ZONE),
@@ -60,6 +60,7 @@ public class DateParser {
     public final static long ONE_MINUTE = 60 * ONE_SECOND;
     public final static long ONE_HOUR = 60 * ONE_MINUTE;
     public final static long ONE_DAY = 24 * ONE_HOUR;
+    public final static long ONE_WEEK = 7 * ONE_DAY;
 
     /* TODO: things that Graphite can parse in addition:
 
@@ -151,7 +152,7 @@ public class DateParser {
         for(FastDateFormat format : DATE_PARSERS) {
             string.append(format.getPattern()).append(", ");
         }
-        throw new IllegalArgumentException("Could not parse absolute date " + dateStr + " via any of the available parsers: " + string.toString());
+        throw new IllegalArgumentException("Could not parse absolute date " + dateStr + " via any of the available parsers: " + string);
     }
 
     /**
@@ -197,9 +198,18 @@ public class DateParser {
      * @return The readable string
      */
     public static String timeToReadable(long millis, String suffix) {
+		if (millis == 0) {
+			return "0 s" + suffix;
+		}
+
         StringBuilder builder = new StringBuilder();
-        boolean haveDays = false;
-        if(millis > ONE_DAY) {
+		boolean haveDays = false;
+        if(millis >= ONE_WEEK) {
+            millis = handleTime(builder, millis, ONE_WEEK, "week", "s");
+            haveDays = true;
+        }
+
+        if(millis >= ONE_DAY) {
             millis = handleTime(builder, millis, ONE_DAY, "day", "s");
             haveDays = true;
         }
