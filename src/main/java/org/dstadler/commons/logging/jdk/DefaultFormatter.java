@@ -1,6 +1,10 @@
 package org.dstadler.commons.logging.jdk;
 
-import static org.dstadler.commons.util.ClientConstants.*;
+import static org.dstadler.commons.util.ClientConstants.COLON;
+import static org.dstadler.commons.util.ClientConstants.DOT;
+import static org.dstadler.commons.util.ClientConstants.LSBRA;
+import static org.dstadler.commons.util.ClientConstants.RSBRA;
+import static org.dstadler.commons.util.ClientConstants.WS;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -141,7 +145,7 @@ public class DefaultFormatter extends Formatter {
             try (PrintWriter pw = new PrintWriter(sw)) {
             	throwable.printStackTrace(pw);
             }
-            BUILDER.append(sw.toString());
+            BUILDER.append(sw);
         } catch (Exception ex) { // NOSONAR // NOPMD
             //ok to ignore this
         }

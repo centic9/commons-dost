@@ -1,14 +1,14 @@
 package org.dstadler.commons.exec;
 
-import org.dstadler.commons.testing.TestHelpers;
-import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
-import static org.junit.Assert.assertTrue;
+import org.dstadler.commons.testing.TestHelpers;
+import org.dstadler.commons.testing.ThreadTestHelper;
+import org.junit.Test;
 
 public class BufferingLogOutputStreamTest {
 	private static final int NUMBER_OF_THREADS = 10;
@@ -45,7 +45,8 @@ public class BufferingLogOutputStreamTest {
                 stream.close();
 
                 // try closing again, should not fail
-                stream.close();
+				//noinspection RedundantExplicitClose
+				stream.close();
             } catch (IOException e) {
                 throw new IllegalStateException(e);
 }
@@ -53,7 +54,7 @@ public class BufferingLogOutputStreamTest {
 	}
 
 	@Test
-	public void testMultipleThreads() throws Throwable {
+	public void testMultipleThreads() {
 		TestHelpers.runTestWithDifferentLogLevel(() -> {
             try {
                 ThreadTestHelper helper =
@@ -63,12 +64,12 @@ public class BufferingLogOutputStreamTest {
                     helper.executeTest(new ThreadTestHelper.TestRunnable() {
 
                         @Override
-                        public void doEnd(int threadNum) throws Exception {
+                        public void doEnd(int threadNum) {
                             // do stuff at the end ...
                         }
 
                         @Override
-                        public void run(int threadNum, int it) throws Exception {
+                        public void run(int threadNum, int it) {
                             for (int i = 0; i < 100; i++) {
                                 stream.processLine("some line", 0);
                             }

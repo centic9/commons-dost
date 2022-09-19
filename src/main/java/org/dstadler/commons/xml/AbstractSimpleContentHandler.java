@@ -13,14 +13,13 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.dstadler.commons.http.HttpClientWrapper;
+import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.dstadler.commons.http.HttpClientWrapper;
-import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
@@ -94,13 +93,13 @@ public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> ex
 	}
 
 	@Override
-	public void characters(char[] ch, int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length) {
 		// combine characters for later use
 		characters.append(ch, start, length);
 	}
 
 	@Override
-	public void error(SAXParseException exception) throws SAXException {
+	public void error(SAXParseException exception) {
 		log.log(Level.SEVERE, "Error in SAX Parsing", exception);
 	}
 
@@ -110,7 +109,7 @@ public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> ex
 	}
 
 	@Override
-	public void warning(SAXParseException exception) throws SAXException {
+	public void warning(SAXParseException exception) {
 		log.log(Level.WARNING, "Error in SAX Parsing", exception);
 	}
 

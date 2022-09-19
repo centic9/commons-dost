@@ -33,7 +33,7 @@ import org.dstadler.commons.util.SuppressForbidden;
  * A simple, tiny, nicely embeddable HTTP 1.0 server in Java
  *
  * <p> NanoHTTPD version 1.14,
- * Copyright &copy; 2001,2005-2010 Jarno Elonen (elonen@iki.fi, http://iki.fi/elonen/)
+ * Copyright &copy; 2001,2005-2010 Jarno Elonen (elonen@iki.fi, <a href="http://iki.fi/elonen/">http://iki.fi/elonen/</a>)
  *
  * <p><b>Features + limitations: </b><ul>
  *
@@ -74,7 +74,7 @@ public class NanoHTTPD
 	/**
 	 * GMT date formatter, have a local instance to avoid multi-threading issues
 	 */
-    private static FastDateFormat gmtFrmt = FastDateFormat.getInstance( "E, d MMM yyyy HH:mm:ss 'GMT'", TimeZone.getTimeZone("GMT"), Locale.US);
+    private static final FastDateFormat gmtFrmt = FastDateFormat.getInstance( "E, d MMM yyyy HH:mm:ss 'GMT'", TimeZone.getTimeZone("GMT"), Locale.US);
 
     private static String encoding = null;
 
@@ -384,12 +384,10 @@ public class NanoHTTPD
 		{
 			try
 			{
-				@SuppressWarnings("resource")
                 InputStream is = mySocket.getInputStream();
 				if ( is == null) {
 					return;
 				}
-				@SuppressWarnings("resource")
                 BufferedReader in = new BufferedReader( new InputStreamReader( is ));       // NOSONAR - test class works only locally anyway
 
 				// Read the request line
@@ -638,7 +636,7 @@ public class NanoHTTPD
 			}
 		}
 
-		private Socket mySocket;
+		private final Socket mySocket;
 	}
 
 	/**
@@ -668,7 +666,7 @@ public class NanoHTTPD
 	}
 
 	private final ServerSocket myServerSocket;
-	private Thread myThread;
+	private final Thread myThread;
 	// helper to not log exceptions during shutdown
 	private volatile boolean stopping = false;
 
@@ -853,7 +851,7 @@ public class NanoHTTPD
 	/**
 	 * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
 	 */
-	private static Map<String,String> theMimeTypes = new HashMap<>();
+	private static final Map<String,String> theMimeTypes = new HashMap<>();
 	static
 	{
 		StringTokenizer st = new StringTokenizer(

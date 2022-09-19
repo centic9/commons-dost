@@ -13,7 +13,7 @@ public class AllowingHostnameVerifierTest {
 	}
 
 	@Test
-	public void instance() throws Exception {
+	public void instance() {
 		assertNotNull(AllowingHostnameVerifier.instance());
 	}
 }

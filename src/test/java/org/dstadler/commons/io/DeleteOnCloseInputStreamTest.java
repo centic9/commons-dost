@@ -1,6 +1,10 @@
 package org.dstadler.commons.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -93,7 +97,7 @@ public class DeleteOnCloseInputStreamTest {
 				"somedata to have something to read...", "UTF-8");
 		try (InputStream input = new FileInputStream(file) {
 			@Override
-			public synchronized void reset() throws IOException {
+			public synchronized void reset() {
 				// just do nothing to make reset() supported here
 			}
 		}) {
@@ -117,6 +121,7 @@ public class DeleteOnCloseInputStreamTest {
 
 		try (InputStream input = new FileInputStream(file)) {
 			try (DeleteOnCloseInputStream stream = new DeleteOnCloseInputStream(input, dir)) {
+				//noinspection RedundantExplicitClose
 				stream.close();
 			}
 

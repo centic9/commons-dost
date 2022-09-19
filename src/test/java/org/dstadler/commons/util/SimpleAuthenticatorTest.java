@@ -28,12 +28,12 @@ public class SimpleAuthenticatorTest {
 
         helper.executeTest(new ThreadTestHelper.TestRunnable() {
             @Override
-            public void doEnd(int threadnum) throws Exception {
+            public void doEnd(int threadnum) {
                 // do stuff at the end ...
             }
 
             @Override
-            public void run(int threadnum, int iter) throws Exception {
+            public void run(int threadnum, int iter) {
             	if(iter == 0) {
             		SimpleAuthenticator auth = new SimpleAuthenticator("user-" + threadnum, "password-" + threadnum);
             		Authenticator.setDefault(auth);

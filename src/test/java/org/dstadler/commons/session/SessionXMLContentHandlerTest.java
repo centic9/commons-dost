@@ -4,12 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 public class SessionXMLContentHandlerTest {
 
 	@Test
-	public void testEndElementStringStringString() throws SAXException {
+	public void testEndElementStringStringString() {
 		SessionXMLContentHandler handler = new SessionXMLContentHandler();
 
 		handler.endElement("some", "unknown", null);

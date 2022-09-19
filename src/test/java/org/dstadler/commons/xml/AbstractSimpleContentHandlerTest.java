@@ -14,16 +14,14 @@ import java.util.SortedMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.Test;
+import org.xml.sax.SAXParseException;
 
 public class AbstractSimpleContentHandlerTest {
 	@Test
-	public void testCharacters() throws SAXException {
+	public void testCharacters() {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
 		};
 
@@ -115,7 +113,7 @@ public class AbstractSimpleContentHandlerTest {
 	}
 
 	@Test
-	public void testErrorSAXParseException() throws Exception {
+	public void testErrorSAXParseException() {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
 		};
 
@@ -123,7 +121,7 @@ public class AbstractSimpleContentHandlerTest {
 	}
 
 	@Test
-	public void testFatalErrorSAXParseException() throws Exception {
+	public void testFatalErrorSAXParseException() {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
 		};
 
@@ -131,7 +129,7 @@ public class AbstractSimpleContentHandlerTest {
 	}
 
 	@Test
-	public void testWarningSAXParseException() throws Exception {
+	public void testWarningSAXParseException() {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
 		};
 

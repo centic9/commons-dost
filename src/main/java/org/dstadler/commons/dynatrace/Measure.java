@@ -20,7 +20,7 @@ public class Measure {
 	private double adjustmentFactor = 1;
 
 	private String dynamicMeasureName;
-	private Map<String, Double> dynamicMeasures = new HashMap<>();
+	private final Map<String, Double> dynamicMeasures = new HashMap<>();
 
 	public Measure() {
 		super();

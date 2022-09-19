@@ -115,7 +115,7 @@ public class UrlUtils {
     public static byte[] retrieveRawData(String sUrl, int timeout, SSLSocketFactory sslFactory) throws IOException {
         URL url = new URL(sUrl);
 
-        LOGGER.fine("Using the following URL for retrieving the data: " + url.toString());
+        LOGGER.fine("Using the following URL for retrieving the data: " + url);
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 

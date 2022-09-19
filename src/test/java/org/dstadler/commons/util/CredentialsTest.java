@@ -65,7 +65,7 @@ public class CredentialsTest {
 
 
 	@Test
-	public void testLoadInvalidFile() throws IOException {
+	public void testLoadInvalidFile() {
 		Credentials.loadProperties(new File("invalid"));
 
 		Credentials.loadProperties(new File("invalid!§\"$%$%=(/?)_:;,.-__;:Ä'Ö#äö+ü*Ü+`¸¸^°!"));

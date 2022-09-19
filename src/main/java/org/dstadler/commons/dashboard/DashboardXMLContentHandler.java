@@ -22,7 +22,7 @@ public class DashboardXMLContentHandler extends DefaultHandler {
 	private final static Logger log = Logger.getLogger(DashboardXMLContentHandler.class.getName());
 
 	// use TreeMap to sort it by dashboard-name
-	private Map<String, String> dashboards = new TreeMap<>();
+	private final Map<String, String> dashboards = new TreeMap<>();
 
 	public static Map<String, String> parseContent(InputStream strm) throws SAXException, IOException {
 		XMLReader parser = XMLReaderFactory.createXMLReader();
@@ -53,17 +53,17 @@ public class DashboardXMLContentHandler extends DefaultHandler {
 	}
 
 	@Override
-	public void error(SAXParseException exception) throws SAXException {
+	public void error(SAXParseException exception) {
 		log.log(Level.SEVERE, "Error in SAX Parsing", exception);
 	}
 
 	@Override
-	public void fatalError(SAXParseException exception) throws SAXException {
+	public void fatalError(SAXParseException exception) {
 		log.log(Level.SEVERE, "Error in SAX Parsing", exception);
 	}
 
 	@Override
-	public void warning(SAXParseException exception) throws SAXException {
+	public void warning(SAXParseException exception) {
 		log.log(Level.WARNING, "Error in SAX Parsing", exception);
 	}
 

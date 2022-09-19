@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class Utils {
 	private static final Logger logger = Logger.getLogger(Utils.class.toString());
 
-	private static Random rand = new Random();
+	private static final Random rand = new Random();
 
 	public static void setSeed(final long seed) {
 		rand.setSeed(seed);
@@ -167,7 +167,7 @@ CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
 		try {
 			url = new URL(sUrl);
 		} catch (MalformedURLException e) {
-			logger.info("URL-Failed(" + count + "): " + e.toString());
+			logger.info("URL-Failed(" + count + "): " + e);
 			return false;
 		}
 
