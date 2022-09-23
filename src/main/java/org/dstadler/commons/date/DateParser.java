@@ -170,7 +170,7 @@ public class DateParser {
         long now = System.currentTimeMillis();
 
         checkArgument(ts <= now, "Cannot handle timestamp in the future" +
-                ", now: " + now + "/" + new Date(now) + 
+                ", now: " + now + "/" + new Date(now) +
                 ", ts: " + ts + "/" + new Date(ts));
 
         long diff = now - ts;
@@ -203,6 +203,17 @@ public class DateParser {
 		}
 
         StringBuilder builder = new StringBuilder();
+        if (millis < 0) {
+            builder.append("-");
+
+            // border-case: avoid overflow as abs(MIN_VALUE) is higher than MAX_VALUE!
+            if (millis == Long.MIN_VALUE) {
+                millis = Long.MAX_VALUE;
+            } else {
+                millis *= -1;
+            }
+        }
+
 		boolean haveDays = false;
         if(millis >= ONE_WEEK) {
             millis = handleTime(builder, millis, ONE_WEEK, "week", "s");
@@ -220,12 +231,16 @@ public class DateParser {
             haveHours = true;
         }
 
+        boolean haveMinutes = false;
         if((!haveDays || !haveHours) && millis >= ONE_MINUTE) {
             millis = handleTime(builder, millis, ONE_MINUTE, "min", "");
+            haveMinutes = true;
         }
 
         if(!haveDays && !haveHours && millis >= ONE_SECOND) {
             /*millis =*/ handleTime(builder, millis, ONE_SECOND, "s", "");
+        } else if (!haveDays && !haveHours && !haveMinutes) {
+            handleTime(builder, millis, 1, "ms", "");
         }
 
         if(builder.length() > 0) {

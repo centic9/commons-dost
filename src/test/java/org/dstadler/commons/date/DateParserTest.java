@@ -91,6 +91,7 @@ public class DateParserTest {
 
 	@Test
 	public void testComputeTimeAgoAsString() {
+		assertEquals("512 ms", DateParser.computeTimeAgoString(System.currentTimeMillis() - 512, ""));
 		assertEquals("6 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (6 * 60 * 1000), ""));
 		assertEquals("2 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (2 * 60 * 1000), ""));
 		assertEquals("1 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (60 * 60 * 1000), ""));
@@ -117,6 +118,7 @@ public class DateParserTest {
 
 	@Test
 	public void testReadableTime() {
+		assertEquals("500 ms", DateParser.timeToReadable(500));
 		assertEquals("1 s", DateParser.timeToReadable(1000));
 		assertEquals("6 min", DateParser.timeToReadable(6 * 60 * 1000));
 		assertEquals("2 min", DateParser.timeToReadable(2 * 60 * 1000));
@@ -131,12 +133,12 @@ public class DateParserTest {
 		assertEquals("19 h", DateParser.timeToReadable(19*60*60*1000));
 
 		// try a few "unusual" values
-		assertEquals("", DateParser.timeToReadable(Long.MIN_VALUE));
+		assertEquals("-15250284452 weeks, 3 days, 7 h", DateParser.timeToReadable(Long.MIN_VALUE));
 		assertEquals("15250284452 weeks, 3 days, 7 h", DateParser.timeToReadable(Long.MAX_VALUE));
-		assertEquals("", DateParser.timeToReadable(-1));
+		assertEquals("-1 ms", DateParser.timeToReadable(-1));
 		assertEquals("0 s", DateParser.timeToReadable(0));
 		assertEquals("15250284452 weeks, 3 days, 7 h", DateParser.timeToReadable((long)Double.POSITIVE_INFINITY));
-		assertEquals("", DateParser.timeToReadable((long)Double.NEGATIVE_INFINITY));
+		assertEquals("-15250284452 weeks, 3 days, 7 h", DateParser.timeToReadable((long)Double.NEGATIVE_INFINITY));
 		//noinspection ConstantConditions
 		assertEquals("0 s", DateParser.timeToReadable((long)Double.MIN_VALUE));
 		assertEquals("15250284452 weeks, 3 days, 7 h", DateParser.timeToReadable((long)Double.MAX_VALUE));
