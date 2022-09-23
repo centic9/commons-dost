@@ -43,6 +43,13 @@ public class DateParserTest {
 	}
 
 	@Test
+	public void testParseURLDateInvalid() {
+		Date now = new Date();
+		assertThrows(IllegalArgumentException.class,
+				() -> DateParser.parseURLDate("-0any", now));
+	}
+
+	@Test
 	public void testParseURLDateAbsolute() {
 		assertEquals(1304215200000L, DateParser.parseURLDate("04:00 20110501", null).getTime());
 		assertEquals(1304215200000L, DateParser.parseURLDate("04:00 110501", null).getTime());
