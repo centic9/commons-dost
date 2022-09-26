@@ -1,23 +1,23 @@
 package org.dstadler.commons.http;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
+import org.apache.hc.client5.http.impl.async.HttpAsyncClientBuilder;
+import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,15 +50,15 @@ public class HttpAsyncClientWrapper extends AbstractClientWrapper implements Clo
         super(timeoutMs, true);
 
         RequestConfig reqConfig = RequestConfig.custom()
-                .setSocketTimeout(timeoutMs)
-                .setConnectTimeout(timeoutMs)
-                .setConnectionRequestTimeout(timeoutMs)
+                //.setSocketTimeout(timeoutMs)
+                .setConnectTimeout(timeoutMs, TimeUnit.MILLISECONDS)
+                .setConnectionRequestTimeout(timeoutMs, TimeUnit.MILLISECONDS)
                 .build();
 
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
                 new AuthScope(null, -1),
-                new UsernamePasswordCredentials(user, password));
+                new UsernamePasswordCredentials(user, password.toCharArray()));
 
         HttpAsyncClientBuilder builder = HttpAsyncClients.custom()
                 .setDefaultCredentialsProvider(credsProvider)
@@ -66,7 +67,7 @@ public class HttpAsyncClientWrapper extends AbstractClientWrapper implements Clo
         try {
             // create permissive ssl context
             final SSLContext sslcontext = createSSLContext();
-            builder.setSSLContext(sslcontext);
+            // TODO: builder.setSSLContext(sslcontext);
         } catch (GeneralSecurityException e) {
             log.log(Level.WARNING, "Could not create SSLSocketFactory for accepting all certificates", e);
         }
@@ -87,9 +88,9 @@ public class HttpAsyncClientWrapper extends AbstractClientWrapper implements Clo
 
 
         RequestConfig reqConfig = RequestConfig.custom()
-                .setSocketTimeout(timeoutMs)
-                .setConnectTimeout(timeoutMs)
-                .setConnectionRequestTimeout(timeoutMs)
+                //.setSocketTimeout(timeoutMs)
+                .setConnectTimeout(timeoutMs, TimeUnit.MILLISECONDS)
+                .setConnectionRequestTimeout(timeoutMs, TimeUnit.MILLISECONDS)
                 .build();
 
         HttpAsyncClientBuilder builder = HttpAsyncClients.custom()
@@ -98,7 +99,7 @@ public class HttpAsyncClientWrapper extends AbstractClientWrapper implements Clo
         try {
             // create permissive ssl context
             final SSLContext sslcontext = createSSLContext();
-            builder.setSSLContext(sslcontext);
+            // TODO: builder.setSSLContext(sslcontext);
         } catch (GeneralSecurityException e) {
             log.log(Level.WARNING, "Could not create SSLSocketFactory for accepting all certificates", e);
         }

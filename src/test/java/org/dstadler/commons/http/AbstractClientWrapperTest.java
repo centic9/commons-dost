@@ -1,9 +1,9 @@
 package org.dstadler.commons.http;
 
 import org.apache.commons.io.input.NullInputStream;
-import org.apache.http.HttpHost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.HttpHost;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -103,7 +103,7 @@ public class AbstractClientWrapperTest {
 
     @Test
     public void testWithIOException() throws IOException {
-        AbstractClientWrapper wrapper = new AbstractClientWrapper(60_000, withAuth) {
+        try (AbstractClientWrapper wrapper = new AbstractClientWrapper(60_000, withAuth) {
             @Override
             protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) {
                 simpleGetCount.incrementAndGet();
@@ -118,17 +118,19 @@ public class AbstractClientWrapperTest {
             @Override
             public void close() {
             }
-        };
+        }) {
 
-        assertThrows(IllegalStateException.class,
-                () -> wrapper.simpleGet("url"));
-        assertThrows(IllegalStateException.class,
-                () -> wrapper.simpleGet("url", "body"));
-        assertThrows(IllegalStateException.class,
-                () -> wrapper.simpleGet("url", (String)null));
-        assertThrows(IllegalStateException.class,
-                () -> wrapper.simpleGetBytes("url"));
+            assertThrows(IllegalStateException.class,
+                    () -> wrapper.simpleGet("url"));
+            assertThrows(IllegalStateException.class,
+                    () -> wrapper.simpleGet("url", "body"));
+            assertThrows(IllegalStateException.class,
+                    () -> wrapper.simpleGet("url", (String) null));
+            assertThrows(IllegalStateException.class,
+                    () -> wrapper.simpleGetBytes("url"));
 
-        wrapper.simpleGet("url", (x) -> {});
+            wrapper.simpleGet("url", (x) -> {
+            });
+        }
     }
 }

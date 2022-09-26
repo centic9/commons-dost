@@ -1,14 +1,14 @@
 package org.dstadler.commons.metrics;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.HttpEntity;
+import org.apache.hc.client5.http.client.HttpClient;
+import org.apache.hc.client5.http.client.methods.CloseableHttpResponse;
+import org.apache.hc.client5.http.client.methods.HttpPut;
+import org.apache.hc.client5.http.entity.ContentType;
+import org.apache.hc.client5.http.entity.StringEntity;
+import org.apache.hc.client5.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.util.EntityUtils;
 import org.dstadler.commons.http.HttpClientWrapper;
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.logging.jdk.LoggerFactory;

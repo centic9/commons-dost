@@ -9,10 +9,10 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.HttpEntity;
+import org.apache.hc.client5.http.client.methods.CloseableHttpResponse;
+import org.apache.hc.client5.http.client.methods.HttpGet;
+import org.apache.hc.client5.http.util.EntityUtils;
 import org.dstadler.commons.http.HttpClientWrapper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.xml.sax.InputSource;

@@ -1,14 +1,14 @@
 package org.dstadler.commons.http;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.hc.client5.http.auth.AuthCache;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
+import org.apache.hc.client5.http.impl.auth.BasicScheme;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -138,12 +138,9 @@ public abstract class AbstractClientWrapper implements Closeable {
     }
 
     protected HttpUriRequest getHttpGet(String url, String body) throws UnsupportedEncodingException {
-        final HttpUriRequest httpGet;
-        if(body == null) {
-            httpGet = new HttpGet(url);
-        } else {
-            httpGet = new HttpGetWithBody(url);
-            ((HttpGetWithBody)httpGet).setEntity(new StringEntity(body));
+        final HttpUriRequest httpGet = new HttpGet(url);
+        if(body != null) {
+            httpGet.setEntity(new StringEntity(body));
         }
         return httpGet;
     }
@@ -157,7 +154,7 @@ public abstract class AbstractClientWrapper implements Closeable {
 
         // Generate BASIC scheme object and add it to the local auth cache
         URL cacheUrl = new URL(url);
-        HttpHost targetHost = new HttpHost(cacheUrl.getHost(), cacheUrl.getPort(), cacheUrl.getProtocol());
+        HttpHost targetHost = new HttpHost(cacheUrl.getHost(), cacheUrl.getPort());
         authCache.put(targetHost, basicAuth);
 
         // Add AuthCache to the execution context
