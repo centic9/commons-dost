@@ -1,6 +1,7 @@
 package org.dstadler.commons.arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.junit.Test;
@@ -35,6 +36,19 @@ public class ArrayUtilsTest {
 		assertEquals("()", ArrayUtils.toString(new Object[0], null, "(", ")"));
 		assertEquals("(a)", ArrayUtils.toString(new Object[] {"a"}, null, "(", ")"));
 		assertEquals("(a,b)", ArrayUtils.toString(new Object[] {"a", "b"}, ",", "(", ")"));
+		assertEquals("a,b)", ArrayUtils.toString(new Object[] {"a", "b"}, ",", "", ")"));
+		assertEquals("a,b", ArrayUtils.toString(new Object[] {"a", "b"}, ",", "", ""));
+		assertEquals("a, b", ArrayUtils.toString(new Object[] {"a", "b"}, ", ", "", ""));
+	}
+
+	@Test
+	public void testToStringObjectArrayStringStringStringInvalid() {
+		// check passing in invalid null as delimiter, suffix or prefix
+		assertThrows(NullPointerException.class,
+				() -> ArrayUtils.toString(new Object[] {"a", "b"}, null, "", ""));
+		assertThrows(NullPointerException.class,
+				() -> ArrayUtils.toString(new Object[] {"a", "b"}, ", ", null, ""));
+		assertEquals("a, 1null", ArrayUtils.toString(new Object[] {"a", "1"}, ", ", "", null));
 	}
 
 	// helper method to get coverage of the unused constructor

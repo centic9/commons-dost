@@ -16,7 +16,7 @@ public class ArrayUtils {
      * </pre>
      *
 	 * @param array Array of elements to print.
-	 * @param delimiter The delimiter to use when concatenating the strings,
+	 * @param delimiter The non-null delimiter to use when concatenating the strings,
 	 * 				", " leads to the same behavior as Arrays.toString()
 	 * @return The resulting string encapsulated in brackets ('[...]')
 	 */
@@ -34,13 +34,15 @@ public class ArrayUtils {
 	 * toString(new Object[0], *, "(", ")") =&gt; "()"
 	 * toString(new Object[] {"a"}, *, "(", ")") =&gt; "(a)"
 	 * toString(new Object[] {"a", "b"}, ",", "(", ")") =&gt; "(a,b)"
+	 * toString(new Object[] {"a", "b"}, ",", "", ")") =&gt; "a,b)"
+	 * toString(new Object[] {"a", "b"}, ",", "", "") =&gt; "a,b"
      * </pre>
 	 *
 	 * @param array Array of elements to print.
-	 * @param delimiter The delimiter to use when concatenating the strings,
+	 * @param delimiter The non-null delimiter to use when concatenating the strings,
 	 * 				", " leads to the same behavior as Arrays.toString()
-	 * @param prefix the starting string which is concatenated to the beginning
-	 * @param suffix the ending string which is concatenated at the end
+	 * @param prefix the non-null starting string which is concatenated to the beginning
+	 * @param suffix the non-null ending string which is concatenated at the end
 	 * @return The resulting string encapsulated in the given prefix and suffix
 	 */
 	public static String toString(Object[] array, String delimiter, String prefix, String suffix) {
