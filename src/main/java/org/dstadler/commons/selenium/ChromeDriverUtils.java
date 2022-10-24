@@ -124,7 +124,7 @@ public class ChromeDriverUtils {
     protected static String getGoogleChromeVersion() throws IOException {
         OutputStream out = new ByteArrayOutputStream();
         // Google Chrome 91.0.4472.77
-		String version = null;
+		String version;
 		if (SystemUtils.IS_OS_WINDOWS) {
 			CommandLine cmdLine = new CommandLine("reg");
 			cmdLine.addArgument("query");
