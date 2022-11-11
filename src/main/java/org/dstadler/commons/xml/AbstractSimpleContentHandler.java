@@ -20,7 +20,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Simple SAX Parser to handle XML data, it is usually subclassed to provide the
@@ -69,7 +68,7 @@ public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> ex
 		currentTags = null;
 		characters.setLength(0);
 
-		XMLReader parser = XMLReaderFactory.createXMLReader();
+		final XMLReader parser = XMLHelper.newXMLReader();
 
 		parser.setContentHandler(this);
 		parser.setErrorHandler(this);

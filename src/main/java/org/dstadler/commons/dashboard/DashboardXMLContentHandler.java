@@ -7,13 +7,13 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.dstadler.commons.xml.XMLHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Can read some information off of the list of Dashboards returned by the dynaTrace XML reporting.
@@ -25,7 +25,7 @@ public class DashboardXMLContentHandler extends DefaultHandler {
 	private final Map<String, String> dashboards = new TreeMap<>();
 
 	public static Map<String, String> parseContent(InputStream strm) throws SAXException, IOException {
-		XMLReader parser = XMLReaderFactory.createXMLReader();
+		final XMLReader parser = XMLHelper.newXMLReader();
 
 		DashboardXMLContentHandler handler = new DashboardXMLContentHandler();
 
