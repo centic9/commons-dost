@@ -70,6 +70,26 @@ public class MappedCounterTest {
 		assertEquals(2, counter.get("other"));
 		assertEquals("{other=2, fifth=1, fourth=1, test=1, third=1}", counter.sortedMap().toString());
 		assertEquals(6, counter.sum());
+
+        counter.inc("new");
+        assertEquals(1, counter.get("new"));
+        assertEquals("{other=2, fifth=1, fourth=1, new=1, test=1, third=1}", counter.sortedMap().toString());
+        assertEquals(7, counter.sum());
+
+        counter.add(null, 15);
+        assertEquals(15, counter.get(null));
+        assertEquals("{null=15, other=2, fifth=1, fourth=1, new=1, test=1, third=1}", counter.sortedMap().toString());
+        assertEquals(22, counter.sum());
+
+        counter.add(null, -15);
+        assertEquals(0, counter.get(null));
+        assertEquals("{other=2, fifth=1, fourth=1, new=1, test=1, third=1, null=0}", counter.sortedMap().toString());
+        assertEquals(7, counter.sum());
+
+        counter.inc(null);
+        assertEquals(1, counter.get(null));
+        assertEquals("{other=2, null=1, fifth=1, fourth=1, new=1, test=1, third=1}", counter.sortedMap().toString());
+        assertEquals(8, counter.sum());
     }
 
     @Test

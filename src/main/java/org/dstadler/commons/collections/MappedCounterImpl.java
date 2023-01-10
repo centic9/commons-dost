@@ -31,11 +31,7 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
 
 	@Override
 	public void inc(T k) {
-		if (!map.containsKey(k)) {
-			map.put(k, 1L);
-		} else {
-			map.put(k, map.get(k) + 1);
-		}
+        add(k, 1);
 	}
 
 	@Override
