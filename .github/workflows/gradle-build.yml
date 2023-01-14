@@ -9,6 +9,7 @@ on:
     branches: [ master ]
   # Allows to run from the Actions tab
   workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   build-and-test:
