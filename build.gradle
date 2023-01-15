@@ -1,22 +1,23 @@
 buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'de.thetaphi:forbiddenapis:3.4'
-	}
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'de.thetaphi:forbiddenapis:3.4'
+    }
 }
 
 plugins {
+    id 'java-library'
+    id 'maven-publish'
     // https://github.com/researchgate/gradle-release
-    id 'net.researchgate.release' version '2.8.1'
+    id 'net.researchgate.release' version '3.0.2'
     id 'io.codearte.nexus-staging' version '0.30.0'
 
     // https://gradle-pitest-plugin.solidsoft.info/
     id 'info.solidsoft.pitest' version '1.7.4'
 }
 
-apply plugin: 'java'
 apply plugin: 'de.thetaphi.forbiddenapis'
 apply plugin: 'jacoco'
 // too chatty apply plugin: 'checkstyle'
@@ -24,71 +25,56 @@ apply plugin: 'codenarc'
 // does not observe excludes: apply plugin: 'findbugs'
 // did not provide useful warnings: apply plugin: 'pmd'
 // not used currently: apply plugin: 'jdepend'
-apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'io.codearte.nexus-staging'
 
 sourceCompatibility = JavaVersion.VERSION_11
 group = 'org.dstadler'
 archivesBaseName = 'commons-dost'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 forbiddenApis {
-	suppressAnnotations = ['org.dstadler.commons.util.SuppressForbidden']
-	bundledSignatures = [ 'jdk-reflection', 'commons-io-unsafe-2.11.0', 'jdk-internal' ]
-	signaturesFiles += files('config/forbidden-apis/http-signatures.txt')
+    suppressAnnotations = ['org.dstadler.commons.util.SuppressForbidden']
+    bundledSignatures = [ 'jdk-reflection', 'commons-io-unsafe-2.11.0', 'jdk-internal' ]
+    signaturesFiles += files('config/forbidden-apis/http-signatures.txt')
 }
 
 forbiddenApisMain {
-	// 'jdk-unsafe', 'jdk-system-out'
-	bundledSignatures += [ 'jdk-deprecated', 'jdk-internal', 'jdk-non-portable' ]
-	signaturesFiles += files('config/forbidden-apis/forbidden.signatures.txt')
+    // 'jdk-unsafe', 'jdk-system-out'
+    bundledSignatures += [ 'jdk-deprecated', 'jdk-internal', 'jdk-non-portable' ]
+    signaturesFiles += files('config/forbidden-apis/forbidden.signatures.txt')
 }
 
 dependencies {
-	implementation 'commons-io:commons-io:2.11.0'
-	implementation 'org.apache.commons:commons-lang3:3.12.0'
-	implementation 'org.apache.commons:commons-text:1.10.0'
-	implementation 'org.apache.httpcomponents:httpclient:4.5.14'
-	implementation 'org.apache.httpcomponents:httpasyncclient:4.1.5'
-	implementation 'org.apache.commons:commons-exec:1.3'
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    implementation 'org.apache.httpcomponents:httpasyncclient:4.1.5'
+    implementation 'org.apache.commons:commons-exec:1.3'
     implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
     implementation 'net.java.dev.jna:jna:3.4.0'
 
-	testImplementation 'org.junit.vintage:junit-vintage-engine:5.9.2'
-	testImplementation 'org.dstadler:commons-test:1.0.0.20'
+    testImplementation 'org.junit.vintage:junit-vintage-engine:5.9.2'
+    testImplementation 'org.dstadler:commons-test:1.0.0.20'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.19.0'
 }
 
 wrapper {
-    gradleVersion = '6.9.2'
+    gradleVersion = '7.6'
 }
-
-task adjustWrapperPropertiesFile {
-    doLast {
-        ant.replaceregexp(match: '^#.*', replace: '', flags: 'g', byline: true) {
-            fileset(dir: project.projectDir, includes: 'gradle/wrapper/gradle-wrapper.properties')
-        }
-        new File(project.projectDir, 'gradle/wrapper/gradle-wrapper.properties').with {
-            it.text = it.readLines().findAll { it }.sort().join('\n')
-        }
-        ant.fixcrlf(file: 'gradle/wrapper/gradle-wrapper.properties', eol: 'lf')
-    }
-}
-wrapper.finalizedBy adjustWrapperPropertiesFile
 
 test {
-	maxHeapSize = "32m"
-	systemProperties = System.properties
+    maxHeapSize = "32m"
+    systemProperties = System.properties
 
-	// enable to show standard out and standard error of the test JVM(s) on the console
-	// testLogging.showStandardStreams = true
+    // enable to show standard out and standard error of the test JVM(s) on the console
+    // testLogging.showStandardStreams = true
 
-	// http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
-	systemProperties['user.dir'] = workingDir
+    // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
+    systemProperties['user.dir'] = workingDir
 
     // avoid failures because Gradle provides it's own version of JNA in the system properties
     systemProperties['jna.boot.library.path'] = null
@@ -114,72 +100,63 @@ task javadocJar(type: Jar) {
     from javadoc
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+release {
+    git {
+        requireBranch.set('master')
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = archivesBaseName
+            from components.java
+
+            pom {
+                name = 'Common Utilities'
+                description = 'Common utilities I find useful in many of my projects.'
+                url = 'https://github.com/centic9/commons-dost'
+                licenses {
+                    license {
+                        name = 'BSD 2-Clause "Simplified" License'
+                        url = 'https://github.com/centic9/commons-dost/blob/master/LICENSE.md'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'centic9'
+                        name = 'Dominik Stadler'
+                    }
+                }
+                scm {
+                    connection = 'scm:git@github.com:centic9/commons-dost'
+                    developerConnection = 'scm:git@github.com:centic9/commons-dost'
+                    url = 'https://github.com/centic9/commons-dost'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            //url = layout.buildDirectory.dir('repo')
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials(PasswordCredentials)
+            //snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/')
+        }
+    }
 }
 
 signing {
-	setRequired {
-		// signing is only required if this is a release version
-		// and the artifacts are to be published
-		gradle.taskGraph.allTasks.any { it instanceof PublishToMavenRepository }
-	}
-	sign configurations.archives
+    sign publishing.publications.mavenJava
 }
 
-//provide defaults so we do not need to specify them always
-if (!project.hasProperty('ossrhUsername')) {
-    ext.ossrhUsername = ''
-}
-if (!project.hasProperty('ossrhPassword')) {
-    ext.ossrhPassword = ''
-}
-
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'Common Utilities'
-        packaging 'jar'
-        // optionally artifactId can be defined here
-        description 'Common utilities I find useful in many of my projects.'
-        url 'https://github.com/centic9/commons-dost'
-
-        scm {
-          connection 'scm:git@github.com:centic9/commons-dost.git'
-          developerConnection 'scm:git@github.com:centic9/commons-dost.git'
-          url 'https://github.com/centic9/commons-dost'
-        }
-
-        licenses {
-          license {
-            name 'BSD 2-Clause License'
-            url 'https://www.opensource.org/licenses/bsd-license.php'
-          }
-        }
-
-        developers {
-          developer {
-            id 'centic9	'
-            name 'Dominik Stadler'
-          }
-        }
-      }
-    }
-  }
-}
-
-afterReleaseBuild.dependsOn uploadArchives
+afterReleaseBuild.dependsOn publish
 
 // settings for the task 'closeAndReleaseRepository'
 nexusStaging {
