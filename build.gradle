@@ -67,6 +67,9 @@ wrapper {
 }
 
 test {
+    // required for LoggerFactoryTest to succeed on JDK 17
+    jvmArgs = ['--add-opens', 'java.logging/java.util.logging=ALL-UNNAMED']
+
     maxHeapSize = "32m"
     systemProperties = System.properties
 

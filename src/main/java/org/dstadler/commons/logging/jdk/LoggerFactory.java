@@ -90,6 +90,9 @@ public class LoggerFactory {
 	 * the current logfile and start a new one, e.g. this may be useful before a big
 	 * batch-job starts to have a clean start of log-entries.
 	 *
+	 * On newer JDKs you might need to specify the following commandline parameter
+	 * when invoking java: "--add-opens java.logging/java.util.logging=ALL-UNNAMED"
+	 *
 	 * @throws IllegalStateException If there is a problem calling the rotate-method of the {@link FileHandler}
 	 */
 	@SuppressForbidden(reason = "Could not do this without reflection")
