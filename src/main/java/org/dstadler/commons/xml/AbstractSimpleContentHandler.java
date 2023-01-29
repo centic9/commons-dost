@@ -88,7 +88,8 @@ public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> ex
 	 *
 	 * @param parser The {@link XMLReader} used for parsing the XML.
 	 */
-	protected void adjustParser(XMLReader parser) {
+	@SuppressWarnings({"RedundantThrows", "unused"})
+	protected void adjustParser(XMLReader parser) throws SAXException, IOException {
 	}
 
 	@Override
