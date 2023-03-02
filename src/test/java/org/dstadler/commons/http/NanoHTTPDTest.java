@@ -1,5 +1,27 @@
 package org.dstadler.commons.http;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.commons.io.IOUtils;
 import org.dstadler.commons.http.NanoHTTPD.Response;
 import org.dstadler.commons.net.SocketUtils;
@@ -10,19 +32,6 @@ import org.dstadler.commons.testing.ThreadTestHelper;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.BindException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.Assert.*;
 
 public class NanoHTTPDTest {
 	@After
@@ -48,6 +57,52 @@ public class NanoHTTPDTest {
 		assertTrue(Utils.getURL("http://localhost:" + port, new AtomicInteger(1), 1));
 
 		httpd.stop();
+	}
+
+	@Test
+	public void testServeWithHeader() throws Exception {
+		int port = SocketUtils.getNextFreePort(9000, 9010);
+        NanoHTTPD httpd = new NanoHTTPD(port);
+		try {
+
+            final URL url = new URL("http://localhost:" + port);
+
+            final URLConnection con;
+            con = url.openConnection();
+            con.setConnectTimeout(10000);
+            con.setReadTimeout(10000);
+            con.addRequestProperty("Test", "value");
+            assertNotEquals(-1,  con.getInputStream().read());
+        } finally {
+            httpd.stop();
+        }
+	}
+
+	@Test
+	public void testServeWithInvalidHeader() throws Exception {
+		int port = SocketUtils.getNextFreePort(9000, 9010);
+        NanoHTTPD httpd = new NanoHTTPD(port);
+		try {
+            try (Socket socket = new Socket("localhost", port)) {
+                PrintWriter out =
+                        new PrintWriter(socket.getOutputStream(), true);
+
+                out.println("GET /example/file.html?query=123 prop1:prop2\n"
+                        + "Content-Type: blabla\n"
+                        + "InvalidHeader\n"
+                        + "\n"
+                        + "Content");
+
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                IOUtils.copy(socket.getInputStream(), bytes);
+
+                System.out.println("\nReply: " + bytes.toString(StandardCharsets.UTF_8));
+                String reply = bytes.toString(StandardCharsets.UTF_8);
+                TestHelpers.assertContains(reply, "404", "Content-Type", "text/plain");
+            }
+        } finally {
+            httpd.stop();
+        }
 	}
 
 	@Test
@@ -235,7 +290,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testServeInvalidBindname() throws Exception {
+	public void testServeInvalidBindName() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		try {
 			NanoHTTPD nanoHTTPD = new NanoHTTPD(port, InetAddress.getByName("192.168.123.234"));

@@ -476,7 +476,11 @@ public class NanoHTTPD
             while ( line != null && line.trim().length() > 0 )
             {
                 int p = line.indexOf( ':' );
-                header.put( line.substring(0,p).trim().toLowerCase(), line.substring(p+1).trim());
+                if (p == -1) {
+                    logger.warning("Could not parse property " + line);
+                } else {
+                    header.put(line.substring(0, p).trim().toLowerCase(), line.substring(p + 1).trim());
+                }
                 line = in.readLine();
             }
         }
