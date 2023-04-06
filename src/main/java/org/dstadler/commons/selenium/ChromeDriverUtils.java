@@ -3,7 +3,6 @@ package org.dstadler.commons.selenium;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
@@ -122,7 +121,7 @@ public class ChromeDriverUtils {
      * @throws java.io.IOException If executing chrome fails.
      */
     protected static String getGoogleChromeVersion() throws IOException {
-        OutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         // Google Chrome 91.0.4472.77
 		String version;
 		if (SystemUtils.IS_OS_WINDOWS) {
@@ -142,10 +141,15 @@ public class ChromeDriverUtils {
 			CommandLine cmdLine = new CommandLine("google-chrome-stable");
 			cmdLine.addArgument("--version");
 
-			ExecutionHelper.getCommandResultIntoStream(cmdLine, new File("."), 0, 10_000, out);
-			// cut out the leading text
-			version = StringUtils.removeStart(out.toString(), "Google Chrome ").trim();
-		}
+            try {
+                ExecutionHelper.getCommandResultIntoStream(cmdLine, new File("."), 0, 10_000, out);
+                // cut out the leading text
+                version = StringUtils.removeStart(out.toString(), "Google Chrome ").trim();
+            } finally {
+                out.close();
+                log.info("Having result from calling '" + cmdLine + "': " + out.toString(StandardCharsets.UTF_8).trim());
+            }
+        }
 
         // cut off the trailing patch-level
         try {
