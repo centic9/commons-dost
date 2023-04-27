@@ -22,7 +22,8 @@ import org.xml.sax.SAXParseException;
 public class AbstractSimpleContentHandlerTest {
 	@Test
 	public void testCharacters() {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		handler.characters("somechars".toCharArray(), 0, 8);
@@ -30,7 +31,8 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testParseContentURL() throws Exception {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
@@ -41,7 +43,8 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testParseContentURLParseFails() throws Exception {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 			@Override
 			public SortedMap<String, String> parseContent(InputStream strm) throws IOException {
 				throw new IOException("testexception");
@@ -60,7 +63,8 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testParseContentURLFails() throws Exception {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		try {
@@ -78,20 +82,27 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testParseContentURLSyntaxFails() throws Exception {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		try {
 			handler.parseContent(new URL("http://inv\"!$%()(§$)(alidhostname/doesnotexist"), "", null, 10_000);
 			fail("Should catch exception");
 		} catch (IOException e) {
-			TestHelpers.assertContains(e, "inv\"!$%()(§$)(alidhostname");	// NOPMD
+			if (System.getProperty("java.specification.version", "99.0").equals("21")) {
+				TestHelpers.assertNotContains(e.getMessage(), "inv\"!$%()(§$)(alidhostname");    // NOPMD
+				TestHelpers.assertContains(e, "host: '\"'");
+			} else {
+				TestHelpers.assertContains(e, "inv\"!$%()(§$)(alidhostname");    // NOPMD
+			}
 		}
 	}
 
 	@Test
 	public void testParseContentNotFound() throws Exception {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		try (MockRESTServer server = new MockRESTServer("404", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
@@ -106,7 +117,8 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testParseContentInputStream() throws Exception {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		handler.parseContent(new ByteArrayInputStream("<file><entry/></file>".getBytes()));
@@ -114,7 +126,8 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testErrorSAXParseException() {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		handler.error(new SAXParseException("testexception", null));
@@ -122,7 +135,8 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testFatalErrorSAXParseException() {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		handler.fatalError(new SAXParseException("testexception", null));
@@ -130,7 +144,8 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testWarningSAXParseException() {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 
 		handler.warning(new SAXParseException("testexception", null));
@@ -138,7 +153,8 @@ public class AbstractSimpleContentHandlerTest {
 
 	@Test
 	public void testGetConfigs() {
-		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<String, String>() {
+		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
+
 		};
 		assertEquals(0, handler.getConfigs().size());
 	}

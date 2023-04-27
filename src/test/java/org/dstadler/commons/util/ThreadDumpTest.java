@@ -109,13 +109,28 @@ public class ThreadDumpTest {
         // sleep a bit to let the thread start
         Thread.sleep(100);
 
-        thread.suspend();
+		boolean suspended = true;
+		try {
+			thread.suspend();
+		} catch (UnsupportedOperationException e) {
+			// thrown in JDK 20+
+			suspended = false;
+		}
 
         ThreadDump dump = new ThreadDump(true, true);
 
-        TestHelpers.assertContains(dump.toString(), "main", "testthread", "(suspended)");
+		TestHelpers.assertContains(dump.toString(), "main", "testthread");
+		if (suspended) {
+			TestHelpers.assertContains(dump.toString(), "(suspended)");
+		} else {
+			TestHelpers.assertNotContains(dump.toString(), "(suspended)");
+		}
 
-        thread.resume();
+		try {
+			thread.resume();
+		} catch (UnsupportedOperationException e) {
+			// thrown in JDK 20+
+		}
 
         sem.release(1);
         thread.join();

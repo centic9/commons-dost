@@ -85,7 +85,7 @@ public class ThreadUtils {
         try {
             //noinspection deprecation
             thread.stop();
-        } catch (ThreadDeath e) {
+        } catch (ThreadDeath | UnsupportedOperationException e) {
             log.log(Level.WARNING, "Stopping thread threw an exception", e);
         }
     }
