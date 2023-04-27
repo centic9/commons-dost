@@ -70,7 +70,7 @@ test {
     // required for LoggerFactoryTest to succeed on JDK 17
     jvmArgs = ['--add-opens', 'java.logging/java.util.logging=ALL-UNNAMED']
 
-    maxHeapSize = "32m"
+    maxHeapSize = "64m"
     systemProperties = System.properties
 
     // enable to show standard out and standard error of the test JVM(s) on the console
