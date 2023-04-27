@@ -57,7 +57,7 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
     implementation 'net.java.dev.jna:jna:3.4.0'
 
-    testImplementation 'org.junit.vintage:junit-vintage-engine:5.9.2'
+    testImplementation 'org.junit.vintage:junit-vintage-engine:5.9.3'
     testImplementation 'org.dstadler:commons-test:1.0.0.20'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.20.0'
 }
@@ -84,7 +84,7 @@ test {
 }
 
 jacoco {
-    toolVersion = '0.8.8'
+    toolVersion = '0.8.10'
 }
 
 jacocoTestReport {
