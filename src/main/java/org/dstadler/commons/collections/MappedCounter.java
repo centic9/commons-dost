@@ -23,6 +23,18 @@ public interface MappedCounter<T> {
 	void add(T k, long v);
 
 	/**
+	 * Add all counts of the given MappedCounter to
+	 * this instance of the counter.
+	 *
+	 * @param counter The counts that should be added.
+	 */
+	default void addAll(MappedCounter<T> counter) {
+		for (Map.Entry<T, Long> o : counter.sortedMap().entrySet()) {
+			add(o.getKey(), o.getValue());
+		}
+	}
+
+	/**
 	 * Increase the value for the given key by one.
 	 *
 	 * @param k The key for which to increment the value

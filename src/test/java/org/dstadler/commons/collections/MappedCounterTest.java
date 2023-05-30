@@ -264,7 +264,7 @@ public class MappedCounterTest {
 
     @Test
     public void testWithComparable() {
-        MappedCounter<TestEnum> counter = new MappedCounterImpl<>();
+        MappedCounter<TestEnum> counter = createCounter();
 
         counter.add(TestEnum.C, 1);
         counter.add(TestEnum.B, 1);
@@ -276,7 +276,7 @@ public class MappedCounterTest {
 
     @Test
     public void testWithNonComparable() {
-        MappedCounter<Object> counter = new MappedCounterImpl<>();
+        MappedCounter<Object> counter = createCounter();
 
         counter.add(new Object(), 1);
         counter.add(new Object(), 1);
@@ -286,4 +286,44 @@ public class MappedCounterTest {
         assertEquals("{java.lang.Object=1, java.lang.Object=1, java.lang.Object=1}",
 				counter.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
     }
+
+	@Test
+	public void testAddAll() {
+		MappedCounter<Object> counter = createCounter();
+
+		counter.add(new Object(), 1);
+		counter.add(new Object(), 1);
+		counter.add(new Object(), 1);
+
+		MappedCounter<Object> added = createCounter();
+		added.addAll(counter);
+
+		assertEquals("{java.lang.Object=1, java.lang.Object=1, java.lang.Object=1}",
+				counter.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
+		assertEquals("{java.lang.Object=1, java.lang.Object=1, java.lang.Object=1}",
+				added.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
+
+		added.addAll(counter);
+
+		assertEquals("{java.lang.Object=1, java.lang.Object=1, java.lang.Object=1}",
+				counter.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
+		assertEquals("{java.lang.Object=2, java.lang.Object=2, java.lang.Object=2}",
+				added.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
+
+		added.add("blabla", 5);
+		added.addAll(counter);
+		assertEquals("{blabla=5, java.lang.Object=3, java.lang.Object=3, java.lang.Object=3}",
+				added.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
+	}
+
+	@Test
+	public void testMixedComparable() {
+		MappedCounter<Object> counter = createCounter();
+
+		counter.add(new Object(), 1);
+		counter.add("blabla", 3);
+
+		assertEquals("{blabla=3, java.lang.Object=1}",
+				counter.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
+	}
 }

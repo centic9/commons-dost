@@ -88,7 +88,7 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
                 return 1;
             }
 
-            if(key1 instanceof Comparable) {
+            if(key1 instanceof Comparable && key2 instanceof Comparable) {
 				//noinspection unchecked,rawtypes
                 return ((Comparable)key1).compareTo(key2);
             } else {
