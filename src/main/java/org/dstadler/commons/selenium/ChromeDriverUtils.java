@@ -90,15 +90,19 @@ public class ChromeDriverUtils {
             log.info("Downloading matching chromedriver from " + downloadUrl +
                     " and extracting to " + chromeDriverFile);
 
-            File fileZip = new File("/tmp/chromedriver.zip");
-            FileUtils.copyURLToFile(new URL(downloadUrl), fileZip);
+            File fileZip = File.createTempFile("chromedriver", ".zip");
+			try {
+				FileUtils.copyURLToFile(new URL(downloadUrl), fileZip);
 
-            // unzip the driver-files to the local directory
-            ZipUtils.extractZip(fileZip, new File("."));
+				// unzip the driver-files to the local directory
+				ZipUtils.extractZip(fileZip, new File("."));
 
-            // rename them to the proper version-name
-            FileUtils.moveFile(new File("chromedriver" +
-                    (SystemUtils.IS_OS_WINDOWS ? ".exe" : "")), chromeDriverFile);
+				// rename them to the proper version-name
+				FileUtils.moveFile(new File("chromedriver" +
+						(SystemUtils.IS_OS_WINDOWS ? ".exe" : "")), chromeDriverFile);
+			} finally {
+				FileUtils.delete(fileZip);
+			}
         }
 
         // make sure the binary is executable
