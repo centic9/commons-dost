@@ -12,10 +12,11 @@ plugins {
     id 'maven-publish'
     // https://github.com/researchgate/gradle-release
     id 'net.researchgate.release' version '3.0.2'
+    // https://github.com/Codearte/gradle-nexus-staging-plugin
     id 'io.codearte.nexus-staging' version '0.30.0'
 
     // https://gradle-pitest-plugin.solidsoft.info/
-    id 'info.solidsoft.pitest' version '1.7.4'
+    id 'info.solidsoft.pitest' version '1.9.11'
 }
 
 apply plugin: 'de.thetaphi.forbiddenapis'
