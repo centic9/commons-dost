@@ -2,6 +2,7 @@ package org.dstadler.commons.selenium;
 
 import static org.dstadler.commons.selenium.ChromeDriverUtils.PROPERTY_CHROME_DRIVER;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -64,6 +65,24 @@ public class ChromeDriverUtilsTest {
         ChromeDriverUtils.configureMatchingChromeDriver("100");
         assertEquals(driverFile, System.getProperty(PROPERTY_CHROME_DRIVER));
     }
+
+	@Test
+	public void testConfigureMatchingChromeDriverInvalidVersion() {
+		assertThrows(IOException.class,
+				() -> ChromeDriverUtils.configureMatchingChromeDriver("1234567890"));
+	}
+
+	@Test
+	public void testConfigureMatchingChromeDriverBlank() {
+		assertThrows(IllegalStateException.class,
+				() -> ChromeDriverUtils.configureMatchingChromeDriver(""));
+	}
+
+	@Test
+	public void testConfigureMatchingChromeDriverNull() {
+		assertThrows(IllegalStateException.class,
+				() -> ChromeDriverUtils.configureMatchingChromeDriver(null));
+	}
 
 	// helper method to get coverage of the unused constructor
 	@Test

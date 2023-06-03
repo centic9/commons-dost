@@ -1,6 +1,7 @@
 package org.dstadler.commons.collections;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -69,32 +70,7 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
     @Override
     public Map<T, Long> sortedMap() {
         List<Map.Entry<T, Long>> list = new LinkedList<>(map.entrySet());
-        list.sort((o1, o2) -> {
-            // reverse ordering to get highest values first
-            int ret = (-1) * o1.getValue().compareTo(o2.getValue());
-            if (ret != 0) {
-                return ret;
-            }
-
-            final T key1 = o1.getKey();
-            final T key2 = o2.getKey();
-
-            // we use a HashMap which allows null-keys
-            if (key1 == null && key2 == null) {
-                return 0;
-            } else if (key1 == null) {
-                return -1;
-            } else if (key2 == null) {
-                return 1;
-            }
-
-            if(key1 instanceof Comparable && key2 instanceof Comparable) {
-				//noinspection unchecked,rawtypes
-                return ((Comparable)key1).compareTo(key2);
-            } else {
-                return key1.toString().compareTo(key2.toString());
-            }
-        });
+        list.sort(new CounterComparator<>());
 
         Map<T, Long> result = new LinkedHashMap<>();
         for (Map.Entry<T, Long> entry : list) {
@@ -116,4 +92,43 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
     public String toString() {
         return map.toString();
     }
+
+	protected static class CounterComparator<T> implements Comparator<Map.Entry<T, Long>> {
+
+		@Override
+		public int compare(Map.Entry<T, Long> o1, Map.Entry<T, Long> o2) {
+			if (o1 == null && o2 == null) {
+				return 0;
+			} else if (o1 == null) {
+				return 1;
+			} else if (o2 == null) {
+				return -1;
+			}
+
+			// reverse ordering to get highest values first
+			int ret = (-1) * o1.getValue().compareTo(o2.getValue());
+			if (ret != 0) {
+				return ret;
+			}
+
+			final T key1 = o1.getKey();
+			final T key2 = o2.getKey();
+
+			// we use a HashMap which allows null-keys
+			if (key1 == null && key2 == null) {
+				return 0;
+			} else if (key1 == null) {
+				return -1;
+			} else if (key2 == null) {
+				return 1;
+			}
+
+			if (key1 instanceof Comparable && key2 instanceof Comparable) {
+				//noinspection unchecked,rawtypes
+				return ((Comparable) key1).compareTo(key2);
+			} else {
+				return key1.toString().compareTo(key2.toString());
+			}
+		}
+	}
 }

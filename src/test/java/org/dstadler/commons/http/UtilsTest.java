@@ -148,6 +148,23 @@ public class UtilsTest {
 		}
 	}
 
+	@Test
+	public void testConnectionEmpty() throws IOException {
+		final int port = SocketUtils.getNextFreePort(9000, 9010);
+		NanoHTTPD httpd = new NanoHTTPD(port) {
+			@Override
+			public Response serve(String uri, String method, Properties header, Properties parms) {
+				return new Response("200", "", "");
+			}
+		};
+
+		try {
+			assertFalse(Utils.getURL("http://localhost:" + port, new AtomicInteger(100), 2));
+		} finally {
+			httpd.stop();
+		}
+	}
+
 	// helper method to get coverage of the unused constructor
 	@Test
 	public void testPrivateConstructor() throws Exception {

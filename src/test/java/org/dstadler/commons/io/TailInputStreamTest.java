@@ -135,4 +135,49 @@ public class TailInputStreamTest {
 			}
 		}
 	}
+
+	@Test
+	public void testTailInputStreamNewlines() throws Exception {
+		File file = File.createTempFile("TailInputStream", ".test");
+		try {
+			FileUtils.write(file, StringUtils.repeat("1234567890\n\r", 100), "UTF-8");
+
+			assertEquals(1200, file.length());
+
+			// Expected is lower because the TailInputStream skips to the next newline to always show full lines
+			assertCount(file, 13, 20);
+			assertCount(file, 97, 100);
+			assertCount(file, 997, 999);
+			assertCount(file, 997, 1000);
+			assertCount(file, 997, 1001);
+			assertCount(file, 1093, 1100);
+
+			// now it returns full length
+			assertCount(file, 1200, 1200);
+			assertCount(file, 1200, 1201);
+			assertCount(file, 1200, 2001);
+		} finally {
+			assertTrue(file.delete());
+		}
+	}
+
+	@Test
+	public void testTailInputStreamEOL() throws Exception {
+		File file = File.createTempFile("TailInputStream", ".test");
+		try {
+			FileUtils.write(file, StringUtils.repeat("1234567890", 100), "UTF-8");
+
+			assertEquals(1000, file.length());
+
+			// nothing is read because the stream only returns data after the first full line
+			assertCount(file, 0, 20);
+			assertCount(file, 0, 100);
+			assertCount(file, 0, 999);
+			assertCount(file, 1000, 1000);
+			assertCount(file, 1000, 1001);
+			assertCount(file, 1000, 2001);
+		} finally {
+			assertTrue(file.delete());
+		}
+	}
 }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -325,5 +326,24 @@ public class MappedCounterTest {
 
 		assertEquals("{blabla=3, java.lang.Object=1}",
 				counter.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
+	}
+
+	@Test
+	public void testComparator() {
+		MappedCounterImpl.CounterComparator<String> comparator = new MappedCounterImpl.CounterComparator<>();
+
+		TestHelpers.ComparatorTest(comparator, getEntry(null, 1L), getEntry(null, 1L), getEntry("1", 1L), false);
+		TestHelpers.ComparatorTest(comparator, getEntry(null, 1L), getEntry(null, 1L), getEntry(null, 2L), true);
+		TestHelpers.ComparatorTest(comparator, getEntry("1", 1L), getEntry("1", 1L), getEntry("1", 2L), true);
+		TestHelpers.ComparatorTest(comparator, getEntry("1", 1L), getEntry("1", 1L), getEntry(null, 2L), true);
+		TestHelpers.ComparatorTest(comparator, getEntry("1", 1L), getEntry("1", 1L), getEntry("0", 1L), true);
+		TestHelpers.ComparatorTest(comparator, getEntry("1", 1L), getEntry("1", 1L), getEntry("2", 1L), false);
+		TestHelpers.ComparatorTest(comparator, getEntry("1", 1L), getEntry("1", 1L), getEntry("2", 1L), false);
+	}
+
+	private static <T> Entry<T, Long> getEntry(T key, long value) {
+		Map<T, Long> map = new HashMap<>();
+		map.put(key, value);
+		return map.entrySet().iterator().next();
 	}
 }
