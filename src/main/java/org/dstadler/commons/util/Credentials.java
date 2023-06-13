@@ -60,7 +60,7 @@ public class Credentials {
     public static String getCredentialOrFail(String key) {
     	String result = getCredentialOrNull(key);
     	if(result == null) {
-    		throw new IllegalStateException("Could not read credentials for key " + key);
+    		throw new IllegalStateException("Could not read credentials for key '" + key + "'");
     	}
 
     	return result;
