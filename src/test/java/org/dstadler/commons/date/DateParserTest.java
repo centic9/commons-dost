@@ -2,6 +2,7 @@ package org.dstadler.commons.date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Date;
@@ -98,7 +99,9 @@ public class DateParserTest {
 
 	@Test
 	public void testComputeTimeAgoAsString() {
-		assertEquals("512 ms", DateParser.computeTimeAgoString(System.currentTimeMillis() - 512, ""));
+		final String str = DateParser.computeTimeAgoString(System.currentTimeMillis() - 512, "");
+		assertTrue("Windows has a 'jumpy' time source, so we expect a range of ms as result, failed for " + str,
+				"512 ms".compareTo(str) <= 0 && "600 ms".compareTo(str) >= 0);
 		assertEquals("6 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (6 * 60 * 1000), ""));
 		assertEquals("2 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (2 * 60 * 1000), ""));
 		assertEquals("1 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (60 * 60 * 1000), ""));
