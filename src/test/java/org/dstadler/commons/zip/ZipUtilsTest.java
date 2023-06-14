@@ -29,11 +29,22 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.zip.ZipUtils.ZipFileVisitor;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class ZipUtilsTest {
 	private static final String TEST_DIRECTORY = "directory123";
+
+	private static final File invalidDir = new File("notexists");
+
+	@After
+	public void tearDown() throws IOException {
+		if (invalidDir.exists()) {
+			FileUtils.deleteDirectory(invalidDir);
+			fail("Directory should not exist: " + invalidDir.getAbsolutePath());
+		}
+	}
 
 	/**
 	 * Test method for {@link org.dstadler.commons.zip.ZipUtils#getZipContentsRecursive(java.lang.String)}.
@@ -486,14 +497,13 @@ public class ZipUtilsTest {
 
 		try {
     		try {
-				File invalidDir = new File("notexists");
 				assertFalse("Directory should not exist: " + invalidDir.getAbsolutePath(),
 						invalidDir.exists());
 
 				ZipUtils.extractZip(zipfile2, invalidDir);
     			fail("Should catch exception here");
     		} catch (IOException e) {
-    			TestHelpers.assertContains(e, "notexists", "does not exist");
+    			TestHelpers.assertContains(e, invalidDir.getName(), "does not exist");
     		}
 
     		File toDir = File.createTempFile("toDir", "");
@@ -571,14 +581,13 @@ public class ZipUtilsTest {
 
 		try (InputStream stream = new FileInputStream(zipfile2)){
     		try {
-				File invalidDir = new File("notexists");
 				assertFalse("Directory should not exist: " + invalidDir.getAbsolutePath(),
 						invalidDir.exists());
 
 				ZipUtils.extractZip(stream, invalidDir);
     			fail("Should catch exception here");
     		} catch (IOException e) {
-    			TestHelpers.assertContains(e, "notexists", "does not exist");
+    			TestHelpers.assertContains(e, invalidDir.getName(), "does not exist");
     		}
 
     		File toDir = File.createTempFile("toDir", "");
@@ -656,6 +665,7 @@ public class ZipUtilsTest {
 		}
 	}
 
+	@SuppressWarnings("UnnecessaryUnicodeEscape")
 	@Test
 	public void testReplaceInZipReplaceEncoding() throws IOException {
 		File zipfile = createNestedZip();
