@@ -128,7 +128,9 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
 				return 1;
 			}
 
-			if (key1 instanceof Comparable && key2 instanceof Comparable) {
+			if (key1 instanceof Comparable && key2 instanceof Comparable &&
+					// e.g. String.compareTo() expects a String as parameter!
+				key1.getClass().isAssignableFrom(key2.getClass())) {
 				//noinspection unchecked,rawtypes
 				return ((Comparable) key1).compareTo(key2);
 			} else {

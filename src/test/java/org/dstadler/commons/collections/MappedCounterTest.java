@@ -357,9 +357,38 @@ public class MappedCounterTest {
 		TestHelpers.ComparatorTest(comparator, getEntry("1", 1L), getEntry("1", 1L), getEntry("2", 1L), false);
 	}
 
+	@Test
+	public void testComparatorObject() {
+		MappedCounterImpl.CounterComparator<Object> comparator = new MappedCounterImpl.CounterComparator<>();
+
+		// compare different types
+		Object obj = "abc";
+		Object equ = "abc";
+		Object notEqu = new Object();
+		TestHelpers.ComparatorTest(comparator, getEntry(obj, 1L), getEntry(equ, 1L), getEntry(notEqu, 1L), false);
+
+		obj = new TestComparable();
+		equ = new TestComparable();
+		notEqu = "abc";
+		TestHelpers.ComparatorTest(comparator, getEntry(obj, 1L), getEntry(equ, 1L), getEntry(notEqu, 1L), true);
+	}
+
 	private static <T> Entry<T, Long> getEntry(T key, long value) {
 		Map<T, Long> map = new HashMap<>();
 		map.put(key, value);
 		return map.entrySet().iterator().next();
+	}
+
+	private static class TestComparable implements Comparable<Object> {
+
+		@Override
+		public int hashCode() {
+			return 1;
+		}
+
+		@Override
+		public int compareTo(Object o) {
+			return Long.compare(hashCode(), o.hashCode());
+		}
 	}
 }
