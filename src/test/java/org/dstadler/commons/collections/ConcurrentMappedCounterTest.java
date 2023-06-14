@@ -16,7 +16,7 @@ import org.junit.Test;
  */
 public class ConcurrentMappedCounterTest extends MappedCounterTest {
     private static final int NUMBER_OF_THREADS = 20;
-    private static final int NUMBER_OF_TESTS = 500;
+    private static final int NUMBER_OF_TESTS = 600;
 
     @Override
     protected <T> MappedCounter<T> createCounter() {
@@ -41,14 +41,18 @@ public class ConcurrentMappedCounterTest extends MappedCounterTest {
                 String key = "iter" + iter;
                 counter.add(key, 1);
                 counter.add("sum", 1);
+                counter.add("r", 15);
+                counter.inc("r");
 				counter.inc(key);
 
-                assertTrue(counter.get(key) > 0);
+				counter.remove("r");
+
+				assertTrue(counter.get(key) > 0);
                 assertTrue(counter.get("sum") > 0);
                 assertTrue(counter.keys().size() > 0);
                 assertTrue(counter.entries().size() > 0);
 
-                Map<String, Long> sortedMap = counter.sortedMap();
+				Map<String, Long> sortedMap = counter.sortedMap();
                 assertTrue(sortedMap.containsKey("sum"));
                 assertTrue(sortedMap.containsKey(key));
 
@@ -59,6 +63,8 @@ public class ConcurrentMappedCounterTest extends MappedCounterTest {
                 assertNotNull(counter.sortedMap());
                 assertNotNull(counter.entries());
                 assertNotNull(counter.keys());
+
+				assertTrue(counter.sum() > 0);
             }
         });
 
