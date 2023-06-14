@@ -68,6 +68,19 @@ public class MapUtilsTest {
 		assertEquals("Third", "Thref", sorted.get(7).getKey());
 	}
 
+	@Test
+	public void testSortingByValueAndKeyEqualValue() {
+		HashMap<String, Integer> map = new HashMap<>();
+		map.put("One", 1);
+		map.put("Two", 1);
+		map.put("Three", 1);
+
+		List<Map.Entry<String, Integer>> sorted = MapUtils.sortByValueAndKey(map);
+		assertEquals("First", "One", sorted.get(0).getKey());
+		assertEquals("Second", "Three", sorted.get(1).getKey());
+		assertEquals("Third", "Two", sorted.get(2).getKey());
+	}
+
 	// helper method to get coverage of the unused constructor
 	 @Test
 	 public void testPrivateConstructor() throws Exception {
