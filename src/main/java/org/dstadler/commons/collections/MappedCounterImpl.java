@@ -49,7 +49,12 @@ public class MappedCounterImpl<T> implements MappedCounter<T> {
 
     @Override
     public long remove(T key) {
-        return map.remove(key);
+		final Long removed = map.remove(key);
+		if (removed == null) {
+			return 0;
+		}
+
+		return removed;
     }
 
     @Override

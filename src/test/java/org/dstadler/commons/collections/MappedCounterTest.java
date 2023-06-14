@@ -48,6 +48,22 @@ public class MappedCounterTest {
         assertEquals(22, counter.sum());
     }
 
+	@Test
+	public void getNotFound() {
+		MappedCounter<String> counter = createCounter();
+
+		assertEquals(0, counter.get("not exist"));
+		assertEquals(0, counter.get(null));
+	}
+
+	@Test
+	public void removeNotFound() {
+		MappedCounter<String> counter = createCounter();
+
+		assertEquals(0, counter.remove("not exist"));
+		assertEquals(0, counter.remove(null));
+	}
+
     @Test
     public void testSortedMapSorted() {
         MappedCounter<String> counter = createCounter();
