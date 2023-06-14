@@ -5,6 +5,14 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class DayCalendarTest {
+	@Test
+	public void testConstruct() {
+		DayCalendar day = new DayCalendar(123456789);
+		assertEquals(123456789, day.getTimeInMillis());
+
+		assertEquals(1, day.getUnixDay());
+		assertEquals(2440589, day.getJulianDay());
+	}
 
 	@Test
 	public void testDayCalendar() {
