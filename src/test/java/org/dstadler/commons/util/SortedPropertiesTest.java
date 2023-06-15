@@ -33,4 +33,30 @@ public class SortedPropertiesTest {
 		obj = enumeration.nextElement();
 		assertEquals("1", obj);
 	}
+
+	@Test
+	public void testKeysSort() {
+		SortedProperties properties = new SortedProperties();
+		properties.put("a test key", "sometext 5");
+		properties.put("some other key", "sometext 4");
+		properties.put("next key", "sometext 3");
+		properties.put("let's sort this", "sometext 2");
+		properties.put("please", "sometext 1");
+
+		Enumeration<Object> enumeration = properties.keys();
+		Object obj = enumeration.nextElement();
+		assertEquals("some other key", obj);
+
+		obj = enumeration.nextElement();
+		assertEquals("please", obj);
+
+		obj = enumeration.nextElement();
+		assertEquals("next key", obj);
+
+		obj = enumeration.nextElement();
+		assertEquals("let's sort this", obj);
+
+		obj = enumeration.nextElement();
+		assertEquals("a test key", obj);
+	}
 }
