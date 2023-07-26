@@ -68,7 +68,7 @@ public class ChromeDriverUtils {
         // https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_linux64.zip
         // https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_win32.zip
 
-        String versionUrl = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_" + chromeVersion;
+        String versionUrl = getVersionUrl(chromeVersion);
         final String driverVersion;
         try {
             driverVersion = IOUtils.toString(new URL(versionUrl), StandardCharsets.UTF_8);
@@ -116,7 +116,11 @@ public class ChromeDriverUtils {
         System.setProperty(PROPERTY_CHROME_DRIVER, chromeDriverFile.getAbsolutePath());
     }
 
-    /**
+	protected static String getVersionUrl(String chromeVersion) {
+		return "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_" + chromeVersion;
+	}
+
+	/**
      * Call 'google-chrome-stable --version' and parse the output to
      * get the current available version of the Chrome browser.
      *

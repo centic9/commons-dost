@@ -9,7 +9,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dstadler.commons.net.UrlUtils;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Test;
 
 public class ChromeDriverUtilsTest {
@@ -32,6 +34,14 @@ public class ChromeDriverUtilsTest {
     public void testConfigureMatchingChromeDriver() throws IOException {
         assertTrue("System property for chrome-driver should not be set before starting this test",
                 StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)));
+
+		{
+			String version = ChromeDriverUtils.getGoogleChromeVersion();
+			String versionUrl = ChromeDriverUtils.getVersionUrl(version);
+			Assume.assumeTrue("Could not retrieve URL for version " + version + " at " + versionUrl +
+							", seems the ChromeDriver is not yet available",
+					UrlUtils.isAvailable(versionUrl, true, 60_000));
+		}
 
 		ChromeDriverUtils.configureMatchingChromeDriver();
 
