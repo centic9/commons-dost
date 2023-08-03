@@ -2,10 +2,13 @@ package org.dstadler.commons.selenium;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.FileUtils;
@@ -34,11 +37,15 @@ import org.dstadler.commons.zip.ZipUtils;
  * <a href="https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection">this page</a>
  */
 public class ChromeDriverUtils {
-    private static final Logger log = LoggerFactory.make();
+
+	private static final Logger log = LoggerFactory.make();
 
     public static final String PROPERTY_CHROME_DRIVER = "webdriver.chrome.driver";
+	public static final String VERSION_JSON =
+			// "https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json";
+			"https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json";
 
-    /**
+	/**
      * Check which version of chrome is installed and based on its version
      * try to fetch the matching chromedriver and configure it via system
      * properties.
@@ -69,24 +76,52 @@ public class ChromeDriverUtils {
         // https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_win32.zip
 
         String versionUrl = getVersionUrl(chromeVersion);
-        final String driverVersion;
+        String driverVersion = null;
+		String downloadUrl;
         try {
-            driverVersion = IOUtils.toString(new URL(versionUrl), StandardCharsets.UTF_8);
+			try {
+				driverVersion = IOUtils.toString(new URL(versionUrl), StandardCharsets.UTF_8);
+				checkState(StringUtils.isNotBlank(driverVersion),
+						"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
+
+				downloadUrl = SystemUtils.IS_OS_WINDOWS ?
+						"https://chromedriver.storage.googleapis.com/" + driverVersion + "/chromedriver_win32.zip" :
+						"https://chromedriver.storage.googleapis.com/" + driverVersion + "/chromedriver_linux64.zip";
+			} catch (FileNotFoundException e) {
+				// try to fetch versions via a JSON file if the old way fails to find the version
+				String versionJson = IOUtils.toString(new URL(VERSION_JSON), StandardCharsets.UTF_8);
+
+				// match the latest build with that version
+				// "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/115.0.5790.170/linux64/chromedriver-linux64.zip"
+				Matcher matcher = Pattern.
+						compile(	"https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/(" + chromeVersion + "[0-9.]+)/linux64/chromedriver-linux64.zip").
+						matcher(versionJson);
+
+				// iterate over all matches to use the latest versions
+				while (matcher.find()) {
+					driverVersion = matcher.group(1);
+				}
+
+				if (driverVersion == null) {
+					throw new IOException("Failed for " + VERSION_JSON + " and " + versionJson, e);
+				}
+
+				checkState(StringUtils.isNotBlank(driverVersion),
+						"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
+
+				downloadUrl = SystemUtils.IS_OS_WINDOWS ?
+						"https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/" + driverVersion + "/win64/chromedriver-win64.zip" :
+						"https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/" + driverVersion + "/linux64/chromedriver-linux64.zip";
+			}
         } catch (IOException e) {
             throw new IOException("Failed for " + versionUrl, e);
         }
-        checkState(StringUtils.isNotBlank(driverVersion),
-                "Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
 
         File chromeDriverFile = new File("chromedriver-" + driverVersion +
                 (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
 
         // download the driver if not available locally yet
         if (!chromeDriverFile.exists()) {
-            String downloadUrl = SystemUtils.IS_OS_WINDOWS ?
-                    "https://chromedriver.storage.googleapis.com/" + driverVersion + "/chromedriver_win32.zip" :
-                    "https://chromedriver.storage.googleapis.com/" + driverVersion + "/chromedriver_linux64.zip";
-
             log.info("Downloading matching chromedriver from " + downloadUrl +
                     " and extracting to " + chromeDriverFile);
 
@@ -98,10 +133,19 @@ public class ChromeDriverUtils {
 				ZipUtils.extractZip(fileZip, new File("."));
 
 				// rename them to the proper version-name
-				FileUtils.moveFile(new File("chromedriver" +
-						(SystemUtils.IS_OS_WINDOWS ? ".exe" : "")), chromeDriverFile);
+				try {
+					FileUtils.moveFile(new File("chromedriver" +
+							(SystemUtils.IS_OS_WINDOWS ? ".exe" : "")), chromeDriverFile);
+				} catch (FileNotFoundException e) {
+					// try 2nd location in newer downloads
+					FileUtils.moveFile(new File(SystemUtils.IS_OS_WINDOWS ?
+							"chromedriver-win64/chromedriver.exe" :
+							"chromedriver-linux64/chromedriver"), chromeDriverFile);
+				}
 			} finally {
 				FileUtils.delete(fileZip);
+				FileUtils.deleteDirectory(new File("chromedriver-win64"));
+				FileUtils.deleteDirectory(new File("chromedriver-linux64"));
 			}
         }
 
