@@ -94,14 +94,14 @@ jacocoTestReport {
     }
 }
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allJava
+tasks.register('sourcesJar', Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allJava
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
+tasks.register('javadocJar', Jar) {
+	archiveClassifier = 'javadoc'
+	from javadoc
 }
 
 java {
