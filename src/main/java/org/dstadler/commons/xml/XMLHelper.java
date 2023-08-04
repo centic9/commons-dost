@@ -68,6 +68,10 @@ public final class XMLHelper {
 
     /**
      * Creates a new SAX XMLReader, with sensible defaults
+	 *
+	 * @return An instance of XMLReader
+	 *
+	 * @throws java.io.IOException When an I/O error occurs
      */
     public static XMLReader newXMLReader() throws IOException {
 		XMLReader xmlReader;

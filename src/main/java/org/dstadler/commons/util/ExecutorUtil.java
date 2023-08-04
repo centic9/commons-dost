@@ -20,6 +20,10 @@ public class ExecutorUtil {
      * for the threads.
      *
      * Also sets the created threads to "daemon" threads.
+	 *
+	 * @param namePattern How new threads should be named, uses
+	 *                    String.format(namePattern, count) for formatting
+	 *                    the name
      *
      * @return a new ThreadFactory
      */

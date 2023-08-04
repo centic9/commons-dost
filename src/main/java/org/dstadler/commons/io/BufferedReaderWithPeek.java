@@ -48,8 +48,16 @@ public class BufferedReaderWithPeek implements AutoCloseable {
 	}
 
 	/**
-	 * Returns the next line from the BufferedReader, may be the line
-	 * that was previously returned via #peekLine().
+	 * Returns the next line from the BufferedReader, not including any line-termination characters,
+	 * may be the line that was previously returned via #peekLine().
+	 * A String containing the contents of the line, or null if the end of the stream has been reached without reading any characters
+	 *
+	 * @return A String containing the contents of the line, not
+	 * 		including any line-termination characters, or null if
+	 * 		the end of the stream has been reached without reading
+	 * 		any characters
+	 *
+	 * @exception  IOException  If an I/O error occurs
 	 *
 	 * @see java.io.BufferedReader#readLine() for details
 	 */

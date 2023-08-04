@@ -87,6 +87,9 @@ public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> ex
 	 * by adjusting additional features.
 	 *
 	 * @param parser The {@link XMLReader} used for parsing the XML.
+	 *
+	 * @throws org.xml.sax.SAXException When parsing XML fails
+	 * @throws java.io.IOException When an I/O error occurs
 	 */
 	@SuppressWarnings({"RedundantThrows", "unused"})
 	protected void adjustParser(XMLReader parser) throws SAXException, IOException {
