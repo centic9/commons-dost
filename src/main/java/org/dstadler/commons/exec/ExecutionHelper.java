@@ -150,7 +150,7 @@ public class ExecutionHelper {
 		try {
 			int exitValue = executor.execute(cmdLine, environment);
 			if (exitValue != 0) {
-				log.info("Had exit code " + exitValue + " when calling " + cmdLine);
+				log.info("Had exit code " + exitValue + " when calling(" + dir + "): " + toString(cmdLine));
 			}
 		} catch (ExecuteException e) {
 			throw new ExecuteException("While executing (" + dir + "); " + toString(cmdLine), e.getExitValue(), e);
