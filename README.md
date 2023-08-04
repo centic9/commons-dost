@@ -26,6 +26,9 @@ Here an (incomplete) list of bits and pieces in this lib:
 type of object contained in the original list.
 * UnsupportedCollection and UnsupportedList as base implementations of Collection and List where all methods throw an exception
 * DocumentStarter - knows how to open documents of known file-types on different operating systems, usually by using platform-specific tools
+* ChromeDriverUtils - Get current installed version of Chrome and download a matching Selenium "chromedriver" executable
+* ExecutorUtil - Helpers when working with Java Executors
+* XMLHelper - Methods to create safe XML Parsers with dangerous features turned off
 
 Please note that some testing related pieces were moved into their own library to better separate these things. Look at
 http://github.com/centic9/commons-test for more details.
