@@ -42,8 +42,8 @@ public class ChromeDriverUtils {
 
     public static final String PROPERTY_CHROME_DRIVER = "webdriver.chrome.driver";
 	public static final String VERSION_JSON =
-			// "https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json";
-			"https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json";
+			"https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json";
+			// "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json";
 
 	/**
      * Check which version of chrome is installed and based on its version
