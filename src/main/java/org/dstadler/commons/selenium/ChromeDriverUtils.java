@@ -103,7 +103,7 @@ public class ChromeDriverUtils {
 				}
 
 				if (driverVersion == null) {
-					throw new IOException("Failed for " + VERSION_JSON + " and " + versionJson, e);
+					throw new IOException("Failed for " + VERSION_JSON + " and " + versionJson + ", previous exception: " + e);
 				}
 
 				checkState(StringUtils.isNotBlank(driverVersion),
