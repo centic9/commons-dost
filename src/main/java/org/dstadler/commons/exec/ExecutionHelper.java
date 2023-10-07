@@ -82,7 +82,7 @@ public class ExecutionHelper {
 				return new ByteArrayInputStream(outStr.toByteArray());
 			} catch (IOException e) {
 				if (outStr.size() > 0) {
-					log.warning("Had output before error: \n" + outStr);
+					log.warning("Had output before error: \n" + outStr + "\n\nException: " + e);
 				}
 				throw new IOException(e);
 			}
