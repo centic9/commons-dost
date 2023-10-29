@@ -84,7 +84,7 @@ public class ExecutionHelper {
 				if (outStr.size() > 0) {
 					log.warning("Had output before error: \n" + outStr + "\n\nException: " + e);
 				}
-Al				throw new IOException(e);
+				throw new IOException(e);
 			}
 		}
 	}
