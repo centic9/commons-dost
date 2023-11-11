@@ -3,8 +3,7 @@ package org.dstadler.commons.thread;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.util.SuppressForbidden;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,20 +15,11 @@ public class ThreadUtils {
      *
      * @param threadName The name to look for.
      * @return A list of found threads. Returns an empty list if no thread is found.
+	 * @deprecated Use org.apache.commons.lang3.ThreadUtils.findThreadsByName()
      */
-    public static List<Thread> getThreadsByName(String threadName) {
-        int count = Thread.currentThread().getThreadGroup().activeCount();
-
-        Thread[] threads = new Thread[count];
-        Thread.currentThread().getThreadGroup().enumerate(threads);
-
-        List<Thread> foundThreads = new ArrayList<>();
-        for (Thread t : threads) {
-            if (t != null && t.getName().equals(threadName)) {
-                foundThreads.add(t);
-            }
-        }
-        return foundThreads;
+    public static Collection<Thread> getThreadsByName(String threadName) {
+		// reuse implementation from commons-lang3 for some time until we remove it completely
+		return org.apache.commons.lang3.ThreadUtils.findThreadsByName(threadName);
     }
 
     /**

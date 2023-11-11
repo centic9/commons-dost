@@ -5,7 +5,7 @@ import org.dstadler.commons.testing.ThreadTestHelper;
 import org.junit.After;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@SuppressWarnings("deprecation")
 public class ThreadUtilsTest {
     private final AtomicReference<Throwable> exc = new AtomicReference<>();
 
@@ -31,14 +32,14 @@ public class ThreadUtilsTest {
 
     @Test
     public void testGetThreadsByNameNotFound() {
-        final List<Thread> threads = ThreadUtils.getThreadsByName("not existing");
+        final Collection<Thread> threads = ThreadUtils.getThreadsByName("not existing");
         assertEquals("Had: " + threads,
                 0, threads.size());
     }
 
     @Test
     public void testGetThreadsByNameOne() {
-        final List<Thread> threads = ThreadUtils.getThreadsByName(Thread.currentThread().getName());
+        final Collection<Thread> threads = ThreadUtils.getThreadsByName(Thread.currentThread().getName());
         assertEquals("Had: " + threads,
                 1, threads.size());
     }
@@ -64,7 +65,7 @@ public class ThreadUtilsTest {
 
         startLatch.await();
 
-        final List<Thread> threads = ThreadUtils.getThreadsByName("TestUtilsTest-thread");
+        final Collection<Thread> threads = ThreadUtils.getThreadsByName("TestUtilsTest-thread");
         assertEquals("Had: " + threads,
                 3, threads.size());
 
