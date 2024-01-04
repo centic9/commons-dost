@@ -1,0 +1,120 @@
+<gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Move</name>
+    <trkseg>
+      <trkpt lat="48.456194" lon="13.99866">
+        <ele>512</ele>
+        <time>2014-02-27T10:42:59.420Z</time>
+        <extensions>
+          <gpxtpx:TrackPointExtension xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1">
+            <gpxtpx:hr>56</gpxtpx:hr>
+          </gpxtpx:TrackPointExtension>
+          <gpxdata:temp>25.6000003814697</gpxdata:temp>
+          <gpxdata:distance>12</gpxdata:distance>
+          <gpxdata:altitude>512</gpxdata:altitude>
+          <gpxdata:energy>1.20000004768372</gpxdata:energy>
+          <gpxdata:seaLevelPressure>1013</gpxdata:seaLevelPressure>
+          <gpxdata:speed>0.413765975271989</gpxdata:speed>
+        </extensions>
+      </trkpt>
+      <trkpt lat="48.456195" lon="13.998676">
+        <ele>513</ele>
+        <time>2014-02-27T10:45:44.320Z</time>
+        <extensions>
+          <gpxtpx:TrackPointExtension xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1">
+            <gpxtpx:hr>63</gpxtpx:hr>
+          </gpxtpx:TrackPointExtension>
+          <gpxdata:temp>25.2999992370605</gpxdata:temp>
+          <gpxdata:distance>14.024</gpxdata:distance>
+          <gpxdata:altitude>513</gpxdata:altitude>
+          <gpxdata:energy>1.21840003013611</gpxdata:energy>
+          <gpxdata:seaLevelPressure>1013</gpxdata:seaLevelPressure>
+          <gpxdata:speed>0.652800009727478</gpxdata:speed>
+        </extensions>
+      </trkpt>
+      <trkpt lat="48.456218" lon="13.998648">
+        <ele>515</ele>
+        <time>2014-02-27T10:55:07.720Z</time>
+        <extensions>
+          <gpxtpx:TrackPointExtension xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1">
+            <gpxtpx:hr>59</gpxtpx:hr>
+          </gpxtpx:TrackPointExtension>
+          <gpxdata:temp>24.7000007629395</gpxdata:temp>
+          <gpxdata:distance>23</gpxdata:distance>
+          <gpxdata:altitude>515</gpxdata:altitude>
+          <gpxdata:energy>1.20000004768372</gpxdata:energy>
+          <gpxdata:seaLevelPressure>1013</gpxdata:seaLevelPressure>
+          <gpxdata:speed>0</gpxdata:speed>
+        </extensions>
+      </trkpt>
+      <trkpt lat="48.456218" lon="13.998648">
+        <ele>515</ele>
+        <time>2014-02-27T10:55:10.370Z</time>
+        <extensions>
+          <gpxtpx:TrackPointExtension xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1">
+            <gpxtpx:hr>59</gpxtpx:hr>
+          </gpxtpx:TrackPointExtension>
+          <gpxdata:temp>24.7000007629395</gpxdata:temp>
+          <gpxdata:distance>23</gpxdata:distance>
+          <gpxdata:altitude>515</gpxdata:altitude>
+          <gpxdata:energy>1.20000004768372</gpxdata:energy>
+          <gpxdata:seaLevelPressure>1013</gpxdata:seaLevelPressure>
+          <gpxdata:speed>0</gpxdata:speed>
+        </extensions>
+      </trkpt>
+      <trkpt lat="48.456214" lon="13.99865">
+        <ele>515</ele>
+        <time>2014-02-27T10:55:13.840Z</time>
+        <extensions>
+          <gpxtpx:TrackPointExtension xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1">
+            <gpxtpx:hr>59</gpxtpx:hr>
+          </gpxtpx:TrackPointExtension>
+          <gpxdata:temp>24.7000007629395</gpxdata:temp>
+          <gpxdata:distance>23</gpxdata:distance>
+          <gpxdata:altitude>515</gpxdata:altitude>
+          <gpxdata:energy>1.20000004768372</gpxdata:energy>
+          <gpxdata:seaLevelPressure>1013</gpxdata:seaLevelPressure>
+          <gpxdata:speed>0</gpxdata:speed>
+        </extensions>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <extensions>
+    <lap xmlns="http://www.cluetrust.com/XML/GPXDATA/1/0">
+      <index>1</index>
+      <startTime>2014-02-27T10:40:23.000Z</startTime>
+      <elapsedTime>0</elapsedTime>
+      <distance>0</distance>
+    </lap>
+    <lap xmlns="http://www.cluetrust.com/XML/GPXDATA/1/0">
+      <index>2</index>
+      <startTime>2014-02-27T10:40:23.000Z</startTime>
+      <elapsedTime>0</elapsedTime>
+      <distance>0</distance>
+    </lap>
+    <lap xmlns="http://www.cluetrust.com/XML/GPXDATA/1/0">
+      <index>3</index>
+      <startTime>2014-02-27T10:40:23.000Z</startTime>
+      <elapsedTime>0</elapsedTime>
+      <distance>0</distance>
+    </lap>
+    <lap xmlns="http://www.cluetrust.com/XML/GPXDATA/1/0">
+      <index>4</index>
+      <startTime>2014-02-27T10:55:07.733Z</startTime>
+      <elapsedTime>885</elapsedTime>
+      <distance>23</distance>
+    </lap>
+    <lap xmlns="http://www.cluetrust.com/XML/GPXDATA/1/0">
+      <index>5</index>
+      <startTime>2014-02-27T10:55:10.333Z</startTime>
+      <elapsedTime>3</elapsedTime>
+      <distance>0</distance>
+    </lap>
+    <lap xmlns="http://www.cluetrust.com/XML/GPXDATA/1/0">
+      <index>6</index>
+      <startTime>2014-02-27T10:55:13.860Z</startTime>
+      <elapsedTime>4</elapsedTime>
+      <distance>0</distance>
+    </lap>
+  </extensions>
+</gpx>
