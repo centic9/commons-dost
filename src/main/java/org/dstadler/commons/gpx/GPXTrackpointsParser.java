@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.commons.util.SuppressForbidden;
 import org.dstadler.commons.xml.AbstractSimpleContentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -21,6 +22,7 @@ import org.xml.sax.SAXException;
 public class GPXTrackpointsParser extends AbstractSimpleContentHandler<Long, TrackPoint> {
     private static final Logger log = LoggerFactory.make();
 
+	@SuppressForbidden(reason = "Uses System.exit")
     // this is an App mostly for testing arbitrary files for proper parsing
     public static void main(String[] args) throws IOException, SAXException {
         LoggerFactory.initLogging();
