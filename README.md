@@ -29,6 +29,7 @@ type of object contained in the original list.
 * ChromeDriverUtils - Get current installed version of Chrome and download a matching Selenium "chromedriver" executable
 * ExecutorUtil - Helpers when working with Java Executors
 * XMLHelper - Methods to create safe XML Parsers with dangerous features turned off
+* GPXTrackpointsParser - Simple parser for GPX files
 
 Please note that some testing related pieces were moved into their own library to better separate these things. Look at
 http://github.com/centic9/commons-test for more details.
