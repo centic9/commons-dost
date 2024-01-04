@@ -17,6 +17,7 @@ public class TrackPoint {
     private int cadence;
     private double speed;
     private double temp;
+	private int seaLevelPressure;
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
@@ -50,7 +51,11 @@ public class TrackPoint {
         this.temp = temp;
     }
 
-    public double getLatitude() {
+	public void setSeaLevelPressure(int seaLevelPressure) {
+		this.seaLevelPressure = seaLevelPressure;
+	}
+
+	public double getLatitude() {
         return latitude;
     }
 
@@ -93,7 +98,11 @@ public class TrackPoint {
         return temp;
     }
 
-    @Override
+	public int getSeaLevelPressure() {
+		return seaLevelPressure;
+	}
+
+	@Override
     public String toString() {
         return "TrackPoint{" +
                 "latitude=" + latitude +

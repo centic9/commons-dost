@@ -21,6 +21,7 @@ public class TrackPointTest {
         point.setHr(234);
         point.setSpeed(234);
         point.setTemp(28.2);
+		point.setSeaLevelPressure(4732);
         TestHelpers.ToStringTest(point);
 
         assertEquals("11:17:36", point.getTimeString());
@@ -32,6 +33,7 @@ public class TrackPointTest {
 		assertEquals(234, point.getHr());
 		assertEquals(2, point.getCadence());
 		assertEquals(234, point.getSpeed(), 0.001);
-        assertEquals(28.2, point.getTemp(), 0.001);
-    }
+		assertEquals(28.2, point.getTemp(), 0.001);
+		assertEquals(4732, point.getSeaLevelPressure());
+	}
 }

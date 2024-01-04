@@ -18,8 +18,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class GPXTrackpointsParserTest {
-	public static final File GPX_FILE_2 = new File("src/test/data", "1651066759000.gpx");
 	public static final File GPX_FILE_1 = new File("src/test/data", "26624974.gpx");
+	public static final File GPX_FILE_2 = new File("src/test/data", "1651066759000.gpx");
+	public static final File GPX_FILE_3 = new File("src/test/data", "9266323613.gpx");
 
 	@Test
     public void parse() throws Exception {
@@ -66,6 +67,15 @@ public class GPXTrackpointsParserTest {
 	}
 
 	@Test
+	public void parseBrokenTime() {
+		GPXTrackpointsParser parser = new GPXTrackpointsParser();
+		assertThrows(IllegalStateException.class,
+				() -> parser.parseContent(new ByteArrayInputStream(GPX_XML_BROKEN_TIME_2021.getBytes(StandardCharsets.UTF_8))));
+		assertThrows(IllegalStateException.class,
+				() -> parser.parseContent(new ByteArrayInputStream(GPX_XML_BROKEN_TIME_2022.getBytes(StandardCharsets.UTF_8))));
+	}
+
+	@Test
     public void parseFile() throws Exception {
         SortedMap<Long, TrackPoint> map =
                 GPXTrackpointsParser.parseContent(GPX_FILE_1);
@@ -96,7 +106,7 @@ public class GPXTrackpointsParserTest {
     }
 
     @Test
-    public void parseFile2022() throws Exception {
+    public void parseFile2022a() throws Exception {
 		SortedMap<Long, TrackPoint> map =
 				GPXTrackpointsParser.parseContent(GPX_FILE_2);
 		assertNotNull(map);
@@ -106,8 +116,36 @@ public class GPXTrackpointsParserTest {
 				1651066885000L, point.getTime());
 		assertEquals("Newer files have date in UTC",
 				"15:41:25", point.getTimeString());
-    }
 
+		assertEquals(48.3176978, point.getLatitude(), 0.001);
+		assertEquals(14.3050261, point.getLongitude(), 0.001);
+		assertEquals(261, point.getElevation(), 0.001);
+		assertEquals(150, point.getHr());
+		assertEquals(85, point.getCadence());
+		assertEquals(23.9, point.getTemp(), 0.001);
+		assertEquals(2.99, point.getSpeed(), 0.001);
+		assertEquals(10215, point.getSeaLevelPressure());
+	}
+
+    @Test
+    public void parseFile2022b() throws Exception {
+		SortedMap<Long, TrackPoint> map =
+				GPXTrackpointsParser.parseContent(GPX_FILE_3);
+		assertNotNull(map);
+
+		TrackPoint point = map.get(map.firstKey());
+		assertEquals(1658675673000L, point.getTime());
+		assertEquals("17:14:33", point.getTimeString());
+
+		assertEquals(47.544777, point.getLatitude(), 0.001);
+		assertEquals(12.56987, point.getLongitude(), 0.001);
+		assertEquals(0, point.getElevation(), 0.001);
+		assertEquals(78, point.getHr());
+		assertEquals(0, point.getCadence());
+		assertEquals(32, point.getTemp(), 0.001);
+		assertEquals(0, point.getSpeed(), 0.001);
+		assertEquals(0, point.getSeaLevelPressure());
+    }
 
 	@Test
 	public void parseNoTime() throws Exception {
@@ -225,6 +263,40 @@ public class GPXTrackpointsParserTest {
 					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
 					"        <ele>512</ele>\n" +
 					"        <time>2014-02-27T10:42:59.420Z</time>\n" +
+					"        <extensions>\n" +
+					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
+					"        </extensions>\n" +
+					"      </trkpt>\n" +
+					"    </trkseg>\n" +
+					"  </trk>\n" +
+					"</gpx>\n";
+
+	private static final String GPX_XML_BROKEN_TIME_2021 =
+			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
+					" <time>2022-07-09T13:32:31.000Z</time>\n" +
+					"<trk>\n" +
+					"    <name>Move</name>\n" +
+					"    <trkseg>\n" +
+					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
+					"        <ele>512</ele>\n" +
+					"        <time>2014-02-27Tasdagasdf10:42:59.420Z</time>\n" +
+					"        <extensions>\n" +
+					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
+					"        </extensions>\n" +
+					"      </trkpt>\n" +
+					"    </trkseg>\n" +
+					"  </trk>\n" +
+					"</gpx>\n";
+
+	private static final String GPX_XML_BROKEN_TIME_2022 =
+			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
+					" <time>2022-07-09T13:32:31.000Z</time>\n" +
+					"<trk>\n" +
+					"    <name>Move</name>\n" +
+					"    <trkseg>\n" +
+					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
+					"        <ele>512</ele>\n" +
+					"        <time>2023-02-27Tasdagasdf10:42:59.420Z</time>\n" +
 					"        <extensions>\n" +
 					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
 					"        </extensions>\n" +

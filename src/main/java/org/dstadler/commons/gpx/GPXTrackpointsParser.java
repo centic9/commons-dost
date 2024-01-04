@@ -73,9 +73,11 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
     private static final String TAG_LON = "lon";
 
 	private static final String TAG_HR = "hr";
-	private static final String TAG_CADENCE = "cadence";    // Suunto extension
-	private static final String TAG_SPEED = "speed";        // Suunto extension
-	private static final String TAG_TEMP = "atemp";         // Garmin extension
+	private static final String TAG_CADENCE = "cadence";    		// Suunto extension
+	private static final String TAG_SPEED = "speed";        		// Suunto extension
+	private static final String TAG_ATEMP = "atemp";        		// Garmin extension
+	private static final String TAG_TEMP = "temp";           		// OpenAmbit
+	private static final String TAG_PRESSURE = "SeaLevelPressure";	// OpenAmbit
 
     private static final String TAG_METADATA = "metadata";
 
@@ -175,8 +177,14 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 				case TAG_SPEED:
 					currentTags.setSpeed(Double.parseDouble(value));
 					break;
+				case TAG_ATEMP:
+					currentTags.setTemp(Double.parseDouble(value));
+					break;
 				case TAG_TEMP:
 					currentTags.setTemp(Double.parseDouble(value));
+					break;
+				case TAG_PRESSURE:
+					currentTags.setSeaLevelPressure(Integer.parseInt(value));
 					break;
 			}
             characters.setLength(0);
