@@ -46,7 +46,10 @@ public class ExecutionHelperTest {
 			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000);
 			fail("Should throw exception");
 		} catch (IOException e) {
-			TestHelpers.assertContains(e, "Process exited with an error: 1", SVN_CMD, "notExists");
+			TestHelpers.assertContains(e, "While executing (.)", SVN_CMD, "notExists");
+			assertNotNull(e.getCause());
+			assertNotNull(e.getCause().getCause());
+			TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 		}
 	}
 
@@ -142,7 +145,10 @@ public class ExecutionHelperTest {
 			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000, new ByteArrayInputStream(new byte[] {}));
 			fail("Should throw exception");
 		} catch (IOException e) {
-			TestHelpers.assertContains(e, "Process exited with an error: 1");
+			TestHelpers.assertContains(e, "While executing (.)", SVN_CMD, "notexists");
+			assertNotNull(e.getCause());
+			assertNotNull(e.getCause().getCause());
+			TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 		}
 	}
 
