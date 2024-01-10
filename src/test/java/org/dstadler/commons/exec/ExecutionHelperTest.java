@@ -64,7 +64,10 @@ public class ExecutionHelperTest {
 			if (SystemUtils.IS_OS_WINDOWS) {
 				TestHelpers.assertContains(e, "The system cannot find the file specified", "\\bin\\false");
 			} else {
-				TestHelpers.assertContains(e, "Process exited with an error: 1", "/bin/false");
+				TestHelpers.assertContains(e, "While executing (.)", "/bin/false");
+				assertNotNull(e.getCause());
+				assertNotNull(e.getCause().getCause());
+				TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 			}
 		}
 	}
