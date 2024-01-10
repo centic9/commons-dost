@@ -1,6 +1,7 @@
 package org.dstadler.commons.gpx;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
@@ -214,6 +215,15 @@ public class GPXTrackpointsParserTest {
 		GPXTrackpointsParser.main(new String[] {
 				GPX_FILE_1.getAbsolutePath(),
 				GPX_FILE_2.getAbsolutePath() });
+	}
+
+	@Ignore
+	@Test
+	public void testParseLocalFile() throws IOException, SAXException {
+		final SortedMap<Long, TrackPoint> map = GPXTrackpointsParser.parseContent(
+				new File("/tmp/test.gpx"));
+		assertNotNull(map);
+		assertFalse(map.isEmpty());
 	}
 
 	private static final String GPX_XML =
