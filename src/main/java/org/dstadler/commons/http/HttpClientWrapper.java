@@ -10,6 +10,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -72,6 +73,8 @@ public class HttpClientWrapper extends AbstractClientWrapper implements Closeabl
 			    .setSocketTimeout(timeoutMs)
 			    .setConnectTimeout(timeoutMs)
 			    .setConnectionRequestTimeout(timeoutMs)
+				// https://www.lenar.io/invalid-cookie-header-invalid-expires-attribute/
+				.setCookieSpec(CookieSpecs.STANDARD)
 			    .build();
 
 		// configure the builder for HttpClients
@@ -99,6 +102,8 @@ public class HttpClientWrapper extends AbstractClientWrapper implements Closeabl
 			    .setSocketTimeout(timeoutMs)
 			    .setConnectTimeout(timeoutMs)
 			    .setConnectionRequestTimeout(timeoutMs)
+				// https://www.lenar.io/invalid-cookie-header-invalid-expires-attribute/
+				.setCookieSpec(CookieSpecs.STANDARD)
 			    .build();
 
 		// configure the builder for HttpClients

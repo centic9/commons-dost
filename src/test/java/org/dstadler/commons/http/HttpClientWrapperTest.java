@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.util.EntityUtils;
+import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.net.UrlUtils;
 import org.dstadler.commons.testing.MemoryLeakVerifier;
 import org.dstadler.commons.testing.MockRESTServer;
@@ -15,6 +16,7 @@ import org.dstadler.commons.testing.TestHelpers;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +29,7 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -55,6 +58,11 @@ public class HttpClientWrapperTest {
 
     @Parameterized.Parameter
     public Boolean withAuth;
+
+	@BeforeClass
+	public static void setUpClass() throws IOException {
+		LoggerFactory.initLogging();
+	}
 
     @Before
     public void setUp() {
@@ -353,4 +361,20 @@ public class HttpClientWrapperTest {
             }
         }
     }
+
+	// https://www.lenar.io/invalid-cookie-header-invalid-expires-attribute/
+	@Test
+	public void testNewExpiresHeader() throws Exception {
+		assertNotNull(wrapper.getHttpClient());
+
+		try (MockRESTServer server = new MockRESTServer(() -> {
+			NanoHTTPD.Response response = new NanoHTTPD.Response(NanoHTTPD.HTTP_OK, "text/plain", "ok");
+			response.addHeader("Set-Cookie", "AWSALBAPP-3=_remove_; Expires=Wed, 24 Jan 2024 09:39:34 GMT; Path=/");
+			return response;
+		})) {
+			assertEquals("ok", wrapper.simpleGet("http://localhost:" + server.getPort()));
+
+			// the effect is only visible in the log, it should not report a line with "Invalid cookie header"
+		}
+	}
 }
