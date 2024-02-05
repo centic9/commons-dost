@@ -68,8 +68,10 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
     </trkpt>
      */
     private static final String TAG_TRKPT = "trkpt";
-    private static final String TAG_ELE = "ele";
-    private static final String TAG_TIME = "time";
+	private static final String TAG_ELE = "ele";
+	private static final String TAG_TIME = "time";
+	// for now parse wpt-elements the same way as trkpt
+	private static final String TAG_WPT = "wpt";
 
     private static final String TAG_LAT = "lat";
     private static final String TAG_LON = "lon";
@@ -105,7 +107,7 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        if(localName.equals(TAG_TRKPT)) {
+        if(localName.equals(TAG_TRKPT) || localName.equals(TAG_WPT)) {
             if (currentTags != null) {
                 throw new IllegalStateException("Should not have tags when a config starts in the XML, but had: " + currentTags);
             }
@@ -123,7 +125,7 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-        if(localName.equals(TAG_TRKPT)) {
+        if(localName.equals(TAG_TRKPT) || localName.equals(TAG_WPT)) {
 			checkState(currentTags.getLatitude() != 0 && currentTags.getLongitude() != 0,
 					"Expected to have tag 'lat' and 'lon' for trkpt in the XML, but did not find it in: %s", currentTags);
 			// GPX files for a planned route do not contain time-markers,

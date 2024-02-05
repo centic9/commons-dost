@@ -22,6 +22,7 @@ public class GPXTrackpointsParserTest {
 	public static final File GPX_FILE_1 = new File("src/test/data", "26624974.gpx");
 	public static final File GPX_FILE_2 = new File("src/test/data", "1651066759000.gpx");
 	public static final File GPX_FILE_3 = new File("src/test/data", "9266323613.gpx");
+	public static final File GPX_FILE_4 = new File("src/test/data", "Ennstalerhuette_und_Tamischbachturm.gpx");
 
 	@Test
     public void parse() throws Exception {
@@ -144,6 +145,26 @@ public class GPXTrackpointsParserTest {
 		assertEquals(78, point.getHr());
 		assertEquals(0, point.getCadence());
 		assertEquals(32, point.getTemp(), 0.001);
+		assertEquals(0, point.getSpeed(), 0.001);
+		assertEquals(0, point.getSeaLevelPressure());
+    }
+
+    @Test
+    public void parseFileTourenportal() throws Exception {
+		SortedMap<Long, TrackPoint> map =
+				GPXTrackpointsParser.parseContent(GPX_FILE_4);
+		assertNotNull(map);
+
+		TrackPoint point = map.get(map.firstKey());
+		assertEquals(1L, point.getTime());
+		assertEquals("01:00:00", point.getTimeString());
+
+		assertEquals(47.650893, point.getLatitude(), 0.001);
+		assertEquals(14.694258, point.getLongitude(), 0.001);
+		assertEquals(557, point.getElevation(), 0.001);
+		assertEquals(0, point.getHr());
+		assertEquals(0, point.getCadence());
+		assertEquals(0, point.getTemp(), 0.001);
 		assertEquals(0, point.getSpeed(), 0.001);
 		assertEquals(0, point.getSeaLevelPressure());
     }
