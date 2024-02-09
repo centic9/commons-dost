@@ -99,7 +99,7 @@ public class DateParserTest {
 
 	@Test
 	public void testComputeTimeAgoAsString() {
-		final String str = DateParser.computeTimeAgoString(System.currentTimeMillis() - 512, "");
+		String str = DateParser.computeTimeAgoString(System.currentTimeMillis() - 512, "");
 		assertTrue("Windows has a 'jumpy' time source, so we expect a range of ms as result, failed for " + str,
 				"512 ms".compareTo(str) <= 0 && "600 ms".compareTo(str) >= 0);
 		assertEquals("6 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (6 * 60 * 1000), ""));
@@ -116,7 +116,11 @@ public class DateParserTest {
 		assertEquals("1 day, 1 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (25 * 60 * 60 * 1000), ""));
 		assertEquals("1 day, 4 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (28 * 60 * 60 * 1000), ""));
 		assertEquals("2 weeks, 4 days, 14 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(18) - TimeUnit.HOURS.toMillis(14), ""));
-		assertEquals("0 s", DateParser.computeTimeAgoString(System.currentTimeMillis(), ""));
+
+		str = DateParser.computeTimeAgoString(System.currentTimeMillis(), "");
+		assertTrue("Sometimes 1ms elapses in the call to DateParser",
+				"0 s".equals(str) || "1 ms".equals(str));
+
 		assertEquals("34 s", DateParser.computeTimeAgoString(System.currentTimeMillis() - (34*1000), ""));
 		assertEquals("19 h, 52 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (29*1000 + 52*60*1000 + 19*60*60*1000), ""));
 		assertEquals("19 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (19*60*60*1000), ""));
