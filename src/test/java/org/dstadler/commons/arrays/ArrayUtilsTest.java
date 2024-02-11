@@ -1,10 +1,10 @@
 package org.dstadler.commons.arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ArrayUtilsTest {
 
@@ -29,7 +29,8 @@ public class ArrayUtilsTest {
 		assertEquals("()", ArrayUtils.toString(new Object[]{}, ", ", "(", ")"));
 		assertEquals("str1, str2", ArrayUtils.toString(new Object[]{"str1", "str2"}, ", ", "", ""));
 		assertEquals("str1/str2", ArrayUtils.toString(new Object[]{"str1", "str2"}, "/", "", ""));
-		assertEquals("somestartstr1/str2someend", ArrayUtils.toString(new Object[]{"str1", "str2"}, "/", "somestart", "someend"));
+		assertEquals("somestartstr1/str2someend",
+				ArrayUtils.toString(new Object[]{"str1", "str2"}, "/", "somestart", "someend"));
 
 		// verify things mentioned in the javadoc
 		assertEquals("null", ArrayUtils.toString(null, null, null, null));

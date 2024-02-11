@@ -1,7 +1,7 @@
 package org.dstadler.commons.collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MappedCounterTest {
     protected <T> MappedCounter<T> createCounter() {
@@ -340,8 +340,7 @@ public class MappedCounterTest {
 		counter.add(new Object(), 1);
 		counter.add("blabla", 3);
 
-		assertEquals("{blabla=3, java.lang.Object=1}",
-				counter.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
+		assertEquals("{blabla=3, java.lang.Object=1}", counter.sortedMap().toString().replaceAll("@[\\da-f]+", ""));
 	}
 
 	@Test

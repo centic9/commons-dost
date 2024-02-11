@@ -1,6 +1,7 @@
 package org.dstadler.commons.collections;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,8 +15,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
 
 public abstract class AbstractUnsupportedCollectionTest<T> {
     // some methods are not overwritten on purpose
@@ -82,7 +82,7 @@ public abstract class AbstractUnsupportedCollectionTest<T> {
                 fail("Method " + method + " did not throw an exception, but should");
             } catch (InvocationTargetException e) {
                 // expected here
-                assertTrue("Had: " + e.getCause(), e.getCause() instanceof UnsupportedOperationException);
+                assertTrue(e.getCause() instanceof UnsupportedOperationException, "Had: " + e.getCause());
             }
         }
     }

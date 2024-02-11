@@ -1,20 +1,20 @@
 package org.dstadler.commons.collections;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<ObjectAccessorList<Integer, Object>> {
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         // list all methods which are actually implemented to not fail the checks in the parent class
         IGNORED_METHODS.add("get");
@@ -28,7 +28,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
     protected ObjectAccessorList<Integer, Object> instance() {
         ArrayList<Object> objects = new ArrayList<>();
         objects.add(new Object());
-        return new ObjectAccessorList<Integer, Object>(objects, Object::hashCode) {};
+        return new ObjectAccessorList<>(objects, Object::hashCode) {};
     }
 
     @Test
@@ -41,7 +41,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         objects.add(obj2);
         objects.add(obj3);
 
-        List<Integer> list = new ObjectAccessorList<Integer, Object>(objects, Object::hashCode) {};
+        List<Integer> list = new ObjectAccessorList<>(objects, Object::hashCode) {};
         assertEquals((Integer)obj1.hashCode(), list.get(0));
         assertEquals((Integer)obj2.hashCode(), list.get(1));
         assertEquals((Integer)obj3.hashCode(), list.get(2));
@@ -61,12 +61,8 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         list.forEach(sum::addAndGet);
         assertEquals(((long)obj1.hashCode())+obj2.hashCode()+obj3.hashCode(), sum.get());
 
-        try {
-            list.remove(0);
-            fail("Should catch exception here");
-        } catch (UnsupportedOperationException e) {
-            // expected here
-        }
+		assertThrows(UnsupportedOperationException.class,
+				() -> list.remove(0));
     }
 
     @Test
@@ -79,7 +75,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         objects.add(obj2);
         objects.add(obj3);
 
-        List<Integer> list = new ObjectAccessorList<Integer, Object>(objects, Object::hashCode) {};
+        List<Integer> list = new ObjectAccessorList<>(objects, Object::hashCode) {};
 
         // modify the list
         objects.remove(obj2);
@@ -100,12 +96,8 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         list.forEach(sum::addAndGet);
         assertEquals(((long)obj1.hashCode())+obj3.hashCode(), sum.get());
 
-        try {
-            list.remove(0);
-            fail("Should catch exception here");
-        } catch (UnsupportedOperationException e) {
-            // expected here
-        }
+		assertThrows(UnsupportedOperationException.class,
+				() -> list.remove(0));
 
         // remove all objects
         objects.remove(obj1);
@@ -114,7 +106,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         assertEquals(0, list.size());
 
         assertFalse(list.iterator().hasNext());
-        // also forEach does not invoke anything any more
+        // also forEach does not invoke anything anymore
         list.forEach(integer -> {
             throw new IllegalStateException("Had: " + integer);
         });

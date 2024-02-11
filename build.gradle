@@ -59,6 +59,7 @@ dependencies {
     implementation 'net.java.dev.jna:jna:3.4.0'
 
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     testImplementation 'org.dstadler:commons-test:1.0.0.20'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.22.1'
 }
@@ -72,7 +73,6 @@ test {
     jvmArgs = ['--add-opens', 'java.logging/java.util.logging=ALL-UNNAMED']
 
     maxHeapSize = "64m"
-    systemProperties = System.properties
 
     // enable to show standard out and standard error of the test JVM(s) on the console
     // testLogging.showStandardStreams = true
@@ -80,11 +80,8 @@ test {
     // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
     systemProperties['user.dir'] = workingDir
 
-    // avoid failures because Gradle provides it's own version of JNA in the system properties
-    systemProperties['jna.boot.library.path'] = null
+    useJUnitPlatform()
 }
-
-test.dependsOn jar
 
 jacoco {
     toolVersion = '0.8.11'

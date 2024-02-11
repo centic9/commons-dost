@@ -1,12 +1,13 @@
 package org.dstadler.commons.collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import org.junit.jupiter.api.Test;
 
 public class CollectionUtilsTest {
 
@@ -18,12 +19,12 @@ public class CollectionUtilsTest {
         List<Integer> ints = new ArrayList<>();
         ints.add(2);
         ints.add(3);
-        assertEquals("Two items are not combined yet",
-                "2,3", CollectionUtils.getCombinedText(ints));
+        assertEquals("2,3", CollectionUtils.getCombinedText(ints),
+				"Two items are not combined yet");
 
         ints.add(4);
-        assertEquals("Now they are combined",
-                "2-4", CollectionUtils.getCombinedText(ints));
+        assertEquals("2-4", CollectionUtils.getCombinedText(ints),
+				"Now they are combined");
 
         ints.add(3);
         assertEquals("2-4,3", CollectionUtils.getCombinedText(ints));
@@ -55,6 +56,6 @@ public class CollectionUtilsTest {
     // helper method to get coverage of the unused constructor
     @Test
     public void testPrivateConstructor() throws Exception {
-        org.dstadler.commons.testing.PrivateConstructorCoverage.executePrivateConstructor(CollectionUtils.class);
+        PrivateConstructorCoverage.executePrivateConstructor(CollectionUtils.class);
     }
 }

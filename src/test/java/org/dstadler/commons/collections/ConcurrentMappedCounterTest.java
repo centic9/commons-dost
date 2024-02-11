@@ -1,14 +1,14 @@
 package org.dstadler.commons.collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
 import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 
 /**
  * All tests from MappedCounterTest are invoked here as well, only with a ConcurrentMappedCounter instance instead
@@ -49,8 +49,8 @@ public class ConcurrentMappedCounterTest extends MappedCounterTest {
 
 				assertTrue(counter.get(key) > 0);
                 assertTrue(counter.get("sum") > 0);
-                assertTrue(counter.keys().size() > 0);
-                assertTrue(counter.entries().size() > 0);
+				assertFalse(counter.keys().isEmpty());
+				assertFalse(counter.entries().isEmpty());
 
 				Map<String, Long> sortedMap = counter.sortedMap();
                 assertTrue(sortedMap.containsKey("sum"));
