@@ -73,6 +73,7 @@ test {
     jvmArgs = ['--add-opens', 'java.logging/java.util.logging=ALL-UNNAMED']
 
     maxHeapSize = "64m"
+    systemProperties = System.properties
 
     // enable to show standard out and standard error of the test JVM(s) on the console
     // testLogging.showStandardStreams = true
@@ -80,8 +81,13 @@ test {
     // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
     systemProperties['user.dir'] = workingDir
 
+    // avoid failures because Gradle provides it's own version of JNA in the system properties
+    systemProperties['jna.boot.library.path'] = null
+
     useJUnitPlatform()
 }
+
+test.dependsOn jar
 
 jacoco {
     toolVersion = '0.8.11'
