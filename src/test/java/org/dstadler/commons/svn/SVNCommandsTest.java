@@ -1,11 +1,12 @@
 package org.dstadler.commons.svn;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,11 +30,10 @@ import org.dstadler.commons.exec.ExecutionHelper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.AfterClass;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 public class SVNCommandsTest {
@@ -46,8 +46,12 @@ public class SVNCommandsTest {
     private static final File repoDir;
 	private static File svnRepoDir;
 
-	// use statick-block to initialize "static final" members
+	// use static-block to initialize "static final" members
     static {
+		assertNotNull(Thread.currentThread().getContextClassLoader().getResource("logging.properties"),
+				"Should have logging.properties, but had none with Classloader: " +
+								Thread.currentThread().getContextClassLoader());
+
 		try {
 			LoggerFactory.initLogging();
 		} catch (IOException e) {
@@ -110,9 +114,9 @@ public class SVNCommandsTest {
 
 				// There is a strange issue with the file-URL on Windows now which
 				// I could not fix, so let's ignore this test here for now
-				Assume.assumeFalse("Checkout on Windows fails in some setups :(",
-						SystemUtils.IS_OS_WINDOWS &&
-								ret.contains("Unable to connect to a repository at URL"));
+				assumeFalse(SystemUtils.IS_OS_WINDOWS &&
+						ret.contains("Unable to connect to a repository at URL"),
+						"Checkout on Windows fails in some setups :(");
 			}
 
 			// add some minimal content
@@ -143,15 +147,14 @@ public class SVNCommandsTest {
 		return svnRepoDir;
 	}
 
-	@BeforeClass
+	@BeforeAll
     public static void setUpClass() {
 		svnRepoDir = checkoutSVNRepository();
 
-		assumeTrue("Could not execute the SVN-command, skipping tests",
-                SVNCommands.checkSVNCommand());
+		assumeTrue(SVNCommands.checkSVNCommand(), "Could not execute the SVN-command, skipping tests");
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws IOException {
 		if (repoDir != null) {
 			FileUtils.deleteDirectory(repoDir);
@@ -163,7 +166,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testGetBranchLogRevisionRevision() throws Exception {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         Map<Long, LogEntry> log = SVNCommands.getBranchLog(new String[]{""}, 0, 1, BASE_URL, USERNAME, PASSWORD);
         assertNotNull(log);
@@ -175,7 +178,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testGetBranchLogRevision() throws Exception {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         Map<Long, LogEntry> log = SVNCommands.getBranchLog(new String[]{""}, 0, BASE_URL, USERNAME, PASSWORD);
         assertNotNull(log);
@@ -187,7 +190,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testGetBranchLogStream() throws Exception {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         InputStream str = SVNCommands.getBranchLogStream(new String[]{""}, 0, BASE_URL, USERNAME, PASSWORD);
         String result = IOUtils.toString(str, StandardCharsets.UTF_8);
@@ -199,7 +202,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testGetBranchLogDate() throws Exception {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         Map<Long, LogEntry> log = SVNCommands.getBranchLog(new String[]{""}, new Date(0),
                 DateUtils.addDays(new Date(), 1), BASE_URL, USERNAME, PASSWORD);
@@ -212,17 +215,17 @@ public class SVNCommandsTest {
 
     @Test
     public void testSVNDirectAccess() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         String content = IOUtils.toString(SVNCommands.getRemoteFileContent("/README", 1, BASE_URL, USERNAME, PASSWORD), StandardCharsets.UTF_8);
         assertNotNull(content);
         assertTrue(content.contains("test content"));
     }
 
-    @Ignore("Does not work currently due to local file repo")
+    @Disabled("Does not work currently due to local file repo")
     @Test
     public void canLoadBranchLogForTimeframe() throws IOException, SAXException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.set(2015, Calendar.SEPTEMBER, 1, 0, 0, 0);
@@ -243,7 +246,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testCleanup() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -253,11 +256,11 @@ public class SVNCommandsTest {
             }
 
             // check that the necessary structures were created
-            assertTrue("Need to find: " + tempDir, tempDir.exists());
-            assertTrue("Needs to be a dir: " + tempDir, tempDir.isDirectory());
+            assertTrue(tempDir.exists(), "Need to find: " + tempDir);
+            assertTrue(tempDir.isDirectory(), "Needs to be a dir: " + tempDir);
             File svnDir = new File(tempDir, ".svn");
-            assertTrue("Need to find: " + svnDir, svnDir.exists());
-            assertTrue("Need to be a dir: " + svnDir, svnDir.isDirectory());
+            assertTrue(svnDir.exists(), "Need to find: " + svnDir);
+            assertTrue(svnDir.isDirectory(), "Need to be a dir: " + svnDir);
 
             SVNCommands.cleanup(tempDir);
         } finally {
@@ -267,7 +270,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testMergeRevision() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -285,7 +288,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testGetBranchRevision() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -294,12 +297,8 @@ public class SVNCommandsTest {
                 System.out.println(IOUtils.toString(stream, StandardCharsets.UTF_8));
             }
 
-            try {
-                SVNCommands.getBranchRevision("", BASE_URL);
-                fail("Should throw exception here");
-            } catch (IOException e) {
-                // expected here
-            }
+            assertThrows(IOException.class,
+					() -> SVNCommands.getBranchRevision("", BASE_URL));
         } finally {
             FileUtils.deleteDirectory(tempDir);
         }
@@ -307,7 +306,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testBranchExists() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -325,7 +324,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testCopyBranch() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -342,7 +341,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testUpdate() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -359,7 +358,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testVerifyNoPendingChanges() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -380,7 +379,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testRevertAll() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -397,7 +396,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testCommitMergeInfo() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -414,7 +413,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testGetConflicts() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -431,7 +430,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testGetLastRevision() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
@@ -449,7 +448,7 @@ public class SVNCommandsTest {
 
     @Test
     public void testRecordMerge() throws IOException {
-        assumeTrue("SVN not available at " + BASE_URL, serverAvailable());
+        assumeTrue(serverAvailable(), "SVN not available at " + BASE_URL);
 
         File tempDir = File.createTempFile("SVNCommandsTest", ".dir");
         try {
