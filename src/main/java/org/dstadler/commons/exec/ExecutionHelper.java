@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Duration;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -131,14 +132,14 @@ public class ExecutionHelper {
 	}
 
 	private static Executor getDefaultExecutor(File dir, int expectedExit, long timeout) {
-		Executor executor = new DefaultExecutor();
+		Executor executor = DefaultExecutor.builder().get();
 		if(expectedExit != -1) {
 			executor.setExitValue(expectedExit);
 		} else {
 			executor.setExitValues(null);
 		}
 
-		ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+		ExecuteWatchdog watchdog = new ExecuteWatchdog.Builder().setTimeout(Duration.ofMillis(timeout)).get();
 		executor.setWatchdog(watchdog);
 		executor.setWorkingDirectory(dir);
 		return executor;
