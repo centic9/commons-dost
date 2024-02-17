@@ -153,7 +153,9 @@ public class ExecutionHelper {
 				log.info("Had exit code " + exitValue + " when calling(" + dir + "): " + toString(cmdLine));
 			}
 		} catch (ExecuteException e) {
-			throw new ExecuteException("While executing (" + dir + "); " + toString(cmdLine), e.getExitValue(), e);
+			throw new ExecuteException(
+					(executor.getWatchdog().killedProcess() ? "Killed by Watchdog, maybe timeout reached. " : "") +
+					"While executing (" + dir + "); " + toString(cmdLine), e.getExitValue(), e);
 		}
 	}
 

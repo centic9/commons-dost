@@ -1,6 +1,7 @@
 package org.dstadler.commons.exec;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -19,6 +20,7 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 public class ExecutionHelperTest {
 	private final static Logger log = LoggerFactory.make();
@@ -207,5 +209,19 @@ public class ExecutionHelperTest {
 			log.info("Had: " + new String(bytes));
 		}
 		//TestHelpers.assertContains(new String(bytes), "");
+	}
+
+	@Test
+	public void testTriggerTimeout() {
+		CommandLine cmdLine = new CommandLine(SVN_CMD);
+		cmdLine.addArgument("help");
+
+		log.info("Working dir: " + new File(".").getAbsolutePath());
+
+		ThrowingRunnable fn = () -> ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 10, new ByteArrayInputStream(new byte[] {}));
+
+		TestHelpers.assertContains(assertThrows("Did expect very short timeout to kick in",
+				IOException.class, fn),
+				"Killed by Watchdog, maybe timeout reached");
 	}
 }
