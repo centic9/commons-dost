@@ -1,9 +1,6 @@
 package org.dstadler.commons.exec;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,8 +16,10 @@ import org.apache.commons.lang3.SystemUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.function.ThrowingRunnable;
+import org.junit.jupiter.api.function.Executable;
 
 public class ExecutionHelperTest {
 	private final static Logger log = LoggerFactory.make();
@@ -34,7 +33,7 @@ public class ExecutionHelperTest {
 
 		log.info("Working dir: " + new File(".").getAbsolutePath());
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000)) {
-			assertNotNull(result);
+			Assertions.assertNotNull(result);
 			log.info("Svn-Update reported:\n" + IOUtils.toString(result, StandardCharsets.UTF_8));
 		}
 	}
@@ -46,11 +45,11 @@ public class ExecutionHelperTest {
 
 		try {
 			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000);
-			fail("Should throw exception");
+			Assertions.fail("Should throw exception");
 		} catch (IOException e) {
 			TestHelpers.assertContains(e, "While executing (.)", SVN_CMD, "notExists");
-			assertNotNull(e.getCause());
-			assertNotNull(e.getCause().getCause());
+			Assertions.assertNotNull(e.getCause());
+			Assertions.assertNotNull(e.getCause().getCause());
 			TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 		}
 	}
@@ -61,14 +60,14 @@ public class ExecutionHelperTest {
 
 		try {
 			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000);
-			fail("Should throw exception");
+			Assertions.fail("Should throw exception");
 		} catch (IOException e) {
 			if (SystemUtils.IS_OS_WINDOWS) {
 				TestHelpers.assertContains(e, "The system cannot find the file specified", "\\bin\\false");
 			} else {
 				TestHelpers.assertContains(e, "While executing (.)", "/bin/false");
-				assertNotNull(e.getCause());
-				assertNotNull(e.getCause().getCause());
+				Assertions.assertNotNull(e.getCause());
+				Assertions.assertNotNull(e.getCause().getCause());
 				TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 			}
 		}
@@ -81,7 +80,7 @@ public class ExecutionHelperTest {
 		addDefaultArguments(cmdLine);
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
-        	assertNotNull(result);
+        	Assertions.assertNotNull(result);
 			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
 			log.info("Svn-Status reported:\n" + output);
 			TestHelpers.assertNotContains(output, "status");
@@ -94,7 +93,7 @@ public class ExecutionHelperTest {
         cmdLine.addArgument("help");
 
         try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
-        	assertNotNull(result);
+        	Assertions.assertNotNull(result);
 			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
 			log.info("Svn-Help reported:\n" + output);
 			TestHelpers.assertContains(output, "help");
@@ -107,7 +106,7 @@ public class ExecutionHelperTest {
 		cmdLine.addArgument("notexists");
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
-			assertNotNull(result);
+			Assertions.assertNotNull(result);
 			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
 			log.info("Svn reported:\n" + output);
 			TestHelpers.assertContains(output, "notexists");
@@ -120,7 +119,7 @@ public class ExecutionHelperTest {
 		cmdLine.addArgument("notexists and more notexists");
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
-			assertNotNull(result);
+			Assertions.assertNotNull(result);
 			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
 			log.info("Svn reported:\n" + output);
 			TestHelpers.assertContains(output.replace("'", "\""), "\"notexists and more notexists\"");
@@ -134,7 +133,7 @@ public class ExecutionHelperTest {
 
 		log.info("Working dir: " + new File(".").getAbsolutePath());
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000, new ByteArrayInputStream(new byte[] {}))) {
-			assertNotNull(result);
+			Assertions.assertNotNull(result);
 			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
 			log.info("Svn-Help reported:\n" + output);
 			TestHelpers.assertContains(output, "help");
@@ -148,11 +147,11 @@ public class ExecutionHelperTest {
 
 		try {
 			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000, new ByteArrayInputStream(new byte[] {}));
-			fail("Should throw exception");
+			Assertions.fail("Should throw exception");
 		} catch (IOException e) {
 			TestHelpers.assertContains(e, "While executing (.)", SVN_CMD, "notexists");
-			assertNotNull(e.getCause());
-			assertNotNull(e.getCause().getCause());
+			Assertions.assertNotNull(e.getCause());
+			Assertions.assertNotNull(e.getCause().getCause());
 			TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 		}
 	}
@@ -169,7 +168,7 @@ public class ExecutionHelperTest {
 		addDefaultArguments(cmdLine);
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000, new ByteArrayInputStream(new byte[] {}))) {
-			assertNotNull(result);
+			Assertions.assertNotNull(result);
 			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
 			log.info("Svn-status reported:\n" + output);
 			TestHelpers.assertNotContains(output, "status");
@@ -182,7 +181,7 @@ public class ExecutionHelperTest {
 		cmdLine.addArgument("notexists");
 
 		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000, new ByteArrayInputStream(new byte[] {}))) {
-			assertNotNull(result);
+			Assertions.assertNotNull(result);
 			String output = IOUtils.toString(result, StandardCharsets.UTF_8);
 			log.info("Svn reported:\n" + output);
 			TestHelpers.assertContains(output, "notexists");
@@ -203,8 +202,8 @@ public class ExecutionHelperTest {
 		try (ByteArrayOutputStream result = new ByteArrayOutputStream()) {
 			ExecutionHelper.getCommandResultIntoStream(cmdLine, new File("."), 0, 60000, result);
 			byte[] bytes = result.toByteArray();
-			assertNotNull(bytes);
-			assertTrue(bytes.length > 0);
+			Assertions.assertNotNull(bytes);
+			Assertions.assertTrue(bytes.length > 0);
 
 			log.info("Had: " + new String(bytes));
 		}
@@ -218,10 +217,13 @@ public class ExecutionHelperTest {
 
 		log.info("Working dir: " + new File(".").getAbsolutePath());
 
-		ThrowingRunnable fn = () -> ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 10, new ByteArrayInputStream(new byte[] {}));
+		IOException exc = assertThrows(
+				IOException.class,
+				() -> ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 10,
+						new ByteArrayInputStream(new byte[] {})),
+				"Did expect very short timeout to kick in");
 
-		TestHelpers.assertContains(assertThrows("Did expect very short timeout to kick in",
-				IOException.class, fn),
+		TestHelpers.assertContains(exc,
 				"Killed by Watchdog, maybe timeout reached");
 	}
 }

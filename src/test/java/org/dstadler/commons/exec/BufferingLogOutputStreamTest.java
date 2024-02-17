@@ -1,6 +1,6 @@
 package org.dstadler.commons.exec;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BufferingLogOutputStreamTest {
 	private static final int NUMBER_OF_THREADS = 10;
