@@ -1,19 +1,19 @@
 package org.dstadler.commons.selenium;
 
 import static org.dstadler.commons.selenium.ChromeDriverUtils.PROPERTY_CHROME_DRIVER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class ChromeDriverUtilsTest {
-    @After
+    @AfterEach
     public void tearDown() {
         ChromeDriverUtils.cleanUp();
     }
@@ -24,23 +24,21 @@ public class ChromeDriverUtilsTest {
 
         assertTrue(StringUtils.isNotBlank(googleChromeVersion));
 
-        assertTrue("Version did not match \\d+\\.\\d+\\.\\d+, did have version: " + googleChromeVersion,
-                googleChromeVersion.matches("\\d+\\.\\d+\\.\\d+"));
+        assertTrue(googleChromeVersion.matches("\\d+\\.\\d+\\.\\d+"),
+				"Version did not match \\d+\\.\\d+\\.\\d+, did have version: " + googleChromeVersion);
     }
 
     @Test
     public void testConfigureMatchingChromeDriver() throws IOException {
-        assertTrue("System property for chrome-driver should not be set before starting this test",
-                StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)));
+        assertTrue(StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)),
+				"System property for chrome-driver should not be set before starting this test");
 
 		ChromeDriverUtils.configureMatchingChromeDriver();
 
         String driverFile = System.getProperty(PROPERTY_CHROME_DRIVER);
-        assertTrue("System property for chrome-driver should be set now",
-                StringUtils.isNotBlank(driverFile));
+        assertTrue(StringUtils.isNotBlank(driverFile), "System property for chrome-driver should be set now");
 
-        assertTrue("Did not find file " + driverFile,
-                new File(driverFile).exists());
+        assertTrue(new File(driverFile).exists(), "Did not find file " + driverFile);
 
         // running it again does not change the result
         ChromeDriverUtils.configureMatchingChromeDriver();
@@ -49,17 +47,15 @@ public class ChromeDriverUtilsTest {
 
     @Test
     public void testConfigureMatchingChromeDriverWithVersion() throws IOException {
-        assertTrue("System property for chrome-driver should not be set before starting this test",
-                StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)));
+        assertTrue(StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)),
+				"System property for chrome-driver should not be set before starting this test");
 
         ChromeDriverUtils.configureMatchingChromeDriver("100");
 
         String driverFile = System.getProperty(PROPERTY_CHROME_DRIVER);
-        assertTrue("System property for chrome-driver should be set now",
-                StringUtils.isNotBlank(driverFile));
+        assertTrue(StringUtils.isNotBlank(driverFile), "System property for chrome-driver should be set now");
 
-        assertTrue("Did not find file " + driverFile,
-                new File(driverFile).exists());
+        assertTrue(new File(driverFile).exists(), "Did not find file " + driverFile);
 
         // running it again does not change the result
         ChromeDriverUtils.configureMatchingChromeDriver("100");
