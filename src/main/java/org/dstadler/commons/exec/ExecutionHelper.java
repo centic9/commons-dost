@@ -40,7 +40,7 @@ public class ExecutionHelper {
      * @param cmdLine The commandline object filled with the executable and command line arguments
      * @param dir The working directory for the command
      * @param expectedExit The expected exit value or -1 to not fail on any exit value
-	 * @param timeout The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
+	 * @param timeoutMillis The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
 	 * @return An InputStream which provides the output of the command.
      *
      * @throws IOException Execution of sub-process failed or the
@@ -48,8 +48,8 @@ public class ExecutionHelper {
 	 */
 	public static InputStream getCommandResult(
 			CommandLine cmdLine, File dir, int expectedExit,
-			long timeout) throws IOException {
-		return getCommandResult(cmdLine, dir, expectedExit, timeout, null);
+			long timeoutMillis) throws IOException {
+		return getCommandResult(cmdLine, dir, expectedExit, timeoutMillis, null);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class ExecutionHelper {
 	 * @param cmdLine The commandline object filled with the executable and command line arguments
 	 * @param dir The working directory for the command
 	 * @param expectedExit The expected exit value or -1 to not fail on any exit value
-	 * @param timeout The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
+	 * @param timeoutMillis The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
 	 * @param input Input for the command-execution
 	 * @return An InputStream which provides the output of the command.
      *
@@ -72,8 +72,8 @@ public class ExecutionHelper {
 	 */
 	public static InputStream getCommandResult(
 			CommandLine cmdLine, File dir, int expectedExit,
-			long timeout, InputStream input) throws IOException {
-		Executor executor = getDefaultExecutor(dir, expectedExit, timeout);
+			long timeoutMillis, InputStream input) throws IOException {
+		Executor executor = getDefaultExecutor(dir, expectedExit, timeoutMillis);
 
 		try (ByteArrayOutputStream outStr = new ByteArrayOutputStream()) {
 			executor.setStreamHandler(new PumpStreamHandler(outStr, outStr, input));
@@ -97,7 +97,7 @@ public class ExecutionHelper {
      * @param cmdLine The commandline object filled with the executable and command line arguments
      * @param dir The working directory for the command
      * @param expectedExit The expected exit value or -1 to not fail on any exit value
-	 * @param timeout The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
+	 * @param timeoutMillis The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
 	 * @param stream An OutputStream which receives the output of the executed command
      *
      * @throws IOException Execution of sub-process failed or the
@@ -105,8 +105,8 @@ public class ExecutionHelper {
 	 */
 	public static void getCommandResultIntoStream(
 			CommandLine cmdLine, File dir, int expectedExit,
-			long timeout, OutputStream stream) throws IOException {
-		getCommandResultIntoStream(cmdLine, dir, expectedExit, timeout, stream, null);
+			long timeoutMillis, OutputStream stream) throws IOException {
+		getCommandResultIntoStream(cmdLine, dir, expectedExit, timeoutMillis, stream, null);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class ExecutionHelper {
      * @param cmdLine The commandline object filled with the executable and command line arguments
      * @param dir The working directory for the command
      * @param expectedExit The expected exit value or -1 to not fail on any exit value
-	 * @param timeout The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
+	 * @param timeoutMillis The timeout in milliseconds or ExecuteWatchdog.INFINITE_TIMEOUT
      * @param stream An OutputStream which receives the output of the executed command
 	 * @param environment Environment variables that should be set for the execution of the command
 	 *
@@ -125,13 +125,13 @@ public class ExecutionHelper {
 	 */
 	public static void getCommandResultIntoStream(
 			CommandLine cmdLine, File dir, int expectedExit,
-			long timeout, OutputStream stream, Map<String,String> environment) throws IOException {
-		Executor executor = getDefaultExecutor(dir, expectedExit, timeout);
+			long timeoutMillis, OutputStream stream, Map<String,String> environment) throws IOException {
+		Executor executor = getDefaultExecutor(dir, expectedExit, timeoutMillis);
 		executor.setStreamHandler(new PumpStreamHandler(stream));
 		execute(cmdLine, dir, executor, environment);
 	}
 
-	private static Executor getDefaultExecutor(File dir, int expectedExit, long timeout) {
+	private static Executor getDefaultExecutor(File dir, int expectedExit, long timeoutMillis) {
 		Executor executor = DefaultExecutor.builder().get();
 		if(expectedExit != -1) {
 			executor.setExitValue(expectedExit);
@@ -139,7 +139,7 @@ public class ExecutionHelper {
 			executor.setExitValues(null);
 		}
 
-		ExecuteWatchdog watchdog = new ExecuteWatchdog.Builder().setTimeout(Duration.ofMillis(timeout)).get();
+		ExecuteWatchdog watchdog = new ExecuteWatchdog.Builder().setTimeout(Duration.ofMillis(timeoutMillis)).get();
 		executor.setWatchdog(watchdog);
 		executor.setWorkingDirectory(dir);
 		return executor;
