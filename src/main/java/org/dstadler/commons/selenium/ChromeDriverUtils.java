@@ -84,9 +84,8 @@ public class ChromeDriverUtils {
 				checkState(StringUtils.isNotBlank(driverVersion),
 						"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
 
-				downloadUrl = SystemUtils.IS_OS_WINDOWS ?
-						"https://chromedriver.storage.googleapis.com/" + driverVersion + "/chromedriver_win32.zip" :
-						"https://chromedriver.storage.googleapis.com/" + driverVersion + "/chromedriver_linux64.zip";
+				downloadUrl = "https://chromedriver.storage.googleapis.com/" + driverVersion + "/chromedriver_" +
+						(SystemUtils.IS_OS_WINDOWS ? "win32.zip" : "linux64.zip");
 			} catch (FileNotFoundException e) {
 				// try to fetch versions via a JSON file if the old way fails to find the version
 				String versionJson = IOUtils.toString(new URL(VERSION_JSON), StandardCharsets.UTF_8);

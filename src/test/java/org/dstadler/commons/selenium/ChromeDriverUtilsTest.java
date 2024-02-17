@@ -60,7 +60,17 @@ public class ChromeDriverUtilsTest {
         // running it again does not change the result
         ChromeDriverUtils.configureMatchingChromeDriver("100");
         assertEquals(driverFile, System.getProperty(PROPERTY_CHROME_DRIVER));
+
+		ChromeDriverUtils.configureMatchingChromeDriver("113");
     }
+
+	@Test
+	public void testConfigureMatchingChromeDriverOldVersionFull() throws IOException {
+		ChromeDriverUtils.configureMatchingChromeDriver("113.0.5672");
+		String driverFile = System.getProperty(PROPERTY_CHROME_DRIVER);
+		assertTrue(new File(driverFile).exists());
+		assertTrue(driverFile.contains("113.0.5672"));
+	}
 
 	@Test
 	public void testConfigureMatchingChromeDriverInvalidVersion() {
