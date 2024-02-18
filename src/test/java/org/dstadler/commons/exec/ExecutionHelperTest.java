@@ -212,8 +212,8 @@ public class ExecutionHelperTest {
 
 	@Test
 	public void testTriggerTimeout() {
-		CommandLine cmdLine = new CommandLine(SVN_CMD);
-		cmdLine.addArgument("help");
+		CommandLine cmdLine = new CommandLine("sleep");
+		cmdLine.addArgument("5");
 
 		log.info("Working dir: " + new File(".").getAbsolutePath());
 
