@@ -390,4 +390,42 @@ public class MappedCounterTest {
 			return Long.compare(hashCode(), o.hashCode());
 		}
 	}
+
+	@Test
+	public void testAddZero() {
+		MappedCounter<String> counter = createCounter();
+
+		// no key initially
+		assertEquals(0, counter.get("some"));
+		assertEquals("{}", counter.sortedMap().toString());
+		assertEquals(0, counter.keys().size());
+		assertEquals(0, counter.entries().size());
+
+		// add zero value and check what happens
+		counter.add("some", 0);
+
+		assertEquals(0, counter.get("some"));
+		assertEquals("{some=0}", counter.sortedMap().toString());
+		assertEquals(1, counter.keys().size());
+		assertEquals(1, counter.entries().size());
+
+		// add zero value and check what happens
+		counter.add("other", 0);
+
+		assertEquals(0, counter.get("some"));
+		assertEquals(0, counter.get("other"));
+		assertEquals("{other=0, some=0}", counter.sortedMap().toString());
+		assertEquals(2, counter.keys().size());
+		assertEquals(2, counter.entries().size());
+
+		// add zero value and check what happens
+		counter.add("third", 0);
+
+		assertEquals(0, counter.get("some"));
+		assertEquals(0, counter.get("other"));
+		assertEquals(0, counter.get("third"));
+		assertEquals("{other=0, some=0, third=0}", counter.sortedMap().toString());
+		assertEquals(3, counter.keys().size());
+		assertEquals(3, counter.entries().size());
+	}
 }
