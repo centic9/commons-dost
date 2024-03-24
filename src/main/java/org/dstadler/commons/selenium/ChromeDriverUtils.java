@@ -206,6 +206,11 @@ public class ChromeDriverUtils {
             }
         }
 
+		if (version.isBlank()) {
+			throw new RuntimeException("Received empty version for Google Chrome, cannot determine version. "
+					+ "Had: '" + version + "' and '" + out + "'");
+		}
+
         // cut off the trailing patch-level
         try {
             version = version.substring(0, version.lastIndexOf('.'));
