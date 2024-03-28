@@ -6,12 +6,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.SortedMap;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.util.SuppressForbidden;
@@ -68,6 +70,7 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
     </trkpt>
      */
     private static final String TAG_TRKPT = "trkpt";
+    private static final String TAG_RTEPT = "rtept";
 	private static final String TAG_ELE = "ele";
 	private static final String TAG_TIME = "time";
 	// for now parse wpt-elements the same way as trkpt
@@ -85,11 +88,18 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
     private static final String TAG_METADATA = "metadata";
 
-	private static final FastDateFormat TIME_FORMAT_IN =
-			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("Europe/Vienna"));
-
-	private static final FastDateFormat TIME_FORMAT_IN_UTC =
-			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("UTC"));
+	private static final FastDateFormat[] TIME_FORMATS = new FastDateFormat[] {
+			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("Europe/Vienna")),
+			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone("Europe/Vienna")),
+			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSZZ", TimeZone.getTimeZone("Europe/Vienna")),
+			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss", TimeZone.getTimeZone("Europe/Vienna")),
+	};
+	private static final FastDateFormat[] TIME_FORMATS_UTC = new FastDateFormat[] {
+			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("UTC")),
+			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone("UTC")),
+			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSZZ", TimeZone.getTimeZone("UTC")),
+			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss", TimeZone.getTimeZone("UTC")),
+	};
 
 	private final AtomicLong syntheticTime = new AtomicLong();
 
@@ -107,16 +117,18 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        if(localName.equals(TAG_TRKPT) || localName.equals(TAG_WPT)) {
+        if(localName.equals(TAG_TRKPT) || localName.equals(TAG_RTEPT) || localName.equals(TAG_WPT)) {
             if (currentTags != null) {
                 throw new IllegalStateException("Should not have tags when a config starts in the XML, but had: " + currentTags);
             }
             currentTags = new TrackPoint();
-            if(attributes.getValue(TAG_LAT) != null) {
-                currentTags.setLatitude(Double.parseDouble(attributes.getValue(TAG_LAT)));
+			String lat = attributes.getValue(TAG_LAT);
+			if(StringUtils.isNotBlank(lat)) {
+                currentTags.setLatitude(Double.parseDouble(lat));
             }
-            if(attributes.getValue(TAG_LON) != null) {
-                currentTags.setLongitude(Double.parseDouble(attributes.getValue(TAG_LON)));
+			String lon = attributes.getValue(TAG_LON);
+			if(StringUtils.isNotBlank(lon)) {
+                currentTags.setLongitude(Double.parseDouble(lon));
             }
         } else if (localName.equals(TAG_METADATA)) {
             metaData = true;
@@ -125,9 +137,10 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
     @Override
     public void endElement(String uri, String localName, String qName) {
-        if(localName.equals(TAG_TRKPT) || localName.equals(TAG_WPT)) {
+        if(localName.equals(TAG_TRKPT) || localName.equals(TAG_RTEPT) || localName.equals(TAG_WPT)) {
 			checkState(currentTags.getLatitude() != 0 && currentTags.getLongitude() != 0,
-					"Expected to have tag 'lat' and 'lon' for trkpt in the XML, but did not find it in: %s", currentTags);
+					"Expected to have tag 'lat' and 'lon' for trkpt in the XML, but did not find it for tag %s1 in: %s2",
+					localName, currentTags);
 			// GPX files for a planned route do not contain time-markers,
 			// let's use a counter in this case to still sort trackpoints properly
 			if (currentTags.time == null) {
@@ -142,7 +155,10 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
             String value = characters.toString().trim();
             switch (localName) {
                 case TAG_ELE:
-                    currentTags.setElevation(Double.parseDouble(value));
+					// some files contain invalid elevation
+					if (!"null".equals(value) && StringUtils.isNotBlank(value)) {
+						currentTags.setElevation(Double.parseDouble(value));
+					}
                     break;
                 case TAG_TIME:
                     if (metaData) {
@@ -154,22 +170,23 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
                         break;
                     }
 
-					// we changed from non-UTC timestamp to UTC-based timestamps in the GPX
-					// at some point...
-					if (Integer.parseInt(value.substring(0, 4)) >= 2022) {
+					boolean parsed = false;
+					for (FastDateFormat timeFormat :
+							// we changed from non-UTC timestamp to UTC-based timestamps in the GPX
+							// at some point and some external files use slightly different format, so
+							// we have to try until we find the proper format
+							Integer.parseInt(value.substring(0, 4)) >= 2022 ? TIME_FORMATS_UTC : TIME_FORMATS) {
 						try {
-							currentTags.setTime(TIME_FORMAT_IN_UTC.parse(value));
+							currentTags.setTime(timeFormat.parse(value));
+							parsed = true;
+							break;
 						} catch (ParseException e) {
-							throw new IllegalStateException("Failed to parse time from: " + value +
-									" with pattern " + TIME_FORMAT_IN_UTC.getPattern(), e);
+							// ignored here as we try others
 						}
-					} else {
-						try {
-							currentTags.setTime(TIME_FORMAT_IN.parse(value));
-						} catch (ParseException e) {
-							throw new IllegalStateException("Failed to parse time from: " + value +
-									" with pattern " + TIME_FORMAT_IN.getPattern(), e);
-						}
+					}
+					if (!parsed) {
+						throw new IllegalStateException("Failed to parse time from: " + value +
+								" with patterns " + Arrays.toString(TIME_FORMATS));
 					}
 					break;
 				case TAG_HR:
@@ -195,9 +212,11 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
         }
     }
 
-	private static void checkState(boolean expression, String errorMessage, Object arg) {
+	private static void checkState(boolean expression, String errorMessage, Object arg1, Object arg2) {
 		if (!expression) {
-			throw new IllegalStateException(errorMessage.replace("%s", arg.toString()));
+			throw new IllegalStateException(errorMessage.
+					replace("%s1", arg1.toString()).
+					replace("%s2", arg2.toString()));
 		}
 	}
 }

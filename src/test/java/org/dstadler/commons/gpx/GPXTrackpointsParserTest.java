@@ -1,19 +1,30 @@
 package org.dstadler.commons.gpx;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.SortedMap;
+import java.util.TimeZone;
+import java.util.stream.Stream;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -23,6 +34,7 @@ public class GPXTrackpointsParserTest {
 	public static final File GPX_FILE_2 = new File("src/test/data", "1651066759000.gpx");
 	public static final File GPX_FILE_3 = new File("src/test/data", "9266323613.gpx");
 	public static final File GPX_FILE_4 = new File("src/test/data", "Ennstalerhuette_und_Tamischbachturm.gpx");
+	public static final File GPX_FILE_5 = new File("src/test/data", "rte.gpx");
 
 	@Test
     public void parse() throws Exception {
@@ -31,7 +43,7 @@ public class GPXTrackpointsParserTest {
                 parser.parseContent(new ByteArrayInputStream(GPX_XML.getBytes(StandardCharsets.UTF_8)));
 
         assertNotNull(map);
-        assertEquals("Had: " + map, 1, map.size());
+        assertEquals(1, map.size(), "Had: " + map);
 		TrackPoint point = map.get(map.firstKey());
 		assertEquals(48.456194, point.getLatitude(), 0.000001);
         assertEquals(13.99866, point.getLongitude(), 0.000001);
@@ -55,7 +67,7 @@ public class GPXTrackpointsParserTest {
 				parser.parseContent(new ByteArrayInputStream(GPX_XML_METADATA.getBytes(StandardCharsets.UTF_8)));
 
 		assertNotNull(map);
-		assertEquals("Had: " + map, 1, map.size());
+		assertEquals(1, map.size(), "Had: " + map);
 	}
 
 	@Test
@@ -65,7 +77,7 @@ public class GPXTrackpointsParserTest {
 				parser.parseContent(new ByteArrayInputStream(GPX_XML_INVALID_TIME.getBytes(StandardCharsets.UTF_8)));
 
 		assertNotNull(map);
-		assertEquals("Had: " + map, 1, map.size());
+		assertEquals(1, map.size(), "Had: " + map);
 	}
 
 	@Test
@@ -83,7 +95,7 @@ public class GPXTrackpointsParserTest {
                 GPXTrackpointsParser.parseContent(GPX_FILE_1);
 
         assertNotNull(map);
-        assertEquals("Had: " + map, 5, map.size());
+        assertEquals(5, map.size(), "Had: " + map);
 		TrackPoint point = map.get(map.firstKey());
 		assertEquals(48.456194, point.getLatitude(), 0.000001);
         assertEquals(13.99866, point.getLongitude(), 0.000001);
@@ -114,10 +126,10 @@ public class GPXTrackpointsParserTest {
 		assertNotNull(map);
 
 		TrackPoint point = map.get(map.firstKey());
-		assertEquals("Newer files have date in UTC",
-				1651066885000L, point.getTime());
-		assertEquals("Newer files have date in UTC",
-				"15:41:25", point.getTimeString());
+		assertEquals(1651066885000L, point.getTime(),
+				"Newer files have date in UTC");
+		assertEquals("15:41:25", point.getTimeString(),
+				"Newer files have date in UTC");
 
 		assertEquals(48.3176978, point.getLatitude(), 0.001);
 		assertEquals(14.3050261, point.getLongitude(), 0.001);
@@ -169,6 +181,26 @@ public class GPXTrackpointsParserTest {
 		assertEquals(0, point.getSeaLevelPressure());
     }
 
+    @Test
+    public void parseFileRTE() throws Exception {
+		SortedMap<Long, TrackPoint> map =
+				GPXTrackpointsParser.parseContent(GPX_FILE_5);
+		assertNotNull(map);
+
+		TrackPoint point = map.get(map.firstKey());
+		assertEquals(1L, point.getTime());
+		assertEquals("01:00:00", point.getTimeString());
+
+		assertEquals(47.437445, point.getLatitude(), 0.001);
+		assertEquals(14.686466, point.getLongitude(), 0.001);
+		assertEquals(846.8803, point.getElevation(), 0.001);
+		assertEquals(0, point.getHr());
+		assertEquals(0, point.getCadence());
+		assertEquals(0, point.getTemp(), 0.001);
+		assertEquals(0, point.getSpeed(), 0.001);
+		assertEquals(0, point.getSeaLevelPressure());
+    }
+
 	@Test
 	public void parseNoTime() throws Exception {
 		GPXTrackpointsParser parser = new GPXTrackpointsParser();
@@ -176,7 +208,7 @@ public class GPXTrackpointsParserTest {
 				parser.parseContent(new ByteArrayInputStream(GPX_XML_NO_TIME.getBytes(StandardCharsets.UTF_8)));
 
 		assertNotNull(map);
-		assertEquals("Had: " + map, 2, map.size());
+		assertEquals(5, map.size(), "Had: " + map);
 
 		Iterator<TrackPoint> it = map.values().iterator();
 
@@ -195,6 +227,30 @@ public class GPXTrackpointsParserTest {
 		assertEquals(0.412765975271989, point.getSpeed(), 0.000001);
 		assertEquals(0, point.getHr());
 		assertEquals(2L, point.getTime());
+
+		point = it.next();
+		assertEquals(48.556194, point.getLatitude(), 0.000001);
+		assertEquals(13.89866, point.getLongitude(), 0.000001);
+		assertEquals(0, point.getElevation(), 0.000001);
+		assertEquals(0.412765975271989, point.getSpeed(), 0.000001);
+		assertEquals(0, point.getHr());
+		assertEquals(3L, point.getTime());
+
+		point = it.next();
+		assertEquals(48.556194, point.getLatitude(), 0.000001);
+		assertEquals(13.89866, point.getLongitude(), 0.000001);
+		assertEquals(0, point.getElevation(), 0.000001);
+		assertEquals(0.412765975271989, point.getSpeed(), 0.000001);
+		assertEquals(0, point.getHr());
+		assertEquals(4L, point.getTime());
+
+		point = it.next();
+		assertEquals(48.556194, point.getLatitude(), 0.000001);
+		assertEquals(13.89866, point.getLongitude(), 0.000001);
+		assertEquals(0, point.getElevation(), 0.000001);
+		assertEquals(0.412765975271989, point.getSpeed(), 0.000001);
+		assertEquals(0, point.getHr());
+		assertEquals(5L, point.getTime());
 	}
 
 	@Test
@@ -214,13 +270,13 @@ public class GPXTrackpointsParserTest {
 				() -> parser.startElement(null, "trkpt", null, null));
 	}
 
-	@Ignore("Calls System.exit(1)")
+	@Disabled("Calls System.exit(1)")
 	@Test
 	public void testMainEmpty() throws IOException, SAXException {
 		GPXTrackpointsParser.main(new String[0]);
 	}
 
-	@Ignore("Calls System.exit(1)")
+	@Disabled("Calls System.exit(1)")
 	@Test
 	public void testMainInvalid() throws IOException, SAXException {
 		GPXTrackpointsParser.main(new String[] { "notexists.gpx" });
@@ -238,13 +294,62 @@ public class GPXTrackpointsParserTest {
 				GPX_FILE_2.getAbsolutePath() });
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void testParseLocalFile() throws IOException, SAXException {
 		final SortedMap<Long, TrackPoint> map = GPXTrackpointsParser.parseContent(
 				new File("/tmp/test.gpx"));
 		assertNotNull(map);
 		assertFalse(map.isEmpty());
+	}
+
+	@Disabled("Verifies parsing of a large local corpus of GPX files if available")
+	@Test
+	public void testParseAllLocalFiles() throws IOException {
+		MutableInt count = new MutableInt();
+		try (Stream<Path> walk = Files.walk(Path.of("/usbb/"), FileVisitOption.FOLLOW_LINKS)) {
+			walk.
+				parallel().
+				forEach(path -> {
+					File gpxFile = path.toFile();
+
+					if(gpxFile.isDirectory()) {
+						return;
+					}
+
+					count.increment();
+
+					if (gpxFile.length() == 0) {
+						System.out.println("Skipping empty file " + gpxFile);
+						return;
+					}
+
+					if (gpxFile.length() == 1048576 ||
+							gpxFile.getName().equals("tourenwelt.at_download.php_tourid=206&download=206_fuenfmandling.gpx")) {
+						System.out.println("Skipping truncated file " + gpxFile);
+						return;
+					}
+
+					System.out.println(count.getValue() + ": Processing: " + gpxFile);
+					try {
+						String str = FileUtils.readFileToString(gpxFile, "UTF-8");
+						if (str.contains("301 Moved Permanently") ||
+							str.startsWith("Moved Permanently") ||
+							str.toLowerCase().startsWith("<!doctype html") ||
+							str.toLowerCase().startsWith("<html") ||
+							str.toUpperCase().startsWith("GEOMETRYCOLLECTION") ||
+								StringUtils.isBlank(str)) {
+							System.out.println("Skipping file with HTTP error " + gpxFile);
+							return;
+						}
+
+						final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
+						assertNotNull(trackPoints);
+					} catch (IOException | SAXException | RuntimeException e) {
+						throw new RuntimeException("Failed to process " + gpxFile, e);
+					}
+				});
+		}
 	}
 
 	private static final String GPX_XML =
@@ -353,7 +458,36 @@ public class GPXTrackpointsParserTest {
 					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
 					"        </extensions>\n" +
 					"      </trkpt>\n" +
+					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
+					"        <ele>null</ele>\n" +
+					"        <extensions>\n" +
+					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
+					"        </extensions>\n" +
+					"      </trkpt>\n" +
+					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
+					"        <ele></ele>\n" +
+					"        <extensions>\n" +
+					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
+					"        </extensions>\n" +
+					"      </trkpt>\n" +
+					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
+					"        <ele>  </ele>\n" +
+					"        <extensions>\n" +
+					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
+					"        </extensions>\n" +
+					"      </trkpt>\n" +
 					"    </trkseg>\n" +
 					"  </trk>\n" +
 					"</gpx>\n";
+
+	@Test
+	void parseTime() throws ParseException {
+		Date date = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSZZ", TimeZone.getTimeZone("UTC"))
+				.parse("2009-03-07T08:59:23.000+01:00");
+		assertNotNull(date);
+
+		date = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss", TimeZone.getTimeZone("UTC"))
+				.parse("2018-08-05T08:36:59-07:00");
+		assertNotNull(date);
+	}
 }
