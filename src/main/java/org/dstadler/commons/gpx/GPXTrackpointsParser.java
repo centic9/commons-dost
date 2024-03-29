@@ -170,12 +170,16 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
                         break;
                     }
 
+					if ("0".equals(value) || StringUtils.isBlank(value)) {
+						break;
+					}
+
 					boolean parsed = false;
 					for (FastDateFormat timeFormat :
 							// we changed from non-UTC timestamp to UTC-based timestamps in the GPX
 							// at some point and some external files use slightly different format, so
 							// we have to try until we find the proper format
-							Integer.parseInt(value.substring(0, 4)) >= 2022 ? TIME_FORMATS_UTC : TIME_FORMATS) {
+							value.length() >= 4 && Integer.parseInt(value.substring(0, 4)) >= 2022 ? TIME_FORMATS_UTC : TIME_FORMATS) {
 						try {
 							currentTags.setTime(timeFormat.parse(value));
 							parsed = true;

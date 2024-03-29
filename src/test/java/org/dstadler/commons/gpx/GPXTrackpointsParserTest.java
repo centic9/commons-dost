@@ -339,7 +339,7 @@ public class GPXTrackpointsParserTest {
 
 					System.out.println(count.getValue() + ": Processing: " + gpxFile);
 					try {
-						String str = FileUtils.readFileToString(gpxFile, "UTF-8");
+						String str = FileUtils.readFileToString(gpxFile, "UTF-8").trim();
 						if (str.contains("301 Moved Permanently") ||
 							str.startsWith("Moved Permanently") ||
 							str.toLowerCase().startsWith("<!doctype html") ||
@@ -467,12 +467,14 @@ public class GPXTrackpointsParserTest {
 					"      </trkpt>\n" +
 					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
 					"        <ele>null</ele>\n" +
+					"        <time></time>\n" +
 					"        <extensions>\n" +
 					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
 					"        </extensions>\n" +
 					"      </trkpt>\n" +
 					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
 					"        <ele></ele>\n" +
+					"        <time>0</time>\n" +
 					"        <extensions>\n" +
 					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
 					"        </extensions>\n" +
