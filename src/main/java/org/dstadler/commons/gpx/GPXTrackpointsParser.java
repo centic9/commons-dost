@@ -26,7 +26,7 @@ public class GPXTrackpointsParser extends AbstractSimpleContentHandler<Long, Tra
 
 	@SuppressForbidden(reason = "Uses System.exit")
     // this is an App mostly for testing arbitrary files for proper parsing
-    public static void main(String[] args) throws IOException, SAXException {
+    public static void main(String[] args) throws IOException {
         LoggerFactory.initLogging();
 
         if (args.length < 1) {
@@ -105,12 +105,12 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
 	private boolean metaData = false;
 
-    public static SortedMap<Long, TrackPoint> parseContent(File file) throws IOException, SAXException {
+    public static SortedMap<Long, TrackPoint> parseContent(File file) throws IOException {
         GPXTrackpointsParser parser = new GPXTrackpointsParser();
 
         try (InputStream stream = new BufferedInputStream(new FileInputStream(file), 200*1024)) {
             return parser.parseContent(stream);
-        } catch (IOException e) {
+        } catch (IOException | SAXException e) {
 			throw new IOException("While reading file: " + file, e);
 		}
     }

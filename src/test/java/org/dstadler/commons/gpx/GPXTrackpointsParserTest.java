@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -23,10 +24,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.dstadler.commons.testing.TestHelpers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class GPXTrackpointsParserTest {
@@ -261,6 +264,26 @@ public class GPXTrackpointsParserTest {
 	}
 
 	@Test
+	public void parseInvalidXMLSyntax() throws IOException {
+		GPXTrackpointsParser parser = new GPXTrackpointsParser();
+		assertThrows(SAXParseException.class,
+				() -> parser.parseContent(new ByteArrayInputStream(GPX_XML_INVALID_XML.getBytes(StandardCharsets.UTF_8))));
+
+		File tempFile = File.createTempFile("GPXTrackpointsParserTest", ".gpx");
+		try {
+			FileUtils.writeStringToFile(tempFile, GPX_XML_INVALID_XML, "UTF-8");
+
+			IOException exc = assertThrows(IOException.class,
+					() -> GPXTrackpointsParser.parseContent(tempFile));
+
+			TestHelpers.assertContains("Should contain file-name of invalid file",
+					exc, tempFile.getName());
+		} finally {
+			assertTrue(!tempFile.exists() || tempFile.delete());
+		}
+	}
+
+	@Test
 	public void parseInvalid() {
 		assertThrows(IOException.class,
 				() -> GPXTrackpointsParser.parseContent(new File("notexist.gpx")));
@@ -352,7 +375,7 @@ public class GPXTrackpointsParserTest {
 
 						final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
 						assertNotNull(trackPoints);
-					} catch (IOException | SAXException | RuntimeException e) {
+					} catch (IOException | RuntimeException e) {
 						throw new RuntimeException("Failed to process " + gpxFile, e);
 					}
 				});
@@ -491,6 +514,27 @@ public class GPXTrackpointsParserTest {
 
 	private static final String GPX_XML_EMPTY_LAT_LON =
 			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
+					"  <trk>\n" +
+					"    <name>Move</name>\n" +
+					"    <trkseg>\n" +
+					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
+					"        <ele>512</ele>\n" +
+					"        <extensions>\n" +
+					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
+					"        </extensions>\n" +
+					"      </trkpt>\n" +
+					"      <trkpt lat=\"\">\n" +
+					"        <ele>511</ele>\n" +
+					"        <extensions>\n" +
+					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
+					"        </extensions>\n" +
+					"      </trkpt>\n" +
+					"    </trkseg>\n" +
+					"  </trk>\n" +
+					"</gpx>\n";
+
+	private static final String GPX_XML_INVALID_XML =
+			"<gpx> xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
 					"  <trk>\n" +
 					"    <name>Move</name>\n" +
 					"    <trkseg>\n" +
