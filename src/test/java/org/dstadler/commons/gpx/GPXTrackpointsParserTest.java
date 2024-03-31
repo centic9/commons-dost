@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.dstadler.commons.testing.TestHelpers;
@@ -365,6 +366,8 @@ public class GPXTrackpointsParserTest {
 						String str = FileUtils.readFileToString(gpxFile, "UTF-8").trim();
 						if (str.contains("301 Moved Permanently") ||
 							str.startsWith("Moved Permanently") ||
+							str.startsWith("BCFZ") ||
+							str.startsWith("Found") ||
 							str.toLowerCase().startsWith("<!doctype html") ||
 							str.toLowerCase().startsWith("<html") ||
 							str.toUpperCase().startsWith("GEOMETRYCOLLECTION") ||
@@ -376,6 +379,13 @@ public class GPXTrackpointsParserTest {
 						final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
 						assertNotNull(trackPoints);
 					} catch (IOException | RuntimeException e) {
+						// ignore some broken files
+						String stackTrace = ExceptionUtils.getStackTrace(e);
+						if (stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
+							stackTrace.contains("For input string")) {
+							System.out.println("Skipping broken file " + gpxFile);
+							return;
+						}
 						throw new RuntimeException("Failed to process " + gpxFile, e);
 					}
 				});
