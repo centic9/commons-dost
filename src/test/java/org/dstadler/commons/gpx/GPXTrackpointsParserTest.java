@@ -368,6 +368,7 @@ public class GPXTrackpointsParserTest {
 							str.startsWith("Moved Permanently") ||
 							str.startsWith("BCFZ") ||
 							str.startsWith("Found") ||
+							str.startsWith("302 Found") ||
 							str.toLowerCase().startsWith("<!doctype html") ||
 							str.toLowerCase().startsWith("<html") ||
 							str.toUpperCase().startsWith("GEOMETRYCOLLECTION") ||
@@ -381,8 +382,9 @@ public class GPXTrackpointsParserTest {
 					} catch (IOException | RuntimeException e) {
 						// ignore some broken files
 						String stackTrace = ExceptionUtils.getStackTrace(e);
-						if (stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
-							stackTrace.contains("For input string")) {
+						if (e.getCause() instanceof SAXParseException ||
+								stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
+								stackTrace.contains("For input string")) {
 							System.out.println("Skipping broken file " + gpxFile);
 							return;
 						}
