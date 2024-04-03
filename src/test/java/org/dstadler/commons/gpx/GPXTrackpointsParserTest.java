@@ -29,7 +29,6 @@ import org.dstadler.commons.testing.TestHelpers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -303,23 +302,23 @@ public class GPXTrackpointsParserTest {
 
 	@Disabled("Calls System.exit(1)")
 	@Test
-	public void testMainEmpty() throws IOException, SAXException {
+	public void testMainEmpty() throws IOException {
 		GPXTrackpointsParser.main(new String[0]);
 	}
 
 	@Disabled("Calls System.exit(1)")
 	@Test
-	public void testMainInvalid() throws IOException, SAXException {
+	public void testMainInvalid() throws IOException {
 		GPXTrackpointsParser.main(new String[] { "notexists.gpx" });
 	}
 
 	@Test
-	public void testMain1() throws IOException, SAXException {
+	public void testMain1() throws IOException {
 		GPXTrackpointsParser.main(new String[] { GPX_FILE_1.getAbsolutePath() });
 	}
 
 	@Test
-	public void testMain2() throws IOException, SAXException {
+	public void testMain2() throws IOException {
 		GPXTrackpointsParser.main(new String[] {
 				GPX_FILE_1.getAbsolutePath(),
 				GPX_FILE_2.getAbsolutePath() });
@@ -327,7 +326,7 @@ public class GPXTrackpointsParserTest {
 
 	@Disabled
 	@Test
-	public void testParseLocalFile() throws IOException, SAXException {
+	public void testParseLocalFile() throws IOException {
 		final SortedMap<Long, TrackPoint> map = GPXTrackpointsParser.parseContent(
 				new File("/tmp/test.gpx"));
 		assertNotNull(map);
@@ -385,7 +384,7 @@ public class GPXTrackpointsParserTest {
 						if (e.getCause() instanceof SAXParseException ||
 								stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
 								stackTrace.contains("For input string")) {
-							System.out.println("Skipping broken file " + gpxFile);
+							System.out.println("Skipping broken file " + gpxFile + ": " + e + " - " + e.getCause());
 							return;
 						}
 						throw new RuntimeException("Failed to process " + gpxFile, e);
