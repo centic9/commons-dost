@@ -60,7 +60,7 @@ dependencies {
 
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.10.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
-    testImplementation 'org.dstadler:commons-test:1.0.0.20'
+    testImplementation 'org.dstadler:commons-test:1.0.0.21'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.23.1'
 }
 
