@@ -61,4 +61,20 @@ public abstract class UnsupportedList<E> extends UnsupportedCollection<E> implem
     public List<E> subList(int fromIndex, int toIndex) {
         throw new UnsupportedOperationException("This operation is not supported");
     }
+
+	// this is added in JDK 21, so not @Override here
+	@SuppressWarnings("UnusedReturnValue")
+	public List<E> reversed() {
+		throw new UnsupportedOperationException("This operation is not supported");
+	}
+
+	// this is added in JDK 21, so not @Override here
+	public E getFirst() {
+		throw new UnsupportedOperationException("This operation is not supported");
+	}
+
+	// this is added in JDK 21, so not @Override here
+	public E getLast() {
+		throw new UnsupportedOperationException("This operation is not supported");
+	}
 }

@@ -9,8 +9,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<ObjectAccessorList<Integer, Object>> {
@@ -22,6 +24,8 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         IGNORED_METHODS.add("isEmpty");
         IGNORED_METHODS.add("iterator");
         IGNORED_METHODS.add("forEach");
+        IGNORED_METHODS.add("getFirst");
+        IGNORED_METHODS.add("getLast");
     }
 
     @Override
@@ -47,6 +51,14 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         assertEquals((Integer)obj3.hashCode(), list.get(2));
         assertEquals(3, list.size());
         assertFalse(list.isEmpty());
+
+		assertThrows(IndexOutOfBoundsException.class,
+				() -> list.get(2363));
+
+		//noinspection CastCanBeRemovedNarrowingVariableType
+		assertEquals((Integer)obj1.hashCode(), ((UnsupportedList<Integer>)list).getFirst());
+		//noinspection CastCanBeRemovedNarrowingVariableType
+		assertEquals((Integer)obj3.hashCode(), ((UnsupportedList<Integer>)list).getLast());
 
         Iterator<Integer> it = list.iterator();
         assertTrue(it.hasNext());
@@ -85,7 +97,15 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         assertEquals(2, list.size());
         assertFalse(list.isEmpty());
 
-        Iterator<Integer> it = list.iterator();
+		assertThrows(IndexOutOfBoundsException.class,
+				() -> list.get(2363));
+
+		//noinspection CastCanBeRemovedNarrowingVariableType
+		assertEquals((Integer)obj1.hashCode(), ((UnsupportedList<Integer>)list).getFirst());
+		//noinspection CastCanBeRemovedNarrowingVariableType
+		assertEquals((Integer)obj3.hashCode(), ((UnsupportedList<Integer>)list).getLast());
+
+		Iterator<Integer> it = list.iterator();
         assertTrue(it.hasNext());
         assertEquals((Integer)obj1.hashCode(), it.next());
         assertTrue(it.hasNext());
@@ -113,4 +133,22 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
 
         assertTrue(list.isEmpty());
     }
+
+	@Test
+	public void testEmpty() {
+		List<Integer> list = new ObjectAccessorList<>(Collections.emptyList(), Object::hashCode) {};
+		assertTrue(list.isEmpty());
+		//noinspection ConstantValue
+		assertEquals(0, list.size());
+		assertThrows(IndexOutOfBoundsException.class,
+				() -> list.get(0));
+		assertThrows(IndexOutOfBoundsException.class,
+				() -> list.get(2363));
+		//noinspection CastCanBeRemovedNarrowingVariableType
+		assertThrows(NoSuchElementException.class,
+				() -> ((UnsupportedList<Integer>)list).getFirst());
+		//noinspection CastCanBeRemovedNarrowingVariableType
+		assertThrows(NoSuchElementException.class,
+				() -> ((UnsupportedList<Integer>)list).getLast());
+	}
 }

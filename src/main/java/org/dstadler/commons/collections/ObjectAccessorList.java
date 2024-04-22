@@ -2,6 +2,7 @@ package org.dstadler.commons.collections;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -75,4 +76,22 @@ public class ObjectAccessorList<R, E> extends UnsupportedList<R> {
     public void forEach(Consumer<? super R> action) {
         original.forEach(e -> action.accept(accessor.apply(e)));
     }
+
+	@Override
+	public R getFirst() {
+		if (original.isEmpty()) {
+			throw new NoSuchElementException();
+		} else {
+			return accessor.apply(original.get(0));
+		}
+	}
+
+	@Override
+	public R getLast() {
+		if (original.isEmpty()) {
+			throw new NoSuchElementException();
+		} else {
+			return accessor.apply(original.get(original.size() - 1));
+		}
+	}
 }
