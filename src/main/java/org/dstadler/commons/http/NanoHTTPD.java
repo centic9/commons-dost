@@ -502,7 +502,7 @@ public class NanoHTTPD
 			try {
 				while (true) {
 					String line = in.readLine();
-					if (line == null) {
+					if (line == null || line.trim().isBlank()) {
 						break;
 					}
 
