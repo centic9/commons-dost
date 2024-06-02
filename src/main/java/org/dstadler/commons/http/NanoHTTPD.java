@@ -22,6 +22,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -472,17 +476,48 @@ public class NanoHTTPD
 		}
 
         private void readProperties(BufferedReader in, Properties header) throws IOException {
-            String line = in.readLine();
-            while ( line != null && line.trim().length() > 0 )
-            {
-                int p = line.indexOf( ':' );
-                if (p == -1) {
-                    logger.warning("Could not parse property " + line);
-                } else {
-                    header.put(line.substring(0, p).trim().toLowerCase(), line.substring(p + 1).trim());
-                }
-                line = in.readLine();
-            }
+			// if the InputStream does not provide full lines, we can get stuck reading more data
+			// and if the other party actually waits for our response, we can get "stuck" here
+			// waiting for the next line
+
+			// Thus we forcefully stop and interrupt the Socket-handling here by detecting
+			// that reading the properties took to long and thus we close the input of the socket
+			// forcefully to avoid a deadlock
+
+			Semaphore sem = new Semaphore(1);
+			sem.acquireUninterruptibly();
+
+			ForkJoinTask<?> task = ForkJoinPool.commonPool().submit(() -> {
+				try {
+					// wait 1 second for reading lines to finish, otherwise interrupt the thread
+					if (!sem.tryAcquire(3, TimeUnit.SECONDS)) {
+						logger.warning("Timeout reading input from socket " + mySocket + " while reading properties");
+						mySocket.shutdownInput();
+					}
+				} catch (InterruptedException | IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
+
+			try {
+				while (true) {
+					String line = in.readLine();
+					if (line == null) {
+						break;
+					}
+
+					int p = line.indexOf(':');
+					if (p == -1) {
+						logger.warning("Could not parse property " + line);
+					} else {
+						header.put(line.substring(0, p).trim().toLowerCase(), line.substring(p + 1).trim());
+					}
+				}
+			} finally {
+				// the task is not needed any more
+				task.cancel(true);
+				sem.release();
+			}
         }
 
         private void handlePOST(BufferedReader in, Properties parms, Properties header) throws IOException, InterruptedException {

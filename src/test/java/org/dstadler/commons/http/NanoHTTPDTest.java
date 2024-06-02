@@ -1,18 +1,27 @@
 package org.dstadler.commons.http;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.dstadler.commons.http.NanoHTTPD.Response;
+import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.commons.net.SocketUtils;
+import org.dstadler.commons.net.UrlUtils;
+import org.dstadler.commons.testing.MockRESTServer;
+import org.dstadler.commons.testing.TestHelpers;
+import org.dstadler.commons.testing.ThreadTestHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.SSLException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.BindException;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
@@ -22,25 +31,26 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.io.IOUtils;
-import org.dstadler.commons.http.NanoHTTPD.Response;
-import org.dstadler.commons.net.SocketUtils;
-import org.dstadler.commons.net.UrlUtils;
-import org.dstadler.commons.testing.MockRESTServer;
-import org.dstadler.commons.testing.TestHelpers;
-import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class NanoHTTPDTest {
-	@After
+class NanoHTTPDTest {
+	@BeforeAll
+	public static void setUpClass() throws Exception {
+		LoggerFactory.initLogging();
+	}
+
+	@AfterEach
 	public void tearDown() throws InterruptedException {
 		ThreadTestHelper.waitForThreadToFinishSubstring("NanoHTTP");
 	}
 
 	@Test
-	public void testServe() throws Exception {
+    void testServe() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port);
 // {
@@ -60,7 +70,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testServeWithHeader() throws Exception {
+    void testServeWithHeader() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
         NanoHTTPD httpd = new NanoHTTPD(port);
 		try {
@@ -72,14 +82,14 @@ public class NanoHTTPDTest {
             con.setConnectTimeout(10000);
             con.setReadTimeout(10000);
             con.addRequestProperty("Test", "value");
-            assertNotEquals(-1,  con.getInputStream().read());
+            assertNotEquals(-1, con.getInputStream().read());
         } finally {
             httpd.stop();
         }
 	}
 
 	@Test
-	public void testServeWithInvalidHeader() throws Exception {
+    void testServeWithInvalidHeader() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
         NanoHTTPD httpd = new NanoHTTPD(port);
 		try {
@@ -106,77 +116,89 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testServeFile() throws Exception {
+    void testServeFile() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port);
 
-		assertEquals("Should fail when not a directory.",
+		assertEquals(
 				NanoHTTPD.HTTP_INTERNALERROR,
-				httpd.serveFile(null, null, new File("somefile"), true).status);
+				httpd.serveFile(null, null, new File("somefile"), true).status,
+				"Should fail when not a directory.");
 
-		assertEquals("Should not serve path with ..",
+		assertEquals(
 				NanoHTTPD.HTTP_FORBIDDEN,
-				httpd.serveFile("../build.gradle", null, new File("."), true).status);
+				httpd.serveFile("../build.gradle", null, new File("."), true).status,
+				"Should not serve path with ..");
 
-		assertEquals("Should not serve path with ..",
+		assertEquals(
 				NanoHTTPD.HTTP_FORBIDDEN,
-				httpd.serveFile("build.gradle/..", null, new File("."), true).status);
+				httpd.serveFile("build.gradle/..", null, new File("."), true).status,
+				"Should not serve path with ..");
 
-		assertEquals("Should not serve path with ..",
+		assertEquals(
 				NanoHTTPD.HTTP_FORBIDDEN,
-				httpd.serveFile("somepath/../build.gradle", null, new File("."), true).status);
+				httpd.serveFile("somepath/../build.gradle", null, new File("."), true).status,
+				"Should not serve path with ..");
 
-		assertEquals("File not found..",
+		assertEquals(
 				NanoHTTPD.HTTP_NOTFOUND,
-				httpd.serveFile("somepath", null, new File("."), true).status);
+				httpd.serveFile("somepath", null, new File("."), true).status,
+				"File not found..");
 
-		assertEquals("File is found",
+		assertEquals(
 				NanoHTTPD.HTTP_OK,
-				httpd.serveFile("build.gradle?param=1", new Properties(), new File("."), true).status);
+				httpd.serveFile("build.gradle?param=1", new Properties(), new File("."), true).status,
+				"File is found");
 
-        assertEquals("File is found",
-                NanoHTTPD.HTTP_OK,
-                httpd.serveFile(".gitignore", new Properties(), new File("."), true).status);
+        assertEquals(
+				NanoHTTPD.HTTP_OK,
+				httpd.serveFile(".gitignore", new Properties(), new File("."), true).status,
+				"File is found");
 
-        assertEquals("File is found",
-                NanoHTTPD.HTTP_OK,
-                httpd.serveFile("gradlew", new Properties(), new File("."), true).status);
+        assertEquals(
+				NanoHTTPD.HTTP_OK,
+				httpd.serveFile("gradlew", new Properties(), new File("."), true).status,
+				"File is found");
 
-        assertEquals("File is found",
-                NanoHTTPD.HTTP_OK,
-                httpd.serveFile("src/test/data/empty.txt", new Properties(), new File("."), true).status);
+        assertEquals(
+				NanoHTTPD.HTTP_OK,
+				httpd.serveFile("src/test/data/empty.txt", new Properties(), new File("."), true).status,
+				"File is found");
 
         Properties header = new Properties();
         header.put("range", "something");
-        assertEquals("File is found",
-                NanoHTTPD.HTTP_OK,
-                httpd.serveFile("build.gradle?param=1", header, new File("."), true).status);
+        assertEquals(NanoHTTPD.HTTP_OK,
+				httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+				"File is found");
 
         header.put("range", "bytes=12");
-        assertEquals("File is found",
-                NanoHTTPD.HTTP_OK,
-                httpd.serveFile("build.gradle?param=1", header, new File("."), true).status);
+        assertEquals(
+				NanoHTTPD.HTTP_OK, httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+				"File is found");
 
         header.put("range", "bytes=-121234");
-        assertEquals("File is found",
-                NanoHTTPD.HTTP_OK,
-                httpd.serveFile("build.gradle?param=1", header, new File("."), true).status);
+        assertEquals(
+				NanoHTTPD.HTTP_OK,
+				httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+				"File is found");
 
         header.put("range", "bytes=123-121234");
-        assertEquals("File is found",
-                NanoHTTPD.HTTP_OK,
-                httpd.serveFile("build.gradle?param=1", header, new File("."), true).status);
+        assertEquals(
+				NanoHTTPD.HTTP_OK,
+				httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+				"File is found");
 
         header.put("range", "bytes=illegal");
-        assertEquals("File is found",
-                NanoHTTPD.HTTP_OK,
-                httpd.serveFile("build.gradle?param=1", header, new File("."), true).status);
+        assertEquals(
+				NanoHTTPD.HTTP_OK,
+				httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+				"File is found");
 
         httpd.stop();
 	}
 
 	@Test
-	public void testServeSuper() throws IOException {
+    void testServeSuper() throws IOException {
 		final int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port) {
 			@Override
@@ -195,7 +217,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testServeException() throws IOException {
+    void testServeException() throws IOException {
 		final int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port) {
 			@Override
@@ -213,7 +235,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testResponse() {
+    void testResponse() {
 		Response response = new Response();
 		assertEquals(NanoHTTPD.HTTP_OK, response.status);
 		assertNull(response.mimeType);
@@ -228,7 +250,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testPortOutOfRange() throws IOException {
+    void testPortOutOfRange() throws IOException {
 		try {
 			NanoHTTPD server = new NanoHTTPD(128000);
 			assertNotNull(server);
@@ -238,9 +260,9 @@ public class NanoHTTPDTest {
 		}
 	}
 
-	@Ignore("may not work on all machines")
+	@Disabled("may not work on all machines")
 	@Test
-	public void testPortPreismonitor() throws IOException {
+    void testPortPreismonitor() throws IOException {
 		NanoHTTPD server = new NanoHTTPD(10080);
 		try {
 			assertNotNull(server);
@@ -250,14 +272,14 @@ public class NanoHTTPDTest {
 	}
 
     @Test
-    public void testNoErrorLogDuringShutdown() throws IOException {
+    void testNoErrorLogDuringShutdown() throws IOException {
     	// port 9004 is hardcoded in Instance.Test
     	NanoHTTPD server = new NanoHTTPD(SocketUtils.getNextFreePort(9000, 9010));
 		server.stop();
     }
 
 	@Test
-	public void testServeTimeoutInitial() throws Exception {
+    void testServeTimeoutInitial() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
 
@@ -272,7 +294,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testServeTimeoutStarted() throws Exception {
+    void testServeTimeoutStarted() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
 
@@ -290,7 +312,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testServeInvalidBindName() throws Exception {
+    void testServeInvalidBindName() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		try {
 			NanoHTTPD nanoHTTPD = new NanoHTTPD(port, InetAddress.getByName("192.168.123.234"));
@@ -302,7 +324,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testEncoding() throws IOException {
+    void testEncoding() throws IOException {
 		NanoHTTPD.setEncoding("UTF-8");
 		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
 			String data;
@@ -310,7 +332,8 @@ public class NanoHTTPDTest {
 			// this test can only run for UTF-8
 			if(Charset.defaultCharset().equals(StandardCharsets.UTF_8)) {
 				data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
-				assertEquals("Failed whit default charset: " + Charset.defaultCharset(), "<html>\u00E4</html>", data);
+				assertEquals("<html>\u00E4</html>", data,
+						"Failed whit default charset: " + Charset.defaultCharset());
 			}
 
 			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "UTF-8", 10_000);
@@ -324,7 +347,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testInvalidEncoding() throws IOException {
+    void testInvalidEncoding() throws IOException {
 		NanoHTTPD.setEncoding("SomeInvalidEncoding");
 		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
 			String data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
@@ -341,7 +364,7 @@ public class NanoHTTPDTest {
 	}
 
 	@Test
-	public void testServerTwice() throws IOException {
+    void testServerTwice() throws IOException {
 		final int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port) {
 			@Override
@@ -362,6 +385,45 @@ public class NanoHTTPDTest {
 			// Error is locale-specific: TestHelpers.assertContains(e, "Address already in use");
 		} finally {
 			httpd.stop();
+		}
+	}
+
+	@Test
+    void testRegexSearchParserSSLException()  throws Exception {
+		try (MockRESTServer server = new MockRESTServer("200 OK", NanoHTTPD.MIME_HTML + "; charset=UTF-8", "")) {
+			try {
+				retrieveData("https://localhost:" + server.getPort());
+				fail("Should catch exception because no product found");
+			} catch (SSLException e) {
+				String str = e.getMessage();
+				assertTrue(str.contains("SSL message") || str.contains("Remote host terminated the handshake"),
+						". Expected to find an SSL error message, but was not contained in provided string '" + str +
+								"'\n" + ExceptionUtils.getStackTrace(e));
+			}
+		}
+	}
+
+	private static void retrieveData(String sUrl) throws IOException {
+		URL url = new URL(sUrl);
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		try {
+			//Authenticator.setDefault(new SimpleAuthenticator(SERVER_USER, SERVER_PASSWORD));
+
+			conn.setConnectTimeout(5000);
+			conn.setReadTimeout(5000);
+
+			conn.setDoOutput(false);
+			conn.setDoInput(true);
+			conn.connect();
+			int code = conn.getResponseCode();
+			if (code >= HttpURLConnection.HTTP_NO_CONTENT) {
+				String msg = "Error " + code + " returned while retrieving response for url " + url
+						+ " message from client: " + conn.getResponseMessage();
+				throw new IOException(msg);
+			}
+		} finally {
+			conn.disconnect();
 		}
 	}
 }
