@@ -50,7 +50,7 @@ public class ChromeDriverUtilsTest {
         assertTrue(StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)),
 				"System property for chrome-driver should not be set before starting this test");
 
-        ChromeDriverUtils.configureMatchingChromeDriver("100");
+        ChromeDriverUtils.configureMatchingChromeDriver("125");
 
         String driverFile = System.getProperty(PROPERTY_CHROME_DRIVER);
         assertTrue(StringUtils.isNotBlank(driverFile), "System property for chrome-driver should be set now");
@@ -58,18 +58,20 @@ public class ChromeDriverUtilsTest {
         assertTrue(new File(driverFile).exists(), "Did not find file " + driverFile);
 
         // running it again does not change the result
-        ChromeDriverUtils.configureMatchingChromeDriver("100");
+        ChromeDriverUtils.configureMatchingChromeDriver("125");
         assertEquals(driverFile, System.getProperty(PROPERTY_CHROME_DRIVER));
 
-		ChromeDriverUtils.configureMatchingChromeDriver("113");
+		ChromeDriverUtils.configureMatchingChromeDriver("126");
     }
 
 	@Test
-	public void testConfigureMatchingChromeDriverOldVersionFull() throws IOException {
-		ChromeDriverUtils.configureMatchingChromeDriver("113.0.5672");
-		String driverFile = System.getProperty(PROPERTY_CHROME_DRIVER);
+	public void testConfigureMatchingChromeDriverOldVersionFull() {
+		assertThrows(IOException.class,
+				() -> ChromeDriverUtils.configureMatchingChromeDriver("113.0.5672"),
+				"Support for old versions was removed");
+		/*String driverFile = System.getProperty(PROPERTY_CHROME_DRIVER);
 		assertTrue(new File(driverFile).exists());
-		assertTrue(driverFile.contains("113.0.5672"));
+		assertTrue(driverFile.contains("113.0.5672"));*/
 	}
 
 	@Test

@@ -79,43 +79,34 @@ public class ChromeDriverUtils {
         String driverVersion = null;
 		String downloadUrl;
         try {
-			try {
-				driverVersion = IOUtils.toString(new URL(versionUrl), StandardCharsets.UTF_8);
-				checkState(StringUtils.isNotBlank(driverVersion),
-						"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
+			// try to fetch versions via a JSON file if the old way fails to find the version
+			String versionJson = IOUtils.toString(new URL(VERSION_JSON), StandardCharsets.UTF_8);
 
-				downloadUrl = "https://chromedriver.storage.googleapis.com/" + driverVersion + "/chromedriver_" +
-						(SystemUtils.IS_OS_WINDOWS ? "win32.zip" : "linux64.zip");
-			} catch (FileNotFoundException e) {
-				// try to fetch versions via a JSON file if the old way fails to find the version
-				String versionJson = IOUtils.toString(new URL(VERSION_JSON), StandardCharsets.UTF_8);
+			// match the latest build with that version
+			// https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/115.0.5790.170/linux64/chromedriver-linux64.zip
+			// https://storage.googleapis.com/chrome-for-testing-public/121.0.6167.0/linux64/chromedriver-linux64.zip
+			Matcher matcher = Pattern.
+					compile(	"https://(edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing|storage.googleapis.com/chrome-for-testing-public)/(" + chromeVersion + "[0-9.]+)/linux64/chromedriver-linux64.zip").
+					matcher(versionJson);
 
-				// match the latest build with that version
-				// https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/115.0.5790.170/linux64/chromedriver-linux64.zip
-				// https://storage.googleapis.com/chrome-for-testing-public/121.0.6167.0/linux64/chromedriver-linux64.zip
-				Matcher matcher = Pattern.
-						compile(	"https://(edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing|storage.googleapis.com/chrome-for-testing-public)/(" + chromeVersion + "[0-9.]+)/linux64/chromedriver-linux64.zip").
-						matcher(versionJson);
-
-				// iterate over all matches to use the latest versions
-				String url = null;
-				while (matcher.find()) {
-					driverVersion = matcher.group(2);
-					url = matcher.group(1);
-				}
-
-				if (driverVersion == null) {
-					throw new IOException("Failed for " + VERSION_JSON + " and " + versionJson + ", previous exception: " + e);
-				}
-
-				checkState(StringUtils.isNotBlank(driverVersion),
-						"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
-
-				downloadUrl = "https://" + url + "/" + driverVersion +
-						(SystemUtils.IS_OS_WINDOWS ?
-							"/win64/chromedriver-win64.zip" :
-							"/linux64/chromedriver-linux64.zip");
+			// iterate over all matches to use the latest versions
+			String url = null;
+			while (matcher.find()) {
+				driverVersion = matcher.group(2);
+				url = matcher.group(1);
 			}
+
+			if (driverVersion == null) {
+				throw new IOException("Failed for " + VERSION_JSON + " and " + versionJson);
+			}
+
+			checkState(StringUtils.isNotBlank(driverVersion),
+					"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
+
+			downloadUrl = "https://" + url + "/" + driverVersion +
+					(SystemUtils.IS_OS_WINDOWS ?
+						"/win64/chromedriver-win64.zip" :
+						"/linux64/chromedriver-linux64.zip");
         } catch (IOException e) {
             throw new IOException("Failed for " + versionUrl, e);
         }
