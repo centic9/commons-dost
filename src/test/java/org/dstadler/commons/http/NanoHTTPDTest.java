@@ -1,6 +1,7 @@
 package org.dstadler.commons.http;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.dstadler.commons.http.NanoHTTPD.Response;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -24,6 +25,7 @@ import java.net.BindException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -393,12 +395,15 @@ class NanoHTTPDTest {
 		try (MockRESTServer server = new MockRESTServer("200 OK", NanoHTTPD.MIME_HTML + "; charset=UTF-8", "")) {
 			try {
 				retrieveData("https://localhost:" + server.getPort());
-				fail("Should catch exception because no product found");
+				fail("Should catch exception because SSL does not work in NanoHTTP");
 			} catch (SSLException e) {
 				String str = e.getMessage();
 				assertTrue(str.contains("SSL message") || str.contains("Remote host terminated the handshake"),
 						". Expected to find an SSL error message, but was not contained in provided string '" + str +
 								"'\n" + ExceptionUtils.getStackTrace(e));
+			} catch (SocketTimeoutException e) {
+				assertTrue(SystemUtils.IS_OS_WINDOWS,
+						"On Windows closing the socket does not wake up the thread in NanoHTTP when it is blocked reading properties");
 			}
 		}
 	}
