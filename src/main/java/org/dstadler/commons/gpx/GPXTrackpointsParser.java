@@ -209,16 +209,12 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 					}
 					break;
 				case TAG_ATEMP:
-					if (StringUtils.isNotBlank(value)) {
+                case TAG_TEMP:
+                    if (StringUtils.isNotBlank(value)) {
 						currentTags.setTemp(Double.parseDouble(value));
 					}
 					break;
-				case TAG_TEMP:
-					if (StringUtils.isNotBlank(value)) {
-						currentTags.setTemp(Double.parseDouble(value));
-					}
-					break;
-				case TAG_PRESSURE:
+                case TAG_PRESSURE:
 					if (StringUtils.isNotBlank(value)) {
 						currentTags.setSeaLevelPressure(Integer.parseInt(value));
 					}
