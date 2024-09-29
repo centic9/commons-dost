@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/11.xsd" xmlns:ns3="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns2="http://www.garmin.com/xmlschemas/GpxExtensions/v3" version="1.1">
+  <trk>
+    <trkseg>
+      <trkpt lat="43.703884" lon="6.981117000000001">
+        <ele>568</ele>
+        <alt>628.0</alt>
+        <time>2022-02-05T11:15:14Z</time>
+        <extensions>
+          <ns3:TrackPointExtension>
+            <ns3:atemp/>
+            <ns3:hr>0</ns3:hr>
+          </ns3:TrackPointExtension>
+        </extensions>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

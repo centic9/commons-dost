@@ -324,6 +324,12 @@ public class GPXTrackpointsParserTest {
 				GPX_FILE_2.getAbsolutePath() });
 	}
 
+	@Test
+	public void testParseBrokenFile() throws IOException {
+		final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(new File("src/test/data/sample_broken_1.gpx"));
+		assertNotNull(trackPoints);
+	}
+
 	@Disabled
 	@Test
 	public void testParseLocalFile() throws IOException {

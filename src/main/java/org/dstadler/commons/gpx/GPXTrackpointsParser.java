@@ -154,21 +154,21 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
         } else {
             String value = characters.toString().trim();
             switch (localName) {
-                case TAG_ELE:
+				case TAG_ELE:
 					// some files contain invalid elevation
 					if (!"null".equals(value) && StringUtils.isNotBlank(value)) {
 						currentTags.setElevation(Double.parseDouble(value));
 					}
-                    break;
-                case TAG_TIME:
-                    if (metaData) {
-                        break;
-                    }
+					break;
+				case TAG_TIME:
+					if (metaData) {
+						break;
+					}
 
-                    if (currentTags == null) {
-                        log.warning("Found " + TAG_TIME + " with value '" + value + "' outside of " + TAG_TRKPT);
-                        break;
-                    }
+					if (currentTags == null) {
+						log.warning("Found " + TAG_TIME + " with value '" + value + "' outside of " + TAG_TRKPT);
+						break;
+					}
 
 					if ("0".equals(value) || StringUtils.isBlank(value)) {
 						break;
@@ -176,9 +176,9 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
 					boolean parsed = false;
 					for (FastDateFormat timeFormat :
-							// we changed from non-UTC timestamp to UTC-based timestamps in the GPX
-							// at some point and some external files use slightly different format, so
-							// we have to try until we find the proper format
+						// we changed from non-UTC timestamp to UTC-based timestamps in the GPX
+						// at some point and some external files use slightly different format, so
+						// we have to try until we find the proper format
 							value.length() >= 4 && Integer.parseInt(value.substring(0, 4)) >= 2022 ? TIME_FORMATS_UTC : TIME_FORMATS) {
 						try {
 							currentTags.setTime(timeFormat.parse(value));
@@ -194,22 +194,34 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 					}
 					break;
 				case TAG_HR:
-                    currentTags.setHr(Integer.parseInt(value));
-                    break;
+					if (StringUtils.isNotBlank(value)) {
+						currentTags.setHr(Integer.parseInt(value));
+					}
+					break;
 				case TAG_CADENCE:
-                    currentTags.setCadence(Integer.parseInt(value));
-                    break;
+					if (StringUtils.isNotBlank(value)) {
+						currentTags.setCadence(Integer.parseInt(value));
+					}
+					break;
 				case TAG_SPEED:
-					currentTags.setSpeed(Double.parseDouble(value));
+					if (StringUtils.isNotBlank(value)) {
+						currentTags.setSpeed(Double.parseDouble(value));
+					}
 					break;
 				case TAG_ATEMP:
-					currentTags.setTemp(Double.parseDouble(value));
+					if (StringUtils.isNotBlank(value)) {
+						currentTags.setTemp(Double.parseDouble(value));
+					}
 					break;
 				case TAG_TEMP:
-					currentTags.setTemp(Double.parseDouble(value));
+					if (StringUtils.isNotBlank(value)) {
+						currentTags.setTemp(Double.parseDouble(value));
+					}
 					break;
 				case TAG_PRESSURE:
-					currentTags.setSeaLevelPressure(Integer.parseInt(value));
+					if (StringUtils.isNotBlank(value)) {
+						currentTags.setSeaLevelPressure(Integer.parseInt(value));
+					}
 					break;
 			}
             characters.setLength(0);
