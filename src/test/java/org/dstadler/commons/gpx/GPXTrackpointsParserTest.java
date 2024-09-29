@@ -29,6 +29,7 @@ import org.dstadler.commons.testing.TestHelpers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -343,7 +344,7 @@ public class GPXTrackpointsParserTest {
 	@Test
 	public void testParseAllLocalFiles() throws IOException {
 		MutableInt count = new MutableInt();
-		try (Stream<Path> walk = Files.walk(Path.of("/usbb/"), FileVisitOption.FOLLOW_LINKS)) {
+		try (Stream<Path> walk = Files.walk(Path.of("/usbc/CommonCrawlGPX"), FileVisitOption.FOLLOW_LINKS)) {
 			walk.
 				parallel().
 				forEach(path -> {
@@ -361,7 +362,11 @@ public class GPXTrackpointsParserTest {
 					}
 
 					if (gpxFile.length() == 1048576 ||
-							gpxFile.getName().equals("tourenwelt.at_download.php_tourid=206&download=206_fuenfmandling.gpx")) {
+							// exclude some invalid files
+							gpxFile.getName().equals("tourenwelt.at_download.php_tourid=206&download=206_fuenfmandling.gpx") ||
+							gpxFile.getName().equals("regepe.com_togpx_ffe3fb343b97b") ||
+							gpxFile.getName().equals("www.naturpark-ehw.de_aktiv-im-np_wanderwege_naturparkweg-leine-werra.html_file=files_routen_naturparkweg-leine-werra.gpx") ||
+							gpxFile.getName().equals("bike-alp.cz_wp-content_uploads_gpx_alpy-gravel-trasy_gravel-saalfelden.gpx")) {
 						System.out.println("Skipping truncated file " + gpxFile);
 						return;
 					}
@@ -387,7 +392,9 @@ public class GPXTrackpointsParserTest {
 					} catch (IOException | RuntimeException e) {
 						// ignore some broken files
 						String stackTrace = ExceptionUtils.getStackTrace(e);
-						if (e.getCause() instanceof SAXParseException ||
+						if (e.getCause() instanceof SAXException ||
+								(e.getCause() != null && e.getCause().getCause() instanceof SAXException) ||
+								e instanceof IllegalStateException ||
 								stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
 								stackTrace.contains("For input string")) {
 							System.out.println("Skipping broken file " + gpxFile + ": " + e + " - " + e.getCause());
@@ -397,6 +404,13 @@ public class GPXTrackpointsParserTest {
 					}
 				});
 		}
+	}
+
+	@Disabled("Allows to verify parsing of a single local files")
+	@Test
+	public void testParseSingleLocalFiles() throws IOException {
+		final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(new File("src/test/data/sample_broken_1.gpx"));
+		assertNotNull(trackPoints);
 	}
 
 	private static final String GPX_XML =
