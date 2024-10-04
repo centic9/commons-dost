@@ -28,7 +28,12 @@ apply plugin: 'codenarc'
 // not used currently: apply plugin: 'jdepend'
 apply plugin: 'signing'
 
-sourceCompatibility = JavaVersion.VERSION_11
+java {
+	  toolchain {
+		  sourceCompatibility = JavaVersion.VERSION_17
+	  }
+}
+
 group = 'org.dstadler'
 archivesBaseName = 'commons-dost'
 
