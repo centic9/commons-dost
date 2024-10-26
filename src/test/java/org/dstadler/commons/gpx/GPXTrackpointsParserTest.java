@@ -414,176 +414,192 @@ public class GPXTrackpointsParserTest {
 	}
 
 	private static final String GPX_XML =
-			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-					"  <trk>\n" +
-					"    <name>Move</name>\n" +
-					"    <trkseg>\n" +
-					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
-					"        <ele>512</ele>\n" +
-					"        <time>2014-02-27T10:42:59.420Z</time>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"    </trkseg>\n" +
-					"  </trk>\n" +
-					"</gpx>\n";
+            """
+                    <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+                      <trk>
+                        <name>Move</name>
+                        <trkseg>
+                          <trkpt lat="48.456194" lon="13.99866">
+                            <ele>512</ele>
+                            <time>2014-02-27T10:42:59.420Z</time>
+                            <extensions>
+                              <gpxdata:speed>0.413765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                        </trkseg>
+                      </trk>
+                    </gpx>
+                    """;
 
 	private static final String GPX_XML_METADATA =
-			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-					"    <metadata>\n"
-					+ "    <link href=\"connect.garmin.com\">\n"
-					+ "      <text>Garmin Connect</text>\n"
-					+ "    </link>\n"
-					+ "    <time>2022-07-09T13:32:31.000Z</time>\n"
-					+ "  </metadata>\n"
-					+ "<trk>\n" +
-					"    <name>Move</name>\n" +
-					"    <trkseg>\n" +
-					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
-					"        <ele>512</ele>\n" +
-					"        <time>2014-02-27T10:42:59.420Z</time>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"    </trkseg>\n" +
-					"  </trk>\n" +
-					"</gpx>\n";
+            """
+                    <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+                        <metadata>
+                        <link href="connect.garmin.com">
+                          <text>Garmin Connect</text>
+                        </link>
+                        <time>2022-07-09T13:32:31.000Z</time>
+                      </metadata>
+                    <trk>
+                        <name>Move</name>
+                        <trkseg>
+                          <trkpt lat="48.456194" lon="13.99866">
+                            <ele>512</ele>
+                            <time>2014-02-27T10:42:59.420Z</time>
+                            <extensions>
+                              <gpxdata:speed>0.413765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                        </trkseg>
+                      </trk>
+                    </gpx>
+                    """;
 
 	private static final String GPX_XML_INVALID_TIME =
-			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-					" <time>2022-07-09T13:32:31.000Z</time>\n" +
-					"<trk>\n" +
-					"    <name>Move</name>\n" +
-					"    <trkseg>\n" +
-					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
-					"        <ele>512</ele>\n" +
-					"        <time>2014-02-27T10:42:59.420Z</time>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"    </trkseg>\n" +
-					"  </trk>\n" +
-					"</gpx>\n";
+            """
+                    <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+                     <time>2022-07-09T13:32:31.000Z</time>
+                    <trk>
+                        <name>Move</name>
+                        <trkseg>
+                          <trkpt lat="48.456194" lon="13.99866">
+                            <ele>512</ele>
+                            <time>2014-02-27T10:42:59.420Z</time>
+                            <extensions>
+                              <gpxdata:speed>0.413765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                        </trkseg>
+                      </trk>
+                    </gpx>
+                    """;
 
 	private static final String GPX_XML_BROKEN_TIME_2021 =
-			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-					" <time>2022-07-09T13:32:31.000Z</time>\n" +
-					"<trk>\n" +
-					"    <name>Move</name>\n" +
-					"    <trkseg>\n" +
-					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
-					"        <ele>512</ele>\n" +
-					"        <time>2014-02-27Tasdagasdf10:42:59.420Z</time>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"    </trkseg>\n" +
-					"  </trk>\n" +
-					"</gpx>\n";
+            """
+                    <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+                     <time>2022-07-09T13:32:31.000Z</time>
+                    <trk>
+                        <name>Move</name>
+                        <trkseg>
+                          <trkpt lat="48.456194" lon="13.99866">
+                            <ele>512</ele>
+                            <time>2014-02-27Tasdagasdf10:42:59.420Z</time>
+                            <extensions>
+                              <gpxdata:speed>0.413765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                        </trkseg>
+                      </trk>
+                    </gpx>
+                    """;
 
 	private static final String GPX_XML_BROKEN_TIME_2022 =
-			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-					" <time>2022-07-09T13:32:31.000Z</time>\n" +
-					"<trk>\n" +
-					"    <name>Move</name>\n" +
-					"    <trkseg>\n" +
-					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
-					"        <ele>512</ele>\n" +
-					"        <time>2023-02-27Tasdagasdf10:42:59.420Z</time>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"    </trkseg>\n" +
-					"  </trk>\n" +
-					"</gpx>\n";
+            """
+                    <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+                     <time>2022-07-09T13:32:31.000Z</time>
+                    <trk>
+                        <name>Move</name>
+                        <trkseg>
+                          <trkpt lat="48.456194" lon="13.99866">
+                            <ele>512</ele>
+                            <time>2023-02-27Tasdagasdf10:42:59.420Z</time>
+                            <extensions>
+                              <gpxdata:speed>0.413765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                        </trkseg>
+                      </trk>
+                    </gpx>
+                    """;
 
 	private static final String GPX_XML_NO_TIME =
-			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-					"  <trk>\n" +
-					"    <name>Move</name>\n" +
-					"    <trkseg>\n" +
-					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
-					"        <ele>512</ele>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
-					"        <ele>511</ele>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
-					"        <ele>null</ele>\n" +
-					"        <time></time>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
-					"        <ele></ele>\n" +
-					"        <time>0</time>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"      <trkpt lat=\"48.556194\" lon=\"13.89866\">\n" +
-					"        <ele>  </ele>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"    </trkseg>\n" +
-					"  </trk>\n" +
-					"</gpx>\n";
+            """
+                    <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+                      <trk>
+                        <name>Move</name>
+                        <trkseg>
+                          <trkpt lat="48.456194" lon="13.99866">
+                            <ele>512</ele>
+                            <extensions>
+                              <gpxdata:speed>0.413765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                          <trkpt lat="48.556194" lon="13.89866">
+                            <ele>511</ele>
+                            <extensions>
+                              <gpxdata:speed>0.412765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                          <trkpt lat="48.556194" lon="13.89866">
+                            <ele>null</ele>
+                            <time></time>
+                            <extensions>
+                              <gpxdata:speed>0.412765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                          <trkpt lat="48.556194" lon="13.89866">
+                            <ele></ele>
+                            <time>0</time>
+                            <extensions>
+                              <gpxdata:speed>0.412765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                          <trkpt lat="48.556194" lon="13.89866">
+                            <ele>  </ele>
+                            <extensions>
+                              <gpxdata:speed>0.412765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                        </trkseg>
+                      </trk>
+                    </gpx>
+                    """;
 
 	private static final String GPX_XML_EMPTY_LAT_LON =
-			"<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-					"  <trk>\n" +
-					"    <name>Move</name>\n" +
-					"    <trkseg>\n" +
-					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
-					"        <ele>512</ele>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"      <trkpt lat=\"\">\n" +
-					"        <ele>511</ele>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"    </trkseg>\n" +
-					"  </trk>\n" +
-					"</gpx>\n";
+            """
+                    <gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+                      <trk>
+                        <name>Move</name>
+                        <trkseg>
+                          <trkpt lat="48.456194" lon="13.99866">
+                            <ele>512</ele>
+                            <extensions>
+                              <gpxdata:speed>0.413765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                          <trkpt lat="">
+                            <ele>511</ele>
+                            <extensions>
+                              <gpxdata:speed>0.412765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                        </trkseg>
+                      </trk>
+                    </gpx>
+                    """;
 
 	private static final String GPX_XML_INVALID_XML =
-			"<gpx> xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-					"  <trk>\n" +
-					"    <name>Move</name>\n" +
-					"    <trkseg>\n" +
-					"      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
-					"        <ele>512</ele>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"      <trkpt lat=\"\">\n" +
-					"        <ele>511</ele>\n" +
-					"        <extensions>\n" +
-					"          <gpxdata:speed>0.412765975271989</gpxdata:speed>\n" +
-					"        </extensions>\n" +
-					"      </trkpt>\n" +
-					"    </trkseg>\n" +
-					"  </trk>\n" +
-					"</gpx>\n";
+            """
+                    <gpx> xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxdata="http://www.topografix.com/GPX/1/0" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www.topografix.com/GPX/1/1">
+                      <trk>
+                        <name>Move</name>
+                        <trkseg>
+                          <trkpt lat="48.456194" lon="13.99866">
+                            <ele>512</ele>
+                            <extensions>
+                              <gpxdata:speed>0.413765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                          <trkpt lat="">
+                            <ele>511</ele>
+                            <extensions>
+                              <gpxdata:speed>0.412765975271989</gpxdata:speed>
+                            </extensions>
+                          </trkpt>
+                        </trkseg>
+                      </trk>
+                    </gpx>
+                    """;
 
 	@Test
 	void parseTime() throws ParseException {
