@@ -137,6 +137,6 @@ public class ThreadDump {
 	 *         the radix indicator <code>0x</code> and is left padded with <code>0</code>
 	 */
 	public static String toHexString(final long value) {
-		return String.format("%#018x", value);
+		return "%#018x".formatted(value);
 	}
 }

@@ -129,8 +129,8 @@ public class UrlUtils {
             conn.setDoOutput(false);
             conn.setDoInput(true);
 
-            if(conn instanceof HttpsURLConnection && sslFactory != null) {
-                ((HttpsURLConnection)conn).setSSLSocketFactory(sslFactory);
+            if(conn instanceof HttpsURLConnection connection && sslFactory != null) {
+                connection.setSSLSocketFactory(sslFactory);
             }
 
             conn.connect();
@@ -289,8 +289,8 @@ public class UrlUtils {
         connection.setDoInput(true); // whether we want to read from the connection
         connection.setDoOutput(false); // whether we want to write to the connection
 
-        if(connection instanceof HttpsURLConnection && sslFactory != null) {
-            ((HttpsURLConnection)connection).setSSLSocketFactory(sslFactory);
+        if(connection instanceof HttpsURLConnection lConnection && sslFactory != null) {
+            lConnection.setSSLSocketFactory(sslFactory);
         }
     }
 
@@ -403,11 +403,11 @@ public class UrlUtils {
                 conn.setReadTimeout(timeout);
             }
 
-            if(ignoreHTTPSHostCheck && conn instanceof HttpsURLConnection) {
-                ((HttpsURLConnection)conn).setHostnameVerifier(new AllowingHostnameVerifier());
+            if(ignoreHTTPSHostCheck && conn instanceof HttpsURLConnection connection) {
+                connection.setHostnameVerifier(new AllowingHostnameVerifier());
             }
-            if(conn instanceof HttpsURLConnection && sslFactory != null) {
-                ((HttpsURLConnection)conn).setSSLSocketFactory(sslFactory);
+            if(conn instanceof HttpsURLConnection connection && sslFactory != null) {
+                connection.setSSLSocketFactory(sslFactory);
             }
 
             conn.setDoOutput(false);

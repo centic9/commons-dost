@@ -25,9 +25,9 @@ import static org.junit.Assert.fail;
 public class ZipFileWalkerTest {
 	private final static Logger log = LoggerFactory.make();
 
-	private static final String LOGLINE = "2014-04-17 13:52:12 [000000c4] info    [native]   Native watchdog feature turned off\n" +
-			// add an unparsable line as well for other tests
-			"2014-2j 2lkjl23 q4l;j3;4l56kj q3l46j q3;l6jq";
+	private static final String LOGLINE = """
+			2014-04-17 13:52:12 [000000c4] info    [native]   Native watchdog feature turned off
+			2014-2j 2lkjl23 q4l;j3;4l56kj q3l46j q3;l6jq""";
 
 	@Test
 	public void testWalk() throws Exception {

@@ -1,5 +1,6 @@
 package org.dstadler.commons.util;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -11,6 +12,7 @@ import java.util.Vector;
  * See http://www.rgagnon.com/javadetails/java-0614.html
  */
 public class SortedProperties extends Properties {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**

@@ -105,7 +105,7 @@ public class MovingAverage {
     // copy of Guava to avoid including Guava in this core library
     private void checkArgument(boolean argument, String msg, Object... args) {
         if (!argument) {
-            throw new IllegalArgumentException(String.format(msg, args));
+            throw new IllegalArgumentException(msg.formatted(args));
         }
     }
 }

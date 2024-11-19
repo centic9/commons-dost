@@ -79,7 +79,7 @@ public class TrackPoint {
         int minutes = (int) ((getTime() - start) / 60 / 1000);
         int seconds = (int) ((getTime() - start) / 1000) % 60;
 
-        return String.format("%02d:%02d", minutes, seconds);
+        return "%02d:%02d".formatted(minutes, seconds);
     }
 
     public int getHr() {

@@ -1,5 +1,6 @@
 package org.dstadler.commons.date;
 
+import java.io.Serial;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -11,6 +12,7 @@ import java.util.GregorianCalendar;
  * copyright 2004 Paul Hill
  */
 public class DayCalendar extends GregorianCalendar {
+	@Serial
 	private static final long serialVersionUID = -9054523308590467657L;
 
 	/**

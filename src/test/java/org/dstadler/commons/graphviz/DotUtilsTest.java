@@ -23,19 +23,21 @@ import org.junit.Test;
 
 
 public class DotUtilsTest {
-	private static final String DOT_FILE = "digraph G {" +
-		"dpi=300;\n" +
-		"rankdir=LR;\n" +
-		"node [shape=box];\n" +
-		"\n" +
-		"\"agent15\"->\"c.d.d.agent\";\n" +
-		"\"com.dynatrace.adk\"->\"c.d.d.agent\";\n" +
-		"\"c.d.d.adm\"->\"test.util.nonprod\";\n" +
-		"\"c.d.d.adm\"->\"c.d.d.sdk\";\n" +
-		"\"c.d.d.adm\"->\"c.d.d.portlets\";\n" +
-		"\"c.d.d.adm\"->\"c.d.d.server.shared\";\n" +
-		"\"c.d.d.adm\"->\"c.d.d.util\";\n" +
-		"}\n";
+	private static final String DOT_FILE = """
+		digraph G {\
+		dpi=300;
+		rankdir=LR;
+		node [shape=box];
+		
+		"agent15"->"c.d.d.agent";
+		"com.dynatrace.adk"->"c.d.d.agent";
+		"c.d.d.adm"->"test.util.nonprod";
+		"c.d.d.adm"->"c.d.d.sdk";
+		"c.d.d.adm"->"c.d.d.portlets";
+		"c.d.d.adm"->"c.d.d.server.shared";
+		"c.d.d.adm"->"c.d.d.util";
+		}
+		""";
 
 	@Before
 	public void setUp() {
@@ -136,9 +138,12 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 0, null, "G", null);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            "digraph G {\n" +
-	                            "rankdir=LR;\n" +
-	                            "node [shape=box];\n\n");
+	                            """
+	                            digraph G {
+	                            rankdir=LR;
+	                            node [shape=box];
+	                            
+	                            """);
 	        }
 
 	        // DPI set
@@ -146,10 +151,13 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 200, null, "G", null);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            "digraph G {\n" +
-	                            "dpi=200;\n" +
-	                            "rankdir=LR;\n" +
-	                            "node [shape=box];\n\n");
+	                            """
+	                            digraph G {
+	                            dpi=200;
+	                            rankdir=LR;
+	                            node [shape=box];
+	                            
+	                            """);
 	        }
 
 	        // Another rankdir
@@ -157,9 +165,12 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 0, "AB", "G", null);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            "digraph G {\n" +
-	                            "rankdir=AB;\n" +
-	                            "node [shape=box];\n\n");
+	                            """
+	                            digraph G {
+	                            rankdir=AB;
+	                            node [shape=box];
+	                            
+	                            """);
 	        }
 
 	        // Extra lines
@@ -171,11 +182,14 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 0, null, "G", lines);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            "digraph G {\n" +
-	                            "rankdir=LR;\n" +
-	                            "someline;\n" +
-	                            "someotherline;\n" +
-	                            "node [shape=box];\n\n");
+	                            """
+	                            digraph G {
+	                            rankdir=LR;
+	                            someline;
+	                            someotherline;
+	                            node [shape=box];
+	                            
+	                            """);
 	        }
 
 	        // different title
@@ -183,9 +197,12 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 0, null, "mygraph", null);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            "digraph mygraph {\n" +
-	                            "rankdir=LR;\n" +
-	                            "node [shape=box];\n\n");
+	                            """
+	                            digraph mygraph {
+	                            rankdir=LR;
+	                            node [shape=box];
+	                            
+	                            """);
 	        }
         } finally {
         	assertTrue(temp.delete());

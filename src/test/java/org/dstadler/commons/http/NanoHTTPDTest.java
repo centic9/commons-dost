@@ -99,11 +99,12 @@ class NanoHTTPDTest {
                 PrintWriter out =
                         new PrintWriter(socket.getOutputStream(), true);
 
-                out.println("GET /example/file.html?query=123 prop1:prop2\n"
-                        + "Content-Type: blabla\n"
-                        + "InvalidHeader\n"
-                        + "\n"
-                        + "Content");
+                out.println("""
+                        GET /example/file.html?query=123 prop1:prop2
+                        Content-Type: blabla
+                        InvalidHeader
+                        
+                        Content""");
 
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 IOUtils.copy(socket.getInputStream(), bytes);

@@ -177,13 +177,14 @@ public class SVNLogFileParserTest {
 		assertEquals(LogEntry.MORE, it.next().getLeft());
 	}
 
-	private static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-		"<log>\n" +
-		"<logentry revision=\"431200\">\n" +
-		"<date>2014-09-18T10:40:52.345853Z</date>\n" +
-		"<msg>APM-23041 System.exit</msg>\n" +
-		"</logentry>\n" +
-		"</log>";
+	private static final String XML = """
+		<?xml version="1.0" encoding="UTF-8"?>
+		<log>
+		<logentry revision="431200">
+		<date>2014-09-18T10:40:52.345853Z</date>
+		<msg>APM-23041 System.exit</msg>
+		</logentry>
+		</log>""";
 
 	@Test
 	public void testParserProblem() throws SAXException, IOException {
