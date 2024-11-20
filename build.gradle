@@ -17,6 +17,8 @@ plugins {
 
     // https://gradle-pitest-plugin.solidsoft.info/
     id 'info.solidsoft.pitest' version '1.9.11'
+
+    id 'org.openrewrite.rewrite' version '6.27.1'
 }
 
 apply plugin: 'de.thetaphi.forbiddenapis'
@@ -67,6 +69,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
     testImplementation 'org.dstadler:commons-test:1.0.0.21'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.24.1'
+
+	rewrite("org.openrewrite.recipe:rewrite-migrate-java:2.29.0")
 }
 
 wrapper {
@@ -117,6 +121,16 @@ tasks.register('javadocJar', Jar) {
 java {
     withJavadocJar()
     withSourcesJar()
+}
+
+rewrite {
+    // Reformats Java Code
+    //activeRecipe('org.openrewrite.java.format.AutoFormat')
+    // Java 8 to Java 11
+    activeRecipe('org.openrewrite.java.migrate.Java8toJava11')
+    activeRecipe('org.openrewrite.java.migrate.UpgradeToJava17')
+    // Imports
+    //activeRecipe('org.openrewrite.java.OrderImports')
 }
 
 release {
