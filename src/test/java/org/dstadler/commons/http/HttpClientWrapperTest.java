@@ -13,14 +13,9 @@ import org.dstadler.commons.net.UrlUtils;
 import org.dstadler.commons.testing.MemoryLeakVerifier;
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -31,40 +26,29 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test is very similar to HttpClientAsyncWrapperTest so that we verify both
  * sync and async HttpClient in the same way
  */
-@RunWith(Parameterized.class)
 public class HttpClientWrapperTest {
     private static final MemoryLeakVerifier verifier = new MemoryLeakVerifier();
 
     private HttpClientWrapper wrapper;
 
-    @Parameterized.Parameters(name = "UseAuth: {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 { Boolean.TRUE }, { Boolean.FALSE },
         });
     }
 
-    @Parameterized.Parameter
-    public Boolean withAuth;
-
-	@BeforeClass
+    @BeforeAll
 	public static void setUpClass() throws IOException {
 		LoggerFactory.initLogging();
 	}
 
-    @Before
-    public void setUp() {
+    public void setUp(boolean withAuth) {
         if(withAuth) {
             wrapper = new HttpClientWrapper("", null, 10000);
         } else {
@@ -72,15 +56,17 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         wrapper.close();
 
         verifier.assertGarbageCollected();
     }
 
-    @Test
-    public void testSimpleGet() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testSimpleGet(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -88,8 +74,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testSimpleGetWithBody() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testSimpleGetWithBody(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -101,8 +89,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testSimpleGetStream() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testSimpleGetStream(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -123,8 +113,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testHttpClientWrapperNormalGet() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testHttpClientWrapperNormalGet(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -151,8 +143,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testHttpClientWrapperBytes() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testHttpClientWrapperBytes(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -160,26 +154,32 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testHttpClientWrapperHTTPS() throws Exception {
-        Assume.assumeTrue("https://dstadler.org/ should be reachable", UrlUtils.isAvailable("https://dstadler.org/", false, 10_000));
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testHttpClientWrapperHTTPS(Boolean withAuth) throws Exception {
+		setUp(withAuth);
+        Assumptions.assumeTrue(UrlUtils.isAvailable("https://dstadler.org/", false, 10_000), "https://dstadler.org/ should be reachable");
 
         String ret = wrapper.simpleGet("https://dstadler.org/");
         assertNotNull(ret);
         assertTrue(ret.length() > 0);
     }
 
-    @Test
-    public void testHttpClientWrapperHTTPSBytes() throws Exception {
-        Assume.assumeTrue("https://dstadler.org/ should be reachable", UrlUtils.isAvailable("https://dstadler.org/", false, 10_000));
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testHttpClientWrapperHTTPSBytes(Boolean withAuth) throws Exception {
+		setUp(withAuth);
+        Assumptions.assumeTrue(UrlUtils.isAvailable("https://dstadler.org/", false, 10_000), "https://dstadler.org/ should be reachable");
 
         byte[] ret = wrapper.simpleGetBytes("https://dstadler.org/");
         assertNotNull(ret);
         assertTrue(ret.length > 0);
     }
 
-    @Test
-    public void testSimpleGetFails() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testSimpleGetFails(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
             try {
                 wrapper.simpleGet("http://localhost:" + server.getPort());
@@ -190,8 +190,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testCheckAndFetchFails() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testCheckAndFetchFails(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
             try {
                 final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
@@ -208,8 +210,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testSimpleGetBytesFails() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testSimpleGetBytesFails(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
             try {
                 wrapper.simpleGetBytes("http://localhost:" + server.getPort());
@@ -220,8 +224,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testSimpleGetException() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testSimpleGetException(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(() -> {
             throw new IllegalStateException("testexception");
         }, NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -234,8 +240,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testSimpleGetBytesException() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testSimpleGetBytesException(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(() -> {
             throw new IllegalStateException("testexception");
         }, NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -248,22 +256,28 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testRetrieveData() throws IOException {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testRetrieveData(Boolean withAuth) throws IOException {
+		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
             assertEquals("ok", HttpClientWrapper.retrieveData("http://localhost:" + server.getPort()));
         }
     }
 
-    @Test
-    public void testRetrieveDataUser() throws IOException {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testRetrieveDataUser(Boolean withAuth) throws IOException {
+		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
             assertEquals("ok", HttpClientWrapper.retrieveData("http://localhost:" + server.getPort(), "", null, 10_000));
         }
     }
 
-    @Test
-    public void microBenchmark() throws IOException {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void microBenchmark(Boolean withAuth) throws IOException {
+		setUp(withAuth);
         // locally this executes in approx. 1 sec...
         for(int i = 0;i < 500;i++) {
             try (HttpClientWrapper client = new HttpClientWrapper("", null, 10_000)) {
@@ -272,8 +286,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testSimplePost() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testSimplePost(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         assertNotNull(wrapper.getHttpClient());
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
@@ -292,8 +308,10 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test
-    public void testDownloadFile() throws IOException {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testDownloadFile(Boolean withAuth) throws IOException {
+		setUp(withAuth);
         File tempFile = File.createTempFile("HttpClientWrapperDownloadFile", ".tst");
         assertTrue(tempFile.delete());
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok, file content")) {
@@ -308,9 +326,11 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Ignore("Only for testing buffering when downloading to a file, but it simply did not have much effect")
-    @Test
-    public void testDownloadSpeed() throws IOException {
+	@Disabled("Only for testing buffering when downloading to a file, but it simply did not have much effect")
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testDownloadSpeed(Boolean withAuth) throws IOException {
+		setUp(withAuth);
         long start = System.currentTimeMillis();
         for(int i = 0;i < 10;i++) {
             HttpClientWrapper.downloadFile("http://dstadler.org/example-debug.apk", new File("/tmp/example-debug.apk"), 60_000);
@@ -342,28 +362,34 @@ public class HttpClientWrapperTest {
         }
     }
 
-    @Test(expected = IOException.class)
-    public void testEmptyResponseEntity() throws IOException {
-        try (MockRESTServer server = new MockRESTServer("404", "application/html", "")) {
-            try (HttpClientWrapper httpClient = new HttpClientWrapper(10_000)) {
-                String url = "http://localhost:" + server.getPort();
-                final HttpUriRequest httpGet = new HttpHead(url);
-                try (CloseableHttpResponse response = httpClient.getHttpClient().execute(httpGet)) {
-                    verifier.addObject(httpGet);
-                    verifier.addObject(response);
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testEmptyResponseEntity(Boolean withAuth) {
+		setUp(withAuth);
+		assertThrows(IOException.class, () -> {
+			try (MockRESTServer server = new MockRESTServer("404", "application/html", "")) {
+				try (HttpClientWrapper httpClient = new HttpClientWrapper(10_000)) {
+					String url = "http://localhost:" + server.getPort();
+					final HttpUriRequest httpGet = new HttpHead(url);
+					try (CloseableHttpResponse response = httpClient.getHttpClient().execute(httpGet)) {
+						verifier.addObject(httpGet);
+						verifier.addObject(response);
 
-                    assertNull("Entity is null in this case", response.getEntity());
+						assertNull(response.getEntity(), "Entity is null in this case");
 
-                    // this will throw an IOException, previously we caught a NullPointerException
-                    HttpClientWrapper.checkAndFetch(response, url);
-                }
-            }
-        }
-    }
+						// this will throw an IOException, previously we caught a NullPointerException
+						HttpClientWrapper.checkAndFetch(response, url);
+					}
+				}
+			}
+		});
+	}
 
 	// https://www.lenar.io/invalid-cookie-header-invalid-expires-attribute/
-	@Test
-	public void testNewExpiresHeader() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testNewExpiresHeader(Boolean withAuth) throws Exception {
+		setUp(withAuth);
 		assertNotNull(wrapper.getHttpClient());
 
 		try (MockRESTServer server = new MockRESTServer(() -> {

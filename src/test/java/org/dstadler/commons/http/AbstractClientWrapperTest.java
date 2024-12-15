@@ -4,11 +4,9 @@ import org.apache.commons.io.input.NullInputStream;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,28 +18,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(Parameterized.class)
 public class AbstractClientWrapperTest {
-    @Parameterized.Parameters(name = "UseAuth: {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 { Boolean.TRUE }, { Boolean.FALSE },
         });
     }
 
-    @Parameterized.Parameter
-    public Boolean withAuth;
-
     private AbstractClientWrapper wrapper;
     private final AtomicInteger simpleGetCount = new AtomicInteger();
 
-    @Before
-    public void setUp() {
+    public void setUp(boolean withAuth) {
         wrapper = new AbstractClientWrapper(60_000, withAuth) {
             @Override
             protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) {
@@ -55,13 +44,15 @@ public class AbstractClientWrapperTest {
         };
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         wrapper.close();
     }
 
-    @Test
-    public void testAbstract() throws Exception {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testAbstract(Boolean withAuth) throws Exception {
+		setUp(withAuth);
         assertNotNull(wrapper.createSSLContext());
 
         wrapper.simpleGet("url");
@@ -79,31 +70,39 @@ public class AbstractClientWrapperTest {
         AtomicBoolean called = new AtomicBoolean();
         wrapper.simpleGet("url", (x) -> called.set(true));
         assertEquals(5, simpleGetCount.get());
-        assertTrue("Consumer should be call", called.get());
+        assertTrue(called.get(), "Consumer should be call");
     }
 
-    @Test
-    public void testHttpGet() throws UnsupportedEncodingException {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testHttpGet(Boolean withAuth) throws UnsupportedEncodingException {
+		setUp(withAuth);
         HttpUriRequest httpGet = wrapper.getHttpGet("url", "body");
         assertNotNull(httpGet);
     }
 
-    @Test
-    public void testHttpGetNullBody() throws UnsupportedEncodingException {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testHttpGetNullBody(Boolean withAuth) throws UnsupportedEncodingException {
+		setUp(withAuth);
         HttpUriRequest httpGet = wrapper.getHttpGet("url", null);
         assertNotNull(httpGet);
     }
 
-    @Test
-    public void testGetHttpHostWithAuth() throws MalformedURLException {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testGetHttpHostWithAuth(Boolean withAuth) throws MalformedURLException {
+		setUp(withAuth);
         HttpClientContext context = HttpClientContext.create();
         HttpHost host = wrapper.getHttpHostWithAuth("http://url", context);
         assertNotNull(host);
     }
 
-    @Test
-    public void testWithIOException() throws IOException {
-        AbstractClientWrapper wrapper = new AbstractClientWrapper(60_000, withAuth) {
+	@MethodSource("data")
+	@ParameterizedTest(name = "UseAuth: {0}")
+	public void testWithIOException(Boolean withAuth) throws IOException {
+		setUp(withAuth);
+        try (AbstractClientWrapper wrapper = new AbstractClientWrapper(60_000, withAuth) {
             @Override
             protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) {
                 simpleGetCount.incrementAndGet();
@@ -118,17 +117,19 @@ public class AbstractClientWrapperTest {
             @Override
             public void close() {
             }
-        };
+        }) {
 
-        assertThrows(IllegalStateException.class,
-                () -> wrapper.simpleGet("url"));
-        assertThrows(IllegalStateException.class,
-                () -> wrapper.simpleGet("url", "body"));
-        assertThrows(IllegalStateException.class,
-                () -> wrapper.simpleGet("url", (String)null));
-        assertThrows(IllegalStateException.class,
-                () -> wrapper.simpleGetBytes("url"));
+            assertThrows(IllegalStateException.class,
+                    () -> wrapper.simpleGet("url"));
+            assertThrows(IllegalStateException.class,
+                    () -> wrapper.simpleGet("url", "body"));
+            assertThrows(IllegalStateException.class,
+                    () -> wrapper.simpleGet("url", (String) null));
+            assertThrows(IllegalStateException.class,
+                    () -> wrapper.simpleGetBytes("url"));
 
-        wrapper.simpleGet("url", (x) -> {});
+            wrapper.simpleGet("url", (x) -> {
+            });
+        }
     }
 }
