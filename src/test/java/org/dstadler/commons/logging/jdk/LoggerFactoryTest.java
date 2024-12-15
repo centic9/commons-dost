@@ -32,28 +32,33 @@ public class LoggerFactoryTest {
 
 	@Test
 	public void testInitLogging() throws IOException {
-		Thread.currentThread().setContextClassLoader(new ClassLoader() {
-			@Override
-			public URL getResource(String name) {
-				return null;
-			}
-		});
+        ClassLoader prev = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(new ClassLoader() {
+                @Override
+                public URL getResource(String name) {
+                    return null;
+                }
+            });
 
-		try {
-			LoggerFactory.initLogging();
-			fail("Should throw Exception, seems we found a resource: " + Thread.currentThread().getContextClassLoader().getResource("logging.properties"));
-		} catch (IOException e) {
-			// expected if we do not have a logging.properties here
-			assertNotNull(e);
-		}
+            try {
+                LoggerFactory.initLogging();
+                fail("Should throw Exception, seems we found a resource: " + Thread.currentThread().getContextClassLoader().getResource("logging.properties"));
+            } catch (IOException e) {
+                // expected if we do not have a logging.properties here
+                assertNotNull(e);
+            }
 
-		try (URLClassLoader cl = new URLClassLoader(new URL[] {new File("src/test/resources").toURI().toURL()},
-				Thread.currentThread().getContextClassLoader())) {
-			Thread.currentThread().setContextClassLoader(cl);
+            try (URLClassLoader cl = new URLClassLoader(new URL[] {new File("src/test/resources").toURI().toURL()}, prev)) {
+                Thread.currentThread().setContextClassLoader(cl);
 
-			// now it should work
-			LoggerFactory.initLogging();
-		}
+                // now it should work
+                LoggerFactory.initLogging();
+            }
+		} finally {
+            // restore the previous class loader
+            Thread.currentThread().setContextClassLoader(prev);
+        }
 	}
 
 	// helper method to get coverage of the unused constructor

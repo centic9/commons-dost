@@ -48,15 +48,11 @@ public class SVNCommandsTest {
 
 	// use static-block to initialize "static final" members
     static {
-		assertNotNull(Thread.currentThread().getContextClassLoader().getResource("logging.properties"),
-				"Should have logging.properties, but had none with Classloader: " +
-								Thread.currentThread().getContextClassLoader());
-
-		try {
-			LoggerFactory.initLogging();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            LoggerFactory.initLogging();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 		repoDir = createLocalSVNRepository();
 
