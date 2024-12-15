@@ -1,6 +1,6 @@
 package org.dstadler.commons.zip;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +15,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ZipFileCloseInputStreamTest {
 
@@ -24,7 +24,7 @@ public class ZipFileCloseInputStreamTest {
 		String name = null;
 		try (ZipFile zipfile = prepareZip()) {
 			name = zipfile.getName();
-			assertNotNull("Should get some entries now", zipfile.entries());
+			assertNotNull(zipfile.entries(), "Should get some entries now");
 
 			File file = File.createTempFile("ZipFileClose", ".test");
 			try {

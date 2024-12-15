@@ -1,7 +1,7 @@
 package org.dstadler.commons.os;
 
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class WindowTitleTest {
 

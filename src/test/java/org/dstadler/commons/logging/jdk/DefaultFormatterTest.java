@@ -1,14 +1,12 @@
 package org.dstadler.commons.logging.jdk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class DefaultFormatterTest {
@@ -66,7 +64,7 @@ public class DefaultFormatterTest {
 		record.setLoggerName(null);
 		String format = formatter.format(record);
 		assertNotNull(format);
-		assertTrue("Had: " + format, format.contains("<unknown>"));
+		assertTrue(format.contains("<unknown>"), "Had: " + format);
 	}
 
 	@Test

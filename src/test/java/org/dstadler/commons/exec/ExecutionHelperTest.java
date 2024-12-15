@@ -18,8 +18,6 @@ import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.function.ThrowingRunnable;
-import org.junit.jupiter.api.function.Executable;
 
 public class ExecutionHelperTest {
 	private final static Logger log = LoggerFactory.make();

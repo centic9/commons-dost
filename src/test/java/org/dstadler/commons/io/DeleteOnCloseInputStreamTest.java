@@ -1,10 +1,6 @@
 package org.dstadler.commons.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +11,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DeleteOnCloseInputStreamTest {
 
@@ -44,8 +40,8 @@ public class DeleteOnCloseInputStreamTest {
 				assertTrue(file.length() > 0);
 			}
 
-			assertFalse("After closing, the file should be deleted from disk.",
-					file.exists());
+			assertFalse(file.exists(),
+					"After closing, the file should be deleted from disk.");
 		}
 	}
 
@@ -85,8 +81,8 @@ public class DeleteOnCloseInputStreamTest {
 				assertFalse(stream.markSupported());
 			}
 
-			assertFalse("After closing, the file should be deleted from disk.",
-					file.exists());
+			assertFalse(file.exists(),
+					"After closing, the file should be deleted from disk.");
 		}
 	}
 
@@ -106,8 +102,8 @@ public class DeleteOnCloseInputStreamTest {
 				stream.reset();
 			}
 
-			assertFalse("After closing, the file should be deleted from disk.",
-					file.exists());
+			assertFalse(file.exists(),
+					"After closing, the file should be deleted from disk.");
 		}
 	}
 

@@ -1,9 +1,6 @@
 package org.dstadler.commons.http;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.net.NoRouteToHostException;
@@ -15,8 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.dstadler.commons.net.SocketUtils;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 public class UtilsTest {
 
@@ -75,19 +72,19 @@ public class UtilsTest {
 	 */
 	@Test
 	public void testGetURL() throws IOException {
-	    Assume.assumeTrue("Could not access http://dstadler.org/",
-	            checkURL(new URL("http://dstadler.org/")));
+	    Assumptions.assumeTrue(checkURL(new URL("http://dstadler.org/")),
+	            "Could not access http://dstadler.org/");
 
-		assertTrue("Expect URL http://dstadler.org to work, but didn't",
-				Utils.getURL("http://dstadler.org", new AtomicInteger(), 2));
-		assertTrue("Expect URL http://dstadler.org to work, but didn't",
-				Utils.getURL("http://dstadler.org", new AtomicInteger(99), 2));
-		assertTrue("Expect URL http://dstadler.org to work, but didn't",
-				Utils.getURL("http://dstadler.org", new AtomicInteger(100), 2));
-		assertFalse("Expect URL http://dstadler.org to not work, but did",
-				Utils.getURL("invalidurl", new AtomicInteger(100), 2));
-		assertFalse("Expect URL http://dstadler.org to not work, but did",
-				Utils.getURL("http://notexistingsomestrangeurlwhichshouldnotexist.com", new AtomicInteger(100), 2));
+		assertTrue(Utils.getURL("http://dstadler.org", new AtomicInteger(), 2),
+				"Expect URL http://dstadler.org to work, but didn't");
+		assertTrue(Utils.getURL("http://dstadler.org", new AtomicInteger(99), 2),
+				"Expect URL http://dstadler.org to work, but didn't");
+		assertTrue(Utils.getURL("http://dstadler.org", new AtomicInteger(100), 2),
+				"Expect URL http://dstadler.org to work, but didn't");
+		assertFalse(Utils.getURL("invalidurl", new AtomicInteger(100), 2),
+				"Expect URL http://dstadler.org to not work, but did");
+		assertFalse(Utils.getURL("http://notexistingsomestrangeurlwhichshouldnotexist.com", new AtomicInteger(100), 2),
+				"Expect URL http://dstadler.org to not work, but did");
 	}
 
 	private boolean checkURL(URL url) {

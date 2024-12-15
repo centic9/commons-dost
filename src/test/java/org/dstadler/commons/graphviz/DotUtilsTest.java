@@ -1,10 +1,6 @@
 package org.dstadler.commons.graphviz;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,9 +13,9 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class DotUtilsTest {
@@ -39,15 +35,15 @@ public class DotUtilsTest {
 		}
 		""";
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		boolean exists = new File(DotUtils.DOT_EXE).exists();
 
 		try {
 			assertEquals(exists, DotUtils.checkDot());
-			Assume.assumeTrue("Did not find dot executable at " + DotUtils.DOT_EXE, exists);
+			Assumptions.assumeTrue(exists, "Did not find dot executable at " + DotUtils.DOT_EXE);
 		} catch (IOException e) {
-			Assume.assumeTrue("Did not find dot executable at " + DotUtils.DOT_EXE + ": " + e, exists);
+			Assumptions.assumeTrue(exists, "Did not find dot executable at " + DotUtils.DOT_EXE + ": " + e);
 		}
 
 	}
@@ -138,12 +134,12 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 0, null, "G", null);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            """
-	                            digraph G {
-	                            rankdir=LR;
-	                            node [shape=box];
+							"""
+                             digraph G {
+                             rankdir=LR;
+                             node [shape=box];
 	                            
-	                            """);
+                             """);
 	        }
 
 	        // DPI set
@@ -151,13 +147,13 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 200, null, "G", null);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            """
-	                            digraph G {
-	                            dpi=200;
-	                            rankdir=LR;
-	                            node [shape=box];
+							"""
+                             digraph G {
+                             dpi=200;
+                             rankdir=LR;
+                             node [shape=box];
 	                            
-	                            """);
+                             """);
 	        }
 
 	        // Another rankdir
@@ -165,12 +161,12 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 0, "AB", "G", null);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            """
-	                            digraph G {
-	                            rankdir=AB;
-	                            node [shape=box];
+							"""
+                             digraph G {
+                             rankdir=AB;
+                             node [shape=box];
 	                            
-	                            """);
+                             """);
 	        }
 
 	        // Extra lines
@@ -182,14 +178,14 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 0, null, "G", lines);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            """
-	                            digraph G {
-	                            rankdir=LR;
-	                            someline;
-	                            someotherline;
-	                            node [shape=box];
+							"""
+                             digraph G {
+                             rankdir=LR;
+                             someline;
+                             someotherline;
+                             node [shape=box];
 	                            
-	                            """);
+                             """);
 	        }
 
 	        // different title
@@ -197,12 +193,12 @@ public class DotUtilsTest {
 	            DotUtils.writeHeader(fileWriter, 0, null, "mygraph", null);
 	            fileWriter.flush();
 	            assertEquals(FileUtils.readFileToString(temp, "UTF-8"),
-	                            """
-	                            digraph mygraph {
-	                            rankdir=LR;
-	                            node [shape=box];
+							"""
+                             digraph mygraph {
+                             rankdir=LR;
+                             node [shape=box];
 	                            
-	                            """);
+                             """);
 	        }
         } finally {
         	assertTrue(temp.delete());

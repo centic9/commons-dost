@@ -1,11 +1,6 @@
 package org.dstadler.commons.zip;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,16 +24,16 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.zip.ZipUtils.ZipFileVisitor;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ZipUtilsTest {
 	private static final String TEST_DIRECTORY = "directory123";
 
 	private static final File invalidDir = new File("notexists");
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 		if (invalidDir.exists()) {
 			FileUtils.deleteDirectory(invalidDir);
@@ -208,15 +203,14 @@ public class ZipUtilsTest {
     		try (InputStream zipInput = new FileInputStream(zipfile)) {
     			ZipUtils.findZip("zipfile", zipInput, FileFilterUtils.falseFileFilter(), results);
     		}
-    		assertEquals("look for files with no-accept filter and expect to accept none", 0, results.size());
+    		assertEquals(0, results.size(), "look for files with no-accept filter and expect to accept none");
 
     		results.clear();
     		try (InputStream zipInput = new FileInputStream(zipfile)) {
     			ZipUtils.findZip("zipfile", zipInput, FileFilterUtils.trueFileFilter(), results);
     		}
     		assertEquals(
-    				"look for files with all-accept filter and expect one entry for the nested zip and one entry for the deeply nested file as well as a dir and a file underneath",
-    				6, results.size());
+    				6, results.size(), "look for files with all-accept filter and expect one entry for the nested zip and one entry for the deeply nested file as well as a dir and a file underneath");
 
     		results.clear();
     		try (InputStream stream = new ExceptionInputStream(new IOException("testexception"))) {
@@ -226,8 +220,7 @@ public class ZipUtilsTest {
     			TestHelpers.assertContains(e.getCause(), "testexception");
     			TestHelpers.assertContains(e, "myownzipfile");
     		}
-    		assertEquals("no files when having exception",
-    				0, results.size());
+    		assertEquals(0, results.size(), "no files when having exception");
 
     		results.clear();
     		try (InputStream stream = new ExceptionInputStream(new IllegalArgumentException("testexception"))) {
@@ -237,8 +230,7 @@ public class ZipUtilsTest {
     			TestHelpers.assertContains(e.getCause(), "testexception");
     			TestHelpers.assertContains(e, "myownzipfile");
     		}
-    		assertEquals("no files when having exception",
-    				0, results.size());
+    		assertEquals(0, results.size(), "no files when having exception");
 		} finally {
 		    assertTrue(zipfile.exists());
 		    assertTrue(zipfile.delete());
@@ -464,7 +456,7 @@ public class ZipUtilsTest {
 		}
 	}
 
-	@Ignore("Local test, will not work in other places")
+	@Disabled("Local test, will not work in other places")
 	@Test
 	public void testIcefaces() throws Exception {
 		List<String> r = new ArrayList<>();
@@ -475,7 +467,7 @@ public class ZipUtilsTest {
                         System.out.println("Check " + t);
                         return t.getPath().matches(".*jsf.js");
                     }, r);
-			assertEquals("List: " + r, 1, r.size());
+			assertEquals(1, r.size(), "List: " + r);
 		}
 	}
 
@@ -497,8 +489,8 @@ public class ZipUtilsTest {
 
 		try {
     		try {
-				assertFalse("Directory should not exist: " + invalidDir.getAbsolutePath(),
-						invalidDir.exists());
+				assertFalse(invalidDir.exists(),
+						"Directory should not exist: " + invalidDir.getAbsolutePath());
 
 				ZipUtils.extractZip(zipfile2, invalidDir);
     			fail("Should catch exception here");
@@ -513,17 +505,17 @@ public class ZipUtilsTest {
     		try {
         		ZipUtils.extractZip(zipfile2, toDir);
 
-        		assertTrue("File not found: " + new File(toDir, "zpifile.zip"),
-        				new File(toDir, "nested.zip").exists());
-        		assertTrue("Dir not found: " + new File(toDir, "dir"),
-        				new File(toDir, "dir").exists());
-        		assertTrue("Dir/File not found: " + new File(toDir, "dir/file"),
-        				new File(toDir, "dir/file").exists());
+        		assertTrue(new File(toDir, "nested.zip").exists(),
+        				"File not found: " + new File(toDir, "zpifile.zip"));
+        		assertTrue(new File(toDir, "dir").exists(),
+        				"Dir not found: " + new File(toDir, "dir"));
+        		assertTrue(new File(toDir, "dir/file").exists(),
+        				"Dir/File not found: " + new File(toDir, "dir/file"));
 
         		ZipUtils.extractZip(zipfile2, toDir);
 
-        		assertTrue("File not found: " + new File(toDir, "zpifile.zip"),
-        				new File(toDir, "nested.zip").exists());
+        		assertTrue(new File(toDir, "nested.zip").exists(),
+        				"File not found: " + new File(toDir, "zpifile.zip"));
     		} finally {
     		    FileUtils.deleteDirectory(toDir);
     		}
@@ -581,8 +573,8 @@ public class ZipUtilsTest {
 
 		try (InputStream stream = new FileInputStream(zipfile2)){
     		try {
-				assertFalse("Directory should not exist: " + invalidDir.getAbsolutePath(),
-						invalidDir.exists());
+				assertFalse(invalidDir.exists(),
+						"Directory should not exist: " + invalidDir.getAbsolutePath());
 
 				ZipUtils.extractZip(stream, invalidDir);
     			fail("Should catch exception here");
@@ -597,12 +589,12 @@ public class ZipUtilsTest {
     		try {
         		ZipUtils.extractZip(stream, toDir);
 
-        		assertTrue("File not found: " + new File(toDir, "zpifile.zip"),
-        				new File(toDir, "nested.zip").exists());
-        		assertTrue("Dir not found: " + new File(toDir, "dir"),
-        				new File(toDir, "dir").exists());
-        		assertTrue("Dir/File not found: " + new File(toDir, "dir/file"),
-        				new File(toDir, "dir/file").exists());
+        		assertTrue(new File(toDir, "nested.zip").exists(),
+        				"File not found: " + new File(toDir, "zpifile.zip"));
+        		assertTrue(new File(toDir, "dir").exists(),
+        				"Dir not found: " + new File(toDir, "dir"));
+        		assertTrue(new File(toDir, "dir/file").exists(),
+        				"Dir/File not found: " + new File(toDir, "dir/file"));
     		} finally {
     		    FileUtils.deleteDirectory(toDir);
     		}
@@ -640,9 +632,9 @@ public class ZipUtilsTest {
 			fail("Should catch exception here");
 		} catch (IOException e) {
 			// error is different between JDK 6 and 7
-			assertTrue("Had: " + e,
-					e.getMessage().contains("ZIP file must have at least one entry")
-					|| e.getMessage().contains("somezip.zip"));
+			assertTrue(e.getMessage().contains("ZIP file must have at least one entry")
+					|| e.getMessage().contains("somezip.zip"),
+					"Had: " + e);
 		}
 	}
 
@@ -678,13 +670,13 @@ public class ZipUtilsTest {
 
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
     				String data = IOUtils.toString(stream, StandardCharsets.UTF_8);
-					assertNotEquals("Should be different without encoding, expected: somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\nhad: " + data,
-							"somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF", data);
+					assertNotEquals("somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF", data, "Should be different without encoding, expected: somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\nhad: " + data);
     			}
 
     			try (InputStream stream = checkZip.getInputStream(checkZip.getEntry("nested.zip"))) {
-    				assertEquals("Should be equal with same encoding", "somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF",
-							IOUtils.toString(stream, StandardCharsets.ISO_8859_1));
+    				assertEquals("somenewdata\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF",
+							IOUtils.toString(stream, StandardCharsets.ISO_8859_1),
+							"Should be equal with same encoding");
     			}
     		}
 		} finally {
@@ -730,7 +722,7 @@ public class ZipUtilsTest {
     			visitor.walk(zipFile2);
     		}
 
-    		assertTrue("Expect to have found at least some files", found.get());
+    		assertTrue(found.get(), "Expect to have found at least some files");
         } finally {
             assertTrue(zipfile.exists());
             assertTrue(zipfile.delete());
@@ -764,7 +756,7 @@ public class ZipUtilsTest {
     			TestHelpers.assertContains(e, "testexception");
     		}
 
-    		assertFalse("Expect to have found at least some files", found.get());
+    		assertFalse(found.get(), "Expect to have found at least some files");
         } finally {
             assertTrue(zipfile.exists());
             assertTrue(zipfile.delete());

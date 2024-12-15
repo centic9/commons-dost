@@ -1,7 +1,7 @@
 package org.dstadler.commons.util;
 
 import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -9,10 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExecutorUtilTest {
     private final AtomicReference<Exception> exc = new AtomicReference<>();
@@ -47,8 +44,8 @@ public class ExecutorUtilTest {
             }
         });
 
-        assertNotNull("There should be a thread running now",
-                ExecutorUtil.lookupThread("ExecutorTest"));
+        assertNotNull(ExecutorUtil.lookupThread("ExecutorTest"),
+                "There should be a thread running now");
 
         ExecutorUtil.shutdownAndAwaitTermination(executor, 50);
 
@@ -59,8 +56,8 @@ public class ExecutorUtilTest {
                 "No thread expected after shutting down the executor, look at log for thread-dump",
                 "ExecutorTest");
 
-        assertTrue("Had unexpected exception, only expecting InterruptedException: " + exc.get(),
-                exc.get() == null || exc.get() instanceof InterruptedException);
+        assertTrue(exc.get() == null || exc.get() instanceof InterruptedException,
+                "Had unexpected exception, only expecting InterruptedException: " + exc.get());
     }
 
     @Test
@@ -76,8 +73,8 @@ public class ExecutorUtilTest {
             }
         });
 
-        assertNotNull("There should be a thread running now",
-                ExecutorUtil.lookupThread("ExecutorTest"));
+        assertNotNull(ExecutorUtil.lookupThread("ExecutorTest"),
+                "There should be a thread running now");
 
         // wait for the thread to throw the exception
         latch.await();
@@ -114,7 +111,7 @@ public class ExecutorUtilTest {
 
         assertSame(thread, ExecutorUtil.lookupThread("test-thread"));
 
-        assertNull("Had unexpected exception: " + exc.get(), exc.get());
+        assertNull(exc.get(), "Had unexpected exception: " + exc.get());
     }
 
 	@Test

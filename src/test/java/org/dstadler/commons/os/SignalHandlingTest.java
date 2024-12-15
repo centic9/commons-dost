@@ -1,8 +1,8 @@
 package org.dstadler.commons.os;
 
-import org.junit.Test;
-
 import java.util.logging.Logger;
+
+import org.junit.jupiter.api.Test;
 
 public class SignalHandlingTest {
     private static final Logger log = Logger.getLogger(SignalHandling.class.getName());

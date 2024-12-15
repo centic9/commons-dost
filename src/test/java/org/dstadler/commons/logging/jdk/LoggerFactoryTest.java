@@ -1,6 +1,6 @@
 package org.dstadler.commons.logging.jdk;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -18,7 +18,7 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LoggerFactoryTest {
 
@@ -67,7 +67,7 @@ public class LoggerFactoryTest {
 	    LoggerFactory.rolloverLogfile();
 
         for(File file : findLogFiles()) {
-            assertTrue("Could not remove logfile: " + file, file.delete());
+            assertTrue(file.delete(), "Could not remove logfile: " + file);
         }
 
         assertEquals(0, findLogFiles().length);
@@ -101,7 +101,7 @@ public class LoggerFactoryTest {
         LoggerFactory.rolloverLogfile();
 
         for(File file : findLogFiles()) {
-            assertTrue("Could not remove logfile: " + file, file.delete());
+            assertTrue(file.delete(), "Could not remove logfile: " + file);
         }
 
         assertEquals(0, findLogFiles().length);
@@ -149,7 +149,7 @@ public class LoggerFactoryTest {
         LoggerFactory.rolloverLogfile();
 
         for(File file : findLogFiles()) {
-            assertTrue("Could not remove logfile: " + file, file.delete());
+            assertTrue(file.delete(), "Could not remove logfile: " + file);
         }
 
         assertEquals(0, findLogFiles().length);

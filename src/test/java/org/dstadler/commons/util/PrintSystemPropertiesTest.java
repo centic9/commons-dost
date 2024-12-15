@@ -1,13 +1,12 @@
 package org.dstadler.commons.util;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
-import org.junit.Test;
-
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import org.junit.jupiter.api.Test;
 
 public class PrintSystemPropertiesTest {
 
@@ -20,8 +19,8 @@ public class PrintSystemPropertiesTest {
 		}
 		PrintSystemProperties.main(new String[] {});
 		assertTrue(file.exists());
-		assertTrue("Could not delete file " + file,
-				file.delete());
+		assertTrue(file.delete(),
+				"Could not delete file " + file);
 	}
 
 	// helper method to get coverage of the unused constructor

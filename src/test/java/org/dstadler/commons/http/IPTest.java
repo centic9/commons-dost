@@ -1,10 +1,10 @@
 package org.dstadler.commons.http;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
 
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IPTest {
 	@Test

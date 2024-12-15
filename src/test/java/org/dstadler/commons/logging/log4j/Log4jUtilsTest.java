@@ -8,12 +8,12 @@ import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.rolling.RollingFileManager;
 import org.apache.logging.log4j.core.appender.rolling.TriggeringPolicy;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.logging.Logger;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.logging.Logger;
 
 public class Log4jUtilsTest {
 	@Test

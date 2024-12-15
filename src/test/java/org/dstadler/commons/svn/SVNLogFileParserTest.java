@@ -1,6 +1,6 @@
 package org.dstadler.commons.svn;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.arrays.ArrayUtils;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 public class SVNLogFileParserTest {
@@ -25,7 +25,7 @@ public class SVNLogFileParserTest {
 			Map<Long, LogEntry> parsed = new SVNLogFileParser(new String[] {}).parseContent(inStr);
 			assertNotNull(parsed);
 
-			assertTrue("Had: " + parsed, parsed.containsKey(1798L));
+			assertTrue(parsed.containsKey(1798L), "Had: " + parsed);
 			assertEquals("somebody", parsed.get(1798L).author);
 			assertEquals("2015-03-31T11:03:42.600994Z", parsed.get(1798L).date);
 			assertEquals("Add gradle-wrapper", parsed.get(1798L).msg);
@@ -43,51 +43,49 @@ public class SVNLogFileParserTest {
 			LogEntry entry = parsed.get(1799L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
-			assertEquals("Expect 4 (3 + ....) for 6 paths, but had: " + entry.paths, 4, entry.paths.size());
+			assertEquals(4, entry.paths.size(), "Expect 4 (3 + ....) for 6 paths, but had: " + entry.paths);
 			Iterator<Pair<String,String>> it = entry.paths.iterator();
 			it.next();
 			it.next();
 			it.next();
 			Pair<String,String> pair = it.next();
 			String next = pair.getLeft();
-			assertEquals("Last path is only '...' to indicate more paths, but had: " + ArrayUtils.toString(entry.paths.toArray(), "\n"), LogEntry.MORE, next);
+			assertEquals(LogEntry.MORE, next, "Last path is only '...' to indicate more paths, but had: " + ArrayUtils.toString(entry.paths.toArray(), "\n"));
 			assertEquals("", pair.getRight());
 
 			// rev. 1790: 4 paths
 			entry = parsed.get(1790L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
-			assertEquals("Expect 4 (3 + ....) for 4 paths, but had: " + entry.paths, 4, entry.paths.size());
+			assertEquals(4, entry.paths.size(), "Expect 4 (3 + ....) for 4 paths, but had: " + entry.paths);
 			it = entry.paths.iterator();
 			it.next();
 			it.next();
 			it.next();
 			pair = it.next();
 			next = pair.getLeft();
-			assertEquals("Last path is only '...' to indicate more paths, but had: " + ArrayUtils.toString(entry.paths.toArray(), "\n"), LogEntry.MORE, next);
+			assertEquals(LogEntry.MORE, next, "Last path is only '...' to indicate more paths, but had: " + ArrayUtils.toString(entry.paths.toArray(), "\n"));
 			assertEquals("", pair.getRight());
 
 			// rev. 1800: 3 paths
 			entry = parsed.get(1800L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
-			assertEquals("Expect 3 paths, but had: " + entry.paths, 3, entry.paths.size());
+			assertEquals(3, entry.paths.size(), "Expect 3 paths, but had: " + entry.paths);
 			it = entry.paths.iterator();
 			it.next();
 			it.next();
 			pair = it.next();
 			next = pair.getLeft();
-			assertNotEquals("Last path is '...', had: " + entry.paths,
-					next, LogEntry.MORE);
+			assertNotEquals(next, LogEntry.MORE, "Last path is '...', had: " + entry.paths);
 			assertEquals("A", pair.getRight());
 
 			// rev. 1797: 1 path
 			entry = parsed.get(1797L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
-			assertEquals("Expect 1 paths, but had: " + entry.paths, 1, entry.paths.size());
-			assertNotEquals("Path is '...', had: " + entry.paths,
-					entry.paths.iterator().next().getLeft(), LogEntry.MORE);
+			assertEquals(1, entry.paths.size(), "Expect 1 paths, but had: " + entry.paths);
+			assertNotEquals(entry.paths.iterator().next().getLeft(), LogEntry.MORE, "Path is '...', had: " + entry.paths);
 
 			// rev. 1791: 0 paths
 			entry = parsed.get(1791L);
@@ -106,13 +104,13 @@ public class SVNLogFileParserTest {
 			LogEntry entry = parsed.get(1799L);
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
-			assertEquals("Expect 3 (2 + ....) for 6 paths, but had: " + entry.paths, 3, entry.paths.size());
+			assertEquals(3, entry.paths.size(), "Expect 3 (2 + ....) for 6 paths, but had: " + entry.paths);
 			Iterator<Pair<String,String>> it = entry.paths.iterator();
 			it.next();
 			it.next();
 			Pair<String,String> pair = it.next();
 			String next = pair.getLeft();
-			assertEquals("Last path is only '...' to indicate more paths, but had: " + ArrayUtils.toString(entry.paths.toArray(), "\n"), LogEntry.MORE, next);
+			assertEquals(LogEntry.MORE, next, "Last path is only '...' to indicate more paths, but had: " + ArrayUtils.toString(entry.paths.toArray(), "\n"));
 			assertEquals("", pair.getRight());
 		}
 	}
@@ -129,7 +127,7 @@ public class SVNLogFileParserTest {
             }, 10).parseContent(inStr);
 
 			assertNotNull(parsed);
-			assertEquals("When using runnable, no entries are returned", 0, parsed.size());
+			assertEquals(0, parsed.size(), "When using runnable, no entries are returned");
 
 			assertEquals(12, count.get());
 		}
@@ -192,7 +190,7 @@ public class SVNLogFileParserTest {
 				parseContent(new ByteArrayInputStream(XML.getBytes(StandardCharsets.UTF_8)));
 		assertNotNull(parsed);
 
-		assertTrue("Had: " + parsed, parsed.containsKey(431200L));
+		assertTrue(parsed.containsKey(431200L), "Had: " + parsed);
 		assertNull(parsed.get(431200L).author);
 		assertEquals("2014-09-18T10:40:52.345853Z", parsed.get(431200L).date);
 		assertEquals("APM-23041 System.exit", parsed.get(431200L).msg);

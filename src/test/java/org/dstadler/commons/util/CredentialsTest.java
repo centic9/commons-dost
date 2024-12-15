@@ -1,11 +1,6 @@
 package org.dstadler.commons.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.stream.IntStreams;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CredentialsTest {
 
@@ -120,8 +115,8 @@ public class CredentialsTest {
 										StandardCharsets.UTF_8);
 								Credentials.loadProperties(file);
 							} finally {
-								assertTrue("Could not delete file " + file,
-										!file.exists() || file.delete());
+								assertTrue(!file.exists() || file.delete(),
+										"Could not delete file " + file);
 							}
 						} catch (Throwable e) {
 							exc.set(e);

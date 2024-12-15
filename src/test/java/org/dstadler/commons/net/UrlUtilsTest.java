@@ -6,9 +6,9 @@ import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -20,12 +20,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UrlUtilsTest {
     private static final Logger log = LoggerFactory.make();
 
-	@After
+	@AfterEach
 	public void tearDown() throws InterruptedException {
 		ThreadTestHelper.waitForThreadToFinishSubstring("NanoHTTP");
 	}
@@ -353,16 +353,16 @@ public class UrlUtilsTest {
 
     @Test
     public void testSSLHostWithFacctory() throws IOException {
-    	Assume.assumeTrue("Need access to https://dstadler.org/ for this test to run",
-    			UrlUtils.isAvailable("https://dstadler.org/", false, 10000));
+    	Assumptions.assumeTrue(UrlUtils.isAvailable("https://dstadler.org/", false, 10000),
+    			"Need access to https://dstadler.org/ for this test to run");
 
     	SSLSocketFactory sslFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
 		String accessError = UrlUtils.getAccessError("https://dstadler.org/", true, false, 10000, sslFactory);
-		assertNull("Contacting https://dstadler.org/ failed, had: " + accessError,accessError);
-		assertTrue("Contacting https://dstadler.org/ failed",
-				UrlUtils.isAvailable("https://dstadler.org/", true, false, 10000, sslFactory));
-		assertNotNull("Contacting https://dstadler.org/ failed",
-				UrlUtils.retrieveData("https://www.dstadler.org/mambo2/", null, 10000, sslFactory));
+		assertNull(accessError,"Contacting https://dstadler.org/ failed, had: " + accessError);
+		assertTrue(UrlUtils.isAvailable("https://dstadler.org/", true, false, 10000, sslFactory),
+				"Contacting https://dstadler.org/ failed");
+		assertNotNull(UrlUtils.retrieveData("https://www.dstadler.org/mambo2/", null, 10000, sslFactory),
+				"Contacting https://dstadler.org/ failed");
 
 		// this will fail with 405 Method not allowed
 		try {
@@ -374,15 +374,15 @@ public class UrlUtilsTest {
 
     @Test
     public void testSSLHostNoFactory() throws IOException {
-    	Assume.assumeTrue("Need access to https://dstadler.org/ for this test to run",
-    			UrlUtils.isAvailable("https://dstadler.org/", false, 20000));
+    	Assumptions.assumeTrue(UrlUtils.isAvailable("https://dstadler.org/", false, 20000),
+    			"Need access to https://dstadler.org/ for this test to run");
 
 		String accessError = UrlUtils.getAccessError("https://dstadler.org/", true, false, 20000, null);
-		assertNull("Contacting https://dstadler.org/ failed, had: " + accessError,accessError);
-		assertTrue("Contacting https://dstadler.org/ failed",
-				UrlUtils.isAvailable("https://dstadler.org/", true, false, 20000, null));
-		assertNotNull("Contacting https://dstadler.org/ failed",
-				UrlUtils.retrieveData("https://www.dstadler.org/mambo2/", null, 20000, null));
+		assertNull(accessError,"Contacting https://dstadler.org/ failed, had: " + accessError);
+		assertTrue(UrlUtils.isAvailable("https://dstadler.org/", true, false, 20000, null),
+				"Contacting https://dstadler.org/ failed");
+		assertNotNull(UrlUtils.retrieveData("https://www.dstadler.org/mambo2/", null, 20000, null),
+				"Contacting https://dstadler.org/ failed");
 
 		// this will fail with 405 Method not allowed
 		try {

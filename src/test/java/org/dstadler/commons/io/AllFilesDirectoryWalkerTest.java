@@ -1,12 +1,12 @@
 package org.dstadler.commons.io;
 
-import org.junit.Test;
-
 import java.io.File;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertFalse;
+import org.junit.jupiter.api.Test;
 
 public class AllFilesDirectoryWalkerTest {
 

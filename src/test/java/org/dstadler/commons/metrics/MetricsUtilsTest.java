@@ -2,9 +2,11 @@ package org.dstadler.commons.metrics;
 
 import org.dstadler.commons.http.HttpClientWrapper;
 import org.dstadler.commons.testing.MockRESTServer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MetricsUtilsTest {
     @Test
@@ -42,14 +44,16 @@ public class MetricsUtilsTest {
         }
     }
 
-    @Test(expected = IOException.class)
-    public void testSendMetricFails() throws Exception {
-        try (MockRESTServer server = new MockRESTServer("503", "application/json", "ERROR");
+    @Test
+    public void testSendMetricFails() {
+		assertThrows(IOException.class, () -> {
+			try (MockRESTServer server = new MockRESTServer("503", "application/json", "ERROR");
                 HttpClientWrapper metrics = new HttpClientWrapper("", null, 60_000)) {
-            String url = "http://localhost:" + server.getPort();
-            MetricsUtils.sendMetric("testmetric", 123, System.currentTimeMillis(), metrics.getHttpClient(), url);
-        }
-    }
+				String url = "http://localhost:" + server.getPort();
+				MetricsUtils.sendMetric("testmetric", 123, System.currentTimeMillis(), metrics.getHttpClient(), url);
+			}
+		});
+	}
 
     // helper method to get coverage of the unused constructor
     @Test

@@ -4,9 +4,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.junit.Test;
-
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.jupiter.api.Test;
 
 
 public class ThreadDumpTest {

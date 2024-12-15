@@ -1,7 +1,7 @@
 package org.dstadler.commons.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class TailInputStreamTest {
@@ -130,8 +130,7 @@ public class TailInputStreamTest {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				IOUtils.copy(stream, out);
 
-				assertEquals("Had: " + new String(out.toByteArray()),
-						expected, out.toByteArray().length);
+				assertEquals(expected, out.toByteArray().length, "Had: " + new String(out.toByteArray()));
 			}
 		}
 	}

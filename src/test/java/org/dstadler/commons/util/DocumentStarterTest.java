@@ -1,14 +1,14 @@
 package org.dstadler.commons.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class DocumentStarterTest {
 
@@ -52,7 +52,7 @@ public class DocumentStarterTest {
 
 	}
 
-	@Ignore("For local testing only, test actually opens stuff...")
+	@Disabled("For local testing only, test actually opens stuff...")
 	@Test
 	public void testStartURLWithBlanks() throws IOException {
 		File file = File.createTempFile("DocumentStarterTest-some file with blanks", ".txt");

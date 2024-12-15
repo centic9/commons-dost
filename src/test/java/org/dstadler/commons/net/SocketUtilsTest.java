@@ -1,7 +1,7 @@
 package org.dstadler.commons.net;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -10,10 +10,10 @@ import java.net.ServerSocket;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
 
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.jupiter.api.Test;
 
 public class SocketUtilsTest {
 	private static final Logger log = Logger.getLogger(SocketUtils.class.getName());
@@ -24,12 +24,12 @@ public class SocketUtilsTest {
 	public void testGetNextFreePort() throws Exception {
 		// I can get a free port
 		int port = SocketUtils.getNextFreePort(8000, 9000);
-		assertTrue("Port is out of range", port >= 8000 && port <= 9000);
+		assertTrue(port >= 8000 && port <= 9000, "Port is out of range");
 
 		// I can do this many times as I do not really "reserve" it
 		for(int i = 0;i < 3*NUMBER_OF_SOCKETS;i++) {
 			port = SocketUtils.getNextFreePort(8000, 9000);
-			assertTrue("Port is out of range", port >= 8000 && port <= 9000);
+			assertTrue(port >= 8000 && port <= 9000, "Port is out of range");
 		}
 
 		ServerSocket[] sock = new ServerSocket[NUMBER_OF_SOCKETS];

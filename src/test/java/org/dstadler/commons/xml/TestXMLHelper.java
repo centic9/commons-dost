@@ -17,11 +17,7 @@
 
 package org.dstadler.commons.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.XMLConstants;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
@@ -79,9 +75,9 @@ public class TestXMLHelper {
                 assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
             } catch (SAXNotRecognizedException e) {
                 // can happen for older XML Parsers, e.g. we have a CI Job which runs with Xerces XML Parser
-                assertTrue("Had Exception about not-recognized SAX feature: " + e + " which is only expected" +
-								" for Xerces XML Parser, but had parser: " + reader,
-						reader.getClass().getName().contains("org.apache.xerces")
+                assertTrue(reader.getClass().getName().contains("org.apache.xerces"),
+						"Had Exception about not-recognized SAX feature: " + e + " which is only expected" +
+								" for Xerces XML Parser, but had parser: " + reader
                     );
             }
             readers.add(reader);

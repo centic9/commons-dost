@@ -1,14 +1,14 @@
 package org.dstadler.commons.logging.jdk;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.jupiter.api.Test;
 
 public class BriefLogFormatterTest {
 	private final static String threadName = StringUtils.repeat(" ", 12 - Thread.currentThread().getName().length()) + Thread.currentThread().getName();

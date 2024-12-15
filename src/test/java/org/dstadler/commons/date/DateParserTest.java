@@ -1,18 +1,15 @@
 package org.dstadler.commons.date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Test;
 
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.jupiter.api.Test;
 
 
 public class DateParserTest {
@@ -31,16 +28,16 @@ public class DateParserTest {
 
 		long expected = DateUtils.addDays(now, -3).getTime();
 		long got = DateParser.parseURLDate("-3day", now).getTime();
-		assertEquals("Expected " + new Date(expected) + " but got " + new Date(got),
-				(double)expected, got,
-				/* one hour because of Daylight Saving Time plus a bit of rounding-margin: */ 60*60*1000 + 500);
+		assertEquals((double)expected, got,
+				/* one hour because of Daylight Saving Time plus a bit of rounding-margin: */ 60*60*1000 + 500,
+				"Expected " + new Date(expected) + " but got " + new Date(got));
 
 		// when using years/months, we do not calculate exactly as we use 365 per year
 		long fiveYearsAgo = DateUtils.addDays(now, -(5*365)).getTime();
-		assertEquals("Expected to get " + new Date(fiveYearsAgo) + ", but had: " + DateParser.parseURLDate("-5years", now),
-				(double)fiveYearsAgo,
+		assertEquals((double)fiveYearsAgo,
 				DateParser.parseURLDate("-5years", now).getTime(),
-				/* one hour because of Daylight Saving Time plus a bit of rounding-margin: */ 60*60*1000 + 500);
+				/* one hour because of Daylight Saving Time plus a bit of rounding-margin: */ 60*60*1000 + 500,
+				"Expected to get " + new Date(fiveYearsAgo) + ", but had: " + DateParser.parseURLDate("-5years", now));
 	}
 
 	@Test
@@ -54,11 +51,11 @@ public class DateParserTest {
 	public void testParseURLDateAbsolute() {
 		assertEquals(1304215200000L, DateParser.parseURLDate("04:00 20110501", null).getTime());
 		assertEquals(1304215200000L, DateParser.parseURLDate("04:00 110501", null).getTime());
-		assertEquals("Expected " + new Date(1304200800000L) + " but got: " + DateParser.parseURLDate("2011-05-01", null),
-				1304200800000L, DateParser.parseURLDate("2011-05-01", null).getTime());
+		assertEquals(1304200800000L, DateParser.parseURLDate("2011-05-01", null).getTime(),
+				"Expected " + new Date(1304200800000L) + " but got: " + DateParser.parseURLDate("2011-05-01", null));
 		assertEquals(1304215200000L, DateParser.parseURLDate("2011-05-01T04:00:00.0", null).getTime());
-		assertEquals("Expected " + new Date(1304200800000L) + " but got: " + DateParser.parseURLDate("05/01/11", null),
-				1304200800000L, DateParser.parseURLDate("05/01/11", null).getTime());
+		assertEquals(1304200800000L, DateParser.parseURLDate("05/01/11", null).getTime(),
+				"Expected " + new Date(1304200800000L) + " but got: " + DateParser.parseURLDate("05/01/11", null));
 	}
 
 	@Test
@@ -100,8 +97,8 @@ public class DateParserTest {
 	@Test
 	public void testComputeTimeAgoAsString() {
 		String str = DateParser.computeTimeAgoString(System.currentTimeMillis() - 512, "");
-		assertTrue("Windows has a 'jumpy' time source, so we expect a range of ms as result, failed for " + str,
-				"512 ms".compareTo(str) <= 0 && "600 ms".compareTo(str) >= 0);
+		assertTrue("512 ms".compareTo(str) <= 0 && "600 ms".compareTo(str) >= 0,
+				"Windows has a 'jumpy' time source, so we expect a range of ms as result, failed for " + str);
 		assertEquals("6 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (6 * 60 * 1000), ""));
 		assertEquals("2 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (2 * 60 * 1000), ""));
 		assertEquals("1 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - (60 * 60 * 1000), ""));
@@ -118,8 +115,8 @@ public class DateParserTest {
 		assertEquals("2 weeks, 4 days, 14 h", DateParser.computeTimeAgoString(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(18) - TimeUnit.HOURS.toMillis(14), ""));
 
 		str = DateParser.computeTimeAgoString(System.currentTimeMillis(), "");
-		assertTrue("Sometimes 1ms elapses in the call to DateParser",
-				"0 s".equals(str) || "1 ms".equals(str));
+		assertTrue("0 s".equals(str) || "1 ms".equals(str),
+				"Sometimes 1ms elapses in the call to DateParser");
 
 		assertEquals("34 s", DateParser.computeTimeAgoString(System.currentTimeMillis() - (34*1000), ""));
 		assertEquals("19 h, 52 min", DateParser.computeTimeAgoString(System.currentTimeMillis() - (29*1000 + 52*60*1000 + 19*60*60*1000), ""));

@@ -2,25 +2,20 @@ package org.dstadler.commons.thread;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.dstadler.commons.testing.ThreadTestHelper;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("deprecation")
 public class ThreadUtilsTest {
     private final AtomicReference<Throwable> exc = new AtomicReference<>();
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (exc.get() != null) {
             fail("Did not expect an exception but had: " + ExceptionUtils.getStackTrace(exc.get()));
@@ -33,15 +28,13 @@ public class ThreadUtilsTest {
     @Test
     public void testGetThreadsByNameNotFound() {
         final Collection<Thread> threads = ThreadUtils.getThreadsByName("not existing");
-        assertEquals("Had: " + threads,
-                0, threads.size());
+        assertEquals(0, threads.size(), "Had: " + threads);
     }
 
     @Test
     public void testGetThreadsByNameOne() {
         final Collection<Thread> threads = ThreadUtils.getThreadsByName(Thread.currentThread().getName());
-        assertEquals("Had: " + threads,
-                1, threads.size());
+        assertEquals(1, threads.size(), "Had: " + threads);
     }
 
     @Test
@@ -66,8 +59,7 @@ public class ThreadUtilsTest {
         startLatch.await();
 
         final Collection<Thread> threads = ThreadUtils.getThreadsByName("TestUtilsTest-thread");
-        assertEquals("Had: " + threads,
-                3, threads.size());
+        assertEquals(3, threads.size(), "Had: " + threads);
 
         // allow threads to finish
         latch.countDown();
@@ -82,8 +74,8 @@ public class ThreadUtilsTest {
     public void testStopStartedThread() throws InterruptedException {
         CountDownLatch startLatch = new CountDownLatch(1);
 
-        assertNull("No such thread running before",
-                ThreadUtils.lookupThread("TestUtilsTest"));
+        assertNull(ThreadUtils.lookupThread("TestUtilsTest"),
+                "No such thread running before");
 
         Thread testThread = new Thread(() -> {
             startLatch.countDown();
@@ -102,8 +94,8 @@ public class ThreadUtilsTest {
         startLatch.await();
 
         Thread thread = ThreadUtils.lookupThread("TestUtilsTest");
-        assertNotNull("There is a thread running now",
-                thread);
+        assertNotNull(thread,
+                "There is a thread running now");
         assertTrue(thread.isAlive());
 
         ThreadUtils.stopThread(testThread, 1000);
@@ -112,8 +104,8 @@ public class ThreadUtilsTest {
 
         assertFalse(thread.isAlive());
 
-        assertNull("No such thread running afterwards",
-                ThreadUtils.lookupThread("TestUtilsTest"));
+        assertNull(ThreadUtils.lookupThread("TestUtilsTest"),
+                "No such thread running afterwards");
     }
 
 	// helper method to get coverage of the unused constructor

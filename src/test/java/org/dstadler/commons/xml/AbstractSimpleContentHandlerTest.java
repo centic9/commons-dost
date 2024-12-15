@@ -1,8 +1,6 @@
 package org.dstadler.commons.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -16,7 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXParseException;
 
 public class AbstractSimpleContentHandlerTest {
@@ -37,7 +35,7 @@ public class AbstractSimpleContentHandlerTest {
 
 		try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
 			SortedMap<String, String> map = handler.parseContent(new URL("http://localhost:" + server.getPort()), "", null, 10_000);
-			assertTrue("Parsing not implemented in abstract base class", map.isEmpty());
+			assertTrue(map.isEmpty(), "Parsing not implemented in abstract base class");
 		}
 	}
 

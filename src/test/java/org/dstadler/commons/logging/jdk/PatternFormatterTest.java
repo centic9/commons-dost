@@ -1,16 +1,15 @@
 package org.dstadler.commons.logging.jdk;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
-import org.junit.Test;
-
 import org.dstadler.commons.testing.TestHelpers;
+import org.junit.jupiter.api.Test;
 
 public class PatternFormatterTest {
 
