@@ -18,7 +18,7 @@ plugins {
     // https://gradle-pitest-plugin.solidsoft.info/
     id 'info.solidsoft.pitest' version '1.9.11'
 
-    id 'org.openrewrite.rewrite' version '6.27.1'
+    id 'org.openrewrite.rewrite' version '6.28.3'
 }
 
 apply plugin: 'de.thetaphi.forbiddenapis'
@@ -70,7 +70,8 @@ dependencies {
     testImplementation 'org.dstadler:commons-test:1.0.0.21'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.24.2'
 
-	rewrite("org.openrewrite.recipe:rewrite-migrate-java:2.29.0")
+    //rewrite("org.openrewrite.recipe:rewrite-testing-frameworks:2.23.1")
+    rewrite("org.openrewrite.recipe:rewrite-migrate-java:2.30.1")
 }
 
 wrapper {
@@ -131,6 +132,9 @@ rewrite {
     activeRecipe('org.openrewrite.java.migrate.UpgradeToJava17')
     // Imports
     //activeRecipe('org.openrewrite.java.OrderImports')
+    // https://docs.openrewrite.org/recipes/java/testing/junit5/junit4to5migration
+    //activeRecipe("org.openrewrite.java.testing.junit5.JUnit4to5Migration")
+    //setExportDatatables(true)
 }
 
 release {
