@@ -1,6 +1,16 @@
 package org.dstadler.commons.exec;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.Executor;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.commons.testing.PrivateConstructorCoverage;
+import org.dstadler.commons.testing.TestHelpers;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,22 +20,27 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.SystemUtils;
-import org.dstadler.commons.logging.jdk.LoggerFactory;
-import org.dstadler.commons.testing.PrivateConstructorCoverage;
-import org.dstadler.commons.testing.TestHelpers;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExecutionHelperTest {
 	private final static Logger log = LoggerFactory.make();
 
 	public static final String SVN_CMD = "svn";
 
+	private static void assumeCommand(String cmd, String arg) throws IOException {
+		Executor executor = DefaultExecutor.builder().get();
+		executor.setExitValues(null);
+
+		CommandLine cmdLine = new CommandLine(cmd);
+		cmdLine.addArgument(arg);
+
+		Assumptions.assumeTrue(0 == executor.execute(cmdLine));
+	}
+
 	@Test
 	public void testGetCommandResult() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("help");
 
@@ -37,7 +52,9 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultWrongCmd() {
+	public void testGetCommandResultWrongCmd() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notExists");
 
@@ -73,6 +90,8 @@ public class ExecutionHelperTest {
 
 	@Test
 	public void testGetCommandResultIgnoreExitValueStatus() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("status");
 		addDefaultArguments(cmdLine);
@@ -87,7 +106,9 @@ public class ExecutionHelperTest {
 
     @Test
     public void testGetCommandResultIgnoreExitValueHelp() throws IOException {
-        CommandLine cmdLine = new CommandLine(SVN_CMD);
+		assumeCommand(SVN_CMD, "-h");
+
+		CommandLine cmdLine = new CommandLine(SVN_CMD);
         cmdLine.addArgument("help");
 
         try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, new File("."), -1, 60000)) {
@@ -100,6 +121,8 @@ public class ExecutionHelperTest {
 
     @Test
 	public void testGetCommandResultIgnoreExitValueWrongCmd() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notexists");
 
@@ -113,6 +136,8 @@ public class ExecutionHelperTest {
 
     @Test
 	public void testGetCommandResultIgnoreExitValueArgumentWithBlanks() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notexists and more notexists");
 
@@ -126,6 +151,8 @@ public class ExecutionHelperTest {
 
 	@Test
 	public void testGetCommandResultInputStream() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("help");
 
@@ -139,7 +166,9 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultWrongCmdInputStream() {
+	public void testGetCommandResultWrongCmdInputStream() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notexists");
 
@@ -161,6 +190,8 @@ public class ExecutionHelperTest {
 
 	@Test
 	public void testGetCommandResultIgnoreExitValueInputStream() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("status");
 		addDefaultArguments(cmdLine);
@@ -175,6 +206,8 @@ public class ExecutionHelperTest {
 
 	@Test
 	public void testGetCommandResultIgnoreExitValueWrongCmdInputStream() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notexists");
 
@@ -194,6 +227,8 @@ public class ExecutionHelperTest {
 
 	@Test
 	public void testGetCommandResultStream() throws IOException {
+		assumeCommand(SVN_CMD, "-h");
+
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("help");
 
