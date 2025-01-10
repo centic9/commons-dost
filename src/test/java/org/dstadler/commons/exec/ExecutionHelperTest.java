@@ -27,14 +27,18 @@ public class ExecutionHelperTest {
 
 	public static final String SVN_CMD = "svn";
 
-	private static void assumeCommand(String cmd, String arg) throws IOException {
+	private static void assumeCommand(String cmd, String arg) {
 		Executor executor = DefaultExecutor.builder().get();
 		executor.setExitValues(null);
 
 		CommandLine cmdLine = new CommandLine(cmd);
 		cmdLine.addArgument(arg);
 
-		Assumptions.assumeTrue(0 == executor.execute(cmdLine));
+		try {
+			Assumptions.assumeTrue(0 == executor.execute(cmdLine));
+		} catch (IOException e) {
+			Assumptions.assumeTrue(false, "Command " + cmd + " " + arg + " not available: " + e.getMessage());
+		}
 	}
 
 	@Test
@@ -52,7 +56,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultWrongCmd() throws IOException {
+	public void testGetCommandResultWrongCmd() {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -166,7 +170,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultWrongCmdInputStream() throws IOException {
+	public void testGetCommandResultWrongCmdInputStream() {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
