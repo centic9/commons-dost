@@ -1,16 +1,20 @@
 package org.dstadler.commons.selenium;
 
-import static org.dstadler.commons.selenium.ChromeDriverUtils.PROPERTY_CHROME_DRIVER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.dstadler.commons.exec.ExecutionHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
+import static org.dstadler.commons.selenium.ChromeDriverUtils.PROPERTY_CHROME_DRIVER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ChromeDriverUtilsTest {
     @AfterEach
@@ -18,9 +22,27 @@ public class ChromeDriverUtilsTest {
         ChromeDriverUtils.cleanUp();
     }
 
+	private void assumeGoogleChrome() {
+		// we only read from the registry on Windows
+		if (SystemUtils.IS_OS_WINDOWS) {
+			return;
+		}
+
+		CommandLine cmdLine = new CommandLine("google-chrome-stable");
+		cmdLine.addArgument("--version");
+
+		try {
+			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 10_000);
+		} catch (IOException e) {
+			Assumptions.assumeTrue(false, "Command " + cmdLine + " not available: " + e.getMessage());
+		}
+	}
+
     @Test
     public void testGetGoogleChromeVersion() throws IOException {
-        String googleChromeVersion = ChromeDriverUtils.getGoogleChromeVersion();
+		assumeGoogleChrome();
+
+		String googleChromeVersion = ChromeDriverUtils.getGoogleChromeVersion();
 
         assertTrue(StringUtils.isNotBlank(googleChromeVersion));
 
@@ -30,7 +52,9 @@ public class ChromeDriverUtilsTest {
 
     @Test
     public void testConfigureMatchingChromeDriver() throws IOException {
-        assertTrue(StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)),
+		assumeGoogleChrome();
+
+		assertTrue(StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)),
 				"System property for chrome-driver should not be set before starting this test");
 
 		ChromeDriverUtils.configureMatchingChromeDriver();
