@@ -54,14 +54,18 @@ public class SVNCommandsTest {
             throw new RuntimeException(e);
         }
 
-        assumeTrue(SVNCommands.checkSVNCommand(), "Could not execute the SVN-command, skipping tests");
+        if (SVNCommands.checkSVNCommand()) {
+            repoDir = createLocalSVNRepository();
 
-        repoDir = createLocalSVNRepository();
-
-		BASE_URL = (SystemUtils.IS_OS_WINDOWS ? "file:///" : "file://") + repoDir.getAbsolutePath().
-				// local URL on Windows has limitations
-						replace("\\", "/").replace("c:/", "/") + "/project1";
-		log.info("Using baseUrl " + BASE_URL);
+            BASE_URL = (SystemUtils.IS_OS_WINDOWS ? "file:///" : "file://") + repoDir.getAbsolutePath().
+                    // local URL on Windows has limitations
+                            replace("\\", "/").replace("c:/", "/") + "/project1";
+            log.info("Using baseUrl " + BASE_URL);
+        } else {
+            repoDir = null;
+            BASE_URL = null;
+            log.warning("Cannot initialize test, SVN command seems to be not available");
+        }
 	}
 
 	@BeforeAll
