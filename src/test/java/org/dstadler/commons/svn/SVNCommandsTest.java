@@ -145,9 +145,9 @@ public class SVNCommandsTest {
 
 	@BeforeAll
     public static void setUpClass() {
-		svnRepoDir = checkoutSVNRepository();
+        assumeTrue(SVNCommands.checkSVNCommand(), "Could not execute the SVN-command, skipping tests");
 
-		assumeTrue(SVNCommands.checkSVNCommand(), "Could not execute the SVN-command, skipping tests");
+        svnRepoDir = checkoutSVNRepository();
     }
 
     @AfterAll
