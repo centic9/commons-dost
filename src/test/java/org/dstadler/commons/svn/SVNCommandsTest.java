@@ -54,93 +54,14 @@ public class SVNCommandsTest {
             throw new RuntimeException(e);
         }
 
-		repoDir = createLocalSVNRepository();
+        assumeTrue(SVNCommands.checkSVNCommand(), "Could not execute the SVN-command, skipping tests");
+
+        repoDir = createLocalSVNRepository();
 
 		BASE_URL = (SystemUtils.IS_OS_WINDOWS ? "file:///" : "file://") + repoDir.getAbsolutePath().
 				// local URL on Windows has limitations
 						replace("\\", "/").replace("c:/", "/") + "/project1";
 		log.info("Using baseUrl " + BASE_URL);
-	}
-
-	private static File createLocalSVNRepository() {
-		// create directory for temporary SVN repository
-		final File repoDir;
-		try {
-			repoDir = File.createTempFile("SVNCommandsTestRepo", ".dir");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		assertTrue(repoDir.delete());
-		assertTrue(repoDir.mkdir());
-
-		CommandLine cmdLine = new CommandLine("svnadmin");
-		cmdLine.addArgument("create");
-		cmdLine.addArgument("project1");
-
-		log.info("Creating local svn repository at " + repoDir);
-		try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, repoDir, 0, 360000)) {
-			log.info("Svnadmin reported:\n" + SVNCommands.extractResult(result));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		return repoDir;
-	}
-
-	private static File checkoutSVNRepository() {
-		final File svnRepoDir;
-
-		// create directory for checkout of SVN repository
-		try {
-			svnRepoDir = File.createTempFile("SVNCommandsTestSVNRepo", ".dir");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		assertTrue(svnRepoDir.delete());
-		assertTrue(svnRepoDir.mkdir());
-
-		try {
-			// checkout to 2nd directory
-			try (InputStream result = SVNCommands.checkout(BASE_URL,
-					svnRepoDir, USERNAME, PASSWORD)) {
-				final String ret = SVNCommands.extractResult(result);
-				if (StringUtils.isNotBlank(ret)) {
-					log.info("Svn-checkout reported:\n" + ret);
-				}
-
-				// There is a strange issue with the file-URL on Windows now which
-				// I could not fix, so let's ignore this test here for now
-				assumeFalse(SystemUtils.IS_OS_WINDOWS &&
-						ret.contains("Unable to connect to a repository at URL"),
-						"Checkout on Windows fails in some setups :(");
-			}
-
-			// add some minimal content
-			FileUtils.writeStringToFile(new File(svnRepoDir, "README"), "test content", "UTF-8");
-			CommandLine cmdLine = new CommandLine(SVNCommands.SVN_CMD);
-			cmdLine.addArgument("add");
-			cmdLine.addArgument("README");
-
-			try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, svnRepoDir, 0, 360000)) {
-				log.info("Svn-add reported:\n" + SVNCommands.extractResult(result));
-			}
-
-			cmdLine = new CommandLine(SVNCommands.SVN_CMD);
-			cmdLine.addArgument("commit");
-			cmdLine.addArgument("-m");
-			cmdLine.addArgument("comment");
-
-			try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, svnRepoDir, 0, 360000)) {
-				log.info("Svn-commit reported:\n" + SVNCommands.extractResult(result));
-			}
-		} catch (IOException e) {
-			FileUtils.deleteQuietly(repoDir);
-			FileUtils.deleteQuietly(svnRepoDir);
-
-			throw new RuntimeException(e);
-		}
-
-		return svnRepoDir;
 	}
 
 	@BeforeAll
@@ -500,5 +421,87 @@ public class SVNCommandsTest {
     @Test
     public void testPrivateConstructor() throws Exception {
         PrivateConstructorCoverage.executePrivateConstructor(SVNCommands.class);
+    }
+
+
+    private static File createLocalSVNRepository() {
+        // create directory for temporary SVN repository
+        final File repoDir;
+        try {
+            repoDir = File.createTempFile("SVNCommandsTestRepo", ".dir");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        assertTrue(repoDir.delete());
+        assertTrue(repoDir.mkdir());
+
+        CommandLine cmdLine = new CommandLine("svnadmin");
+        cmdLine.addArgument("create");
+        cmdLine.addArgument("project1");
+
+        log.info("Creating local svn repository at " + repoDir);
+        try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, repoDir, 0, 360000)) {
+            log.info("Svnadmin reported:\n" + SVNCommands.extractResult(result));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return repoDir;
+    }
+
+    private static File checkoutSVNRepository() {
+        final File svnRepoDir;
+
+        // create directory for checkout of SVN repository
+        try {
+            svnRepoDir = File.createTempFile("SVNCommandsTestSVNRepo", ".dir");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        assertTrue(svnRepoDir.delete());
+        assertTrue(svnRepoDir.mkdir());
+
+        try {
+            // checkout to 2nd directory
+            try (InputStream result = SVNCommands.checkout(BASE_URL,
+                    svnRepoDir, USERNAME, PASSWORD)) {
+                final String ret = SVNCommands.extractResult(result);
+                if (StringUtils.isNotBlank(ret)) {
+                    log.info("Svn-checkout reported:\n" + ret);
+                }
+
+                // There is a strange issue with the file-URL on Windows now which
+                // I could not fix, so let's ignore this test here for now
+                assumeFalse(SystemUtils.IS_OS_WINDOWS &&
+                                ret.contains("Unable to connect to a repository at URL"),
+                        "Checkout on Windows fails in some setups :(");
+            }
+
+            // add some minimal content
+            FileUtils.writeStringToFile(new File(svnRepoDir, "README"), "test content", "UTF-8");
+            CommandLine cmdLine = new CommandLine(SVNCommands.SVN_CMD);
+            cmdLine.addArgument("add");
+            cmdLine.addArgument("README");
+
+            try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, svnRepoDir, 0, 360000)) {
+                log.info("Svn-add reported:\n" + SVNCommands.extractResult(result));
+            }
+
+            cmdLine = new CommandLine(SVNCommands.SVN_CMD);
+            cmdLine.addArgument("commit");
+            cmdLine.addArgument("-m");
+            cmdLine.addArgument("comment");
+
+            try (InputStream result = ExecutionHelper.getCommandResult(cmdLine, svnRepoDir, 0, 360000)) {
+                log.info("Svn-commit reported:\n" + SVNCommands.extractResult(result));
+            }
+        } catch (IOException e) {
+            FileUtils.deleteQuietly(repoDir);
+            FileUtils.deleteQuietly(svnRepoDir);
+
+            throw new RuntimeException(e);
+        }
+
+        return svnRepoDir;
     }
 }
