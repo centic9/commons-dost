@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Duration;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.exec.CommandLine;
@@ -162,5 +163,14 @@ public class ExecutionHelper {
 
 	private static String toString(CommandLine cmdLine) {
 		return ArrayUtils.toString(cmdLine.toStrings(), " ", "", "");
+	}
+
+	/**
+	 * Allows to overwrite the log-level set for the logger of this class.
+	 *
+	 * @param level The new log-level to be used
+	 */
+	public static void setLogLevel(Level level) {
+		log.setLevel(level);
 	}
 }

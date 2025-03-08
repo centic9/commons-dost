@@ -18,11 +18,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ExecutionHelperTest {
+class ExecutionHelperTest {
 	private final static Logger log = LoggerFactory.make();
 
 	public static final String SVN_CMD = "svn";
@@ -42,7 +43,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResult() throws IOException {
+	void testGetCommandResult() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -56,7 +57,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultWrongCmd() {
+	void testGetCommandResultWrongCmd() {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -74,7 +75,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultFailureNoOutput() {
+	void testGetCommandResultFailureNoOutput() {
 		CommandLine cmdLine = new CommandLine("/bin/false");
 
 		try {
@@ -93,7 +94,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultIgnoreExitValueStatus() throws IOException {
+	void testGetCommandResultIgnoreExitValueStatus() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -109,7 +110,7 @@ public class ExecutionHelperTest {
 	}
 
     @Test
-    public void testGetCommandResultIgnoreExitValueHelp() throws IOException {
+    void testGetCommandResultIgnoreExitValueHelp() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -124,7 +125,7 @@ public class ExecutionHelperTest {
     }
 
     @Test
-	public void testGetCommandResultIgnoreExitValueWrongCmd() throws IOException {
+	void testGetCommandResultIgnoreExitValueWrongCmd() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -139,7 +140,7 @@ public class ExecutionHelperTest {
 	}
 
     @Test
-	public void testGetCommandResultIgnoreExitValueArgumentWithBlanks() throws IOException {
+	void testGetCommandResultIgnoreExitValueArgumentWithBlanks() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -154,7 +155,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultInputStream() throws IOException {
+	void testGetCommandResultInputStream() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -170,7 +171,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultWrongCmdInputStream() {
+	void testGetCommandResultWrongCmdInputStream() {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -193,7 +194,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultIgnoreExitValueInputStream() throws IOException {
+	void testGetCommandResultIgnoreExitValueInputStream() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -209,7 +210,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testGetCommandResultIgnoreExitValueWrongCmdInputStream() throws IOException {
+	void testGetCommandResultIgnoreExitValueWrongCmdInputStream() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -225,12 +226,12 @@ public class ExecutionHelperTest {
 
 	// helper method to get coverage of the unused constructor
 	@Test
-	public void testPrivateConstructor() throws Exception {
+	void testPrivateConstructor() throws Exception {
 		PrivateConstructorCoverage.executePrivateConstructor(ExecutionHelper.class);
 	}
 
 	@Test
-	public void testGetCommandResultStream() throws IOException {
+	void testGetCommandResultStream() throws IOException {
 		assumeCommand(SVN_CMD, "-h");
 
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
@@ -248,7 +249,7 @@ public class ExecutionHelperTest {
 	}
 
 	@Test
-	public void testTriggerTimeout() {
+	void testTriggerTimeout() {
 		CommandLine cmdLine = new CommandLine("sleep");
 		cmdLine.addArgument("5");
 
@@ -262,5 +263,22 @@ public class ExecutionHelperTest {
 
 		TestHelpers.assertContains(exc,
 				"Killed by Watchdog, maybe timeout reached");
+	}
+
+	@Test
+	void testSetLevel() {
+		// this can only be verified visually
+		log.info("Test 1");
+		testTriggerTimeout();
+
+		ExecutionHelper.setLogLevel(Level.WARNING);
+
+		log.info("Test 2");
+		testTriggerTimeout();
+
+		ExecutionHelper.setLogLevel(Level.INFO);
+
+		log.info("Test 3");
+		testTriggerTimeout();
 	}
 }
