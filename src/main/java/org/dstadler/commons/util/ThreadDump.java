@@ -12,7 +12,7 @@ import org.apache.commons.lang3.SystemUtils;
  * Creates a Thread Dump of all Java Threads
  */
 public class ThreadDump {
-	public static final String NEWLINE = System.getProperty("line.separator");
+	public static final String NEWLINE = System.lineSeparator();
 
 	private static final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 	private final ThreadInfo [] infos;
