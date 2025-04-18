@@ -1,26 +1,13 @@
 package org.dstadler.commons.thread;
 
-import org.dstadler.commons.logging.jdk.LoggerFactory;
-import org.dstadler.commons.util.SuppressForbidden;
-
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.commons.util.SuppressForbidden;
+
 public class ThreadUtils {
     private final static Logger log = LoggerFactory.make();
-
-    /**
-     * Returns a list of all threads with the given name, i.e. equals-match.
-     *
-     * @param threadName The name to look for.
-     * @return A list of found threads. Returns an empty list if no thread is found.
-	 * @deprecated Use org.apache.commons.lang3.ThreadUtils.findThreadsByName()
-     */
-    public static Collection<Thread> getThreadsByName(String threadName) {
-		// reuse implementation from commons-lang3 for some time until we remove it completely
-		return org.apache.commons.lang3.ThreadUtils.findThreadsByName(threadName);
-    }
 
     /**
      * Returns the first thread for which the thread-name contains
