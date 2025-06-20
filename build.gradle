@@ -18,7 +18,8 @@ plugins {
     // https://gradle-pitest-plugin.solidsoft.info/
     id 'info.solidsoft.pitest' version '1.9.11'
 
-    id 'org.openrewrite.rewrite' version '6.28.3'
+    // https://plugins.gradle.org/plugin/org.openrewrite.rewrite
+    id 'org.openrewrite.rewrite' version '7.8.0'
 }
 
 apply plugin: 'de.thetaphi.forbiddenapis'
@@ -72,8 +73,12 @@ dependencies {
     testImplementation 'org.dstadler:commons-test:1.0.0.22'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.24.3'
 
-    //rewrite("org.openrewrite.recipe:rewrite-testing-frameworks:2.23.1")
-    rewrite("org.openrewrite.recipe:rewrite-migrate-java:2.30.1")
+    // https://github.com/openrewrite/rewrite-testing-frameworks
+    rewrite 'org.openrewrite.recipe:rewrite-testing-frameworks:3.10.0'
+    // https://github.com/openrewrite/rewrite-migrate-java
+    rewrite 'org.openrewrite.recipe:rewrite-migrate-java:3.11.0'
+    // https://github.com/openrewrite/rewrite-apache
+    // does not fully work: rewrite 'org.openrewrite.recipe:rewrite-apache:2.10.3'
 }
 
 wrapper {
@@ -135,8 +140,10 @@ rewrite {
     // Imports
     //activeRecipe('org.openrewrite.java.OrderImports')
     // https://docs.openrewrite.org/recipes/java/testing/junit5/junit4to5migration
-    //activeRecipe("org.openrewrite.java.testing.junit5.JUnit4to5Migration")
-    //setExportDatatables(true)
+    activeRecipe("org.openrewrite.java.testing.junit5.JUnit4to5Migration")
+    // https://docs.openrewrite.org/recipes/apache/httpclient5/upgradeapachehttpclient_5
+    // does not fully work: activeRecipe("org.openrewrite.apache.httpclient5.UpgradeApacheHttpClient_5")
+    setExportDatatables(true)
 }
 
 release {
