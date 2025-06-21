@@ -54,6 +54,7 @@ http://github.com/centic9/commons-test for more details.
 ### Release it
 
 * Check version in `gradle.properties`
+* Push changes to Github
 * Publish the binaries to Maven Central
 
     ./gradlew --console=plain publishToMavenCentral
