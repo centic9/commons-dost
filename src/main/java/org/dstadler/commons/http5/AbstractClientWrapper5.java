@@ -6,8 +6,8 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
 import org.apache.hc.client5.http.impl.auth.BasicScheme;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.HttpHost;
-import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 
@@ -138,7 +138,7 @@ public abstract class AbstractClientWrapper5 implements Closeable {
         simpleGetInternal(url, consumer, null);
     }
 
-    protected HttpRequest getHttpGet(String url, String body) throws UnsupportedEncodingException {
+    protected ClassicHttpRequest getHttpGet(String url, String body) throws UnsupportedEncodingException {
         final BasicClassicHttpRequest httpGet;
         if(body == null) {
             httpGet = new HttpGet(url);
