@@ -38,7 +38,9 @@ java {
 }
 
 group = 'org.dstadler'
-archivesBaseName = 'commons-dost'
+base {
+    archivesName = 'commons-dost'
+}
 
 repositories {
     mavenCentral()
