@@ -10,13 +10,12 @@ buildscript {
 plugins {
     id 'java-library'
     id 'maven-publish'
-    // https://github.com/researchgate/gradle-release
-    id 'net.researchgate.release' version '3.0.2'
-    // https://github.com/Codearte/gradle-nexus-staging-plugin
+    // https://github.com/SgtSilvio/gradle-maven-central-publishing
+    id 'io.github.sgtsilvio.gradle.maven-central-publishing' version '0.4.0'
     id 'io.codearte.nexus-staging' version '0.30.0'
 
     // https://gradle-pitest-plugin.solidsoft.info/
-    id 'info.solidsoft.pitest' version '1.9.11'
+    id 'info.solidsoft.pitest' version '1.15.0'
 
     // https://plugins.gradle.org/plugin/org.openrewrite.rewrite
     id 'org.openrewrite.rewrite' version '7.8.0'
@@ -32,9 +31,9 @@ apply plugin: 'codenarc'
 apply plugin: 'signing'
 
 java {
-	  toolchain {
-		  sourceCompatibility = JavaVersion.VERSION_17
-	  }
+  toolchain {
+	  sourceCompatibility = JavaVersion.VERSION_17
+  }
 }
 
 group = 'org.dstadler'
@@ -120,13 +119,20 @@ jacocoTestReport {
 }
 
 tasks.register('sourcesJar', Jar) {
-	archiveClassifier = 'sources'
-	from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
 }
 
 tasks.register('javadocJar', Jar) {
-	archiveClassifier = 'javadoc'
-	from javadoc
+    archiveClassifier = 'javadoc'
+    from javadoc
+}
+
+tasks.withType(Jar).configureEach { task ->
+    task.doLast {
+        ant.checksum algorithm: 'md5', file: it.archivePath
+        ant.checksum algorithm: 'sha1', file: it.archivePath
+    }
 }
 
 java {
@@ -149,16 +155,10 @@ rewrite {
     setExportDatatables(true)
 }
 
-release {
-    git {
-        requireBranch.set('master')
-    }
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = archivesBaseName
+            artifactId = 'commons-dost'
             from components.java
 
             pom {
@@ -198,16 +198,4 @@ publishing {
 
 signing {
     sign publishing.publications.mavenJava
-}
-
-afterReleaseBuild.dependsOn publish
-
-// settings for the task 'closeAndReleaseRepository'
-nexusStaging {
-    // retrieved via Gradle Task 'getStagingProfile'
-    stagingProfileId = 'b1687c5b3e1bd'
-
-    // use a much longer timeout as Nexus is sometimes very slow
-    numberOfRetries = 180
-    delayBetweenRetriesInMillis = 30000
 }

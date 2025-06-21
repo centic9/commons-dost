@@ -53,10 +53,15 @@ http://github.com/centic9/commons-test for more details.
 
 ### Release it
 
-    ./gradlew --console=plain release && ./gradlew closeAndReleaseRepository
-    
+* Check version in `gradle.properties`
+* Publish the binaries to Maven Central
+
+    ./gradlew --console=plain publishToMavenCentral
+
 * This should automatically release the new version on MavenCentral
-* Afterwards go to the [Github releases page](https://github.com/centic9/commons-dost/releases) and add release-notes
+* Apply tag in Github
+* Increase version in `gradle.properties` afterwards
+* Afterwards go to the [Github releases page](https://github.com/centic9/commons-test/releases) and add release-notes
 
 ## Support this project
 
@@ -68,4 +73,3 @@ If you find this library useful and would like to support it, you can [Sponsor t
 * A few pieces are imported from other sources, the source-files contain the necessary license pieces/references.
 
 [BSD 2-Clause License]: https://www.opensource.org/licenses/bsd-license.php
-
