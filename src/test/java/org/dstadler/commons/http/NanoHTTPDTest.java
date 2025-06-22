@@ -48,7 +48,9 @@ class NanoHTTPDTest {
 
 	@AfterEach
 	public void tearDown() throws InterruptedException {
-		ThreadTestHelper.waitForThreadToFinishSubstring("NanoHTTP");
+		ThreadTestHelper.waitForThreadToFinishSubstring("NanoHTTP", 10_000);
+
+		ThreadTestHelper.assertNoThreadLeft("NanoHTTP still had threads running", "NanoHTTP");
 	}
 
 	@Test
@@ -284,11 +286,11 @@ class NanoHTTPDTest {
 	@Test
     void testServeTimeoutInitial() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
-		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
+		NanoHTTPD httpd = new NanoHTTPD(port, null, 500);
 
 		try (Socket socket = new Socket("localhost", port)) {
 			// wait some time to trigger the timeout
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 
 			assertTrue(IOUtils.toString(socket.getInputStream(), StandardCharsets.UTF_8).startsWith("HTTP/1.0 500 Internal Server Error"));
 		}
@@ -299,19 +301,49 @@ class NanoHTTPDTest {
 	@Test
     void testServeTimeoutStarted() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
-		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
+		NanoHTTPD httpd = new NanoHTTPD(port, null, 500);
 
 		try (Socket socket = new Socket("localhost", port)) {
 			// write some bits
 			socket.getOutputStream().write("POST index.html\n".getBytes(StandardCharsets.UTF_8));
 
 			// wait some time to trigger the timeout
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 
-			assertTrue(IOUtils.toString(socket.getInputStream(), StandardCharsets.UTF_8).startsWith("HTTP/1.0 500 Internal Server Error"));
+			String string = IOUtils.toString(socket.getInputStream(), StandardCharsets.UTF_8);
+			assertTrue(string.startsWith("HTTP/1.0 500 Internal Server Error"),
+					"Had: " + string);
+		} finally {
+			httpd.stop();
 		}
+	}
 
-		httpd.stop();
+	@Test
+    void testServePOST() throws Exception {
+		int port = SocketUtils.getNextFreePort(9000, 9010);
+		NanoHTTPD httpd = new NanoHTTPD(port, null, 1_000);
+
+		try (Socket socket = new Socket("localhost", port)) {
+			// write some bits
+			socket.getOutputStream().write(("POST / HTTP/1.1\n" +
+					"Accept-Encoding: gzip, x-gzip, deflate\n" +
+					"Host: localhost:15100\n" +
+					"Content-Length: 2\n" +
+					"Content-Type: text/plain; charset=UTF-8\n" +
+					"Connection: keep-alive\n" +
+					"User-Agent: Apache-HttpClient/5.5 (Java/17.0.15)\n" +
+					"\n" +
+					"ab").getBytes(StandardCharsets.UTF_8));
+
+			// wait some time to trigger the timeout
+			Thread.sleep(1000);
+
+			String string = IOUtils.toString(socket.getInputStream(), StandardCharsets.UTF_8);
+			assertTrue(string.startsWith("HTTP/1.0 200 OK "),
+					"Had: " + string);
+		} finally {
+			httpd.stop();
+		}
 	}
 
 	@Test
@@ -329,21 +361,21 @@ class NanoHTTPDTest {
 	@Test
     void testEncoding() throws IOException {
 		NanoHTTPD.setEncoding("UTF-8");
-		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>ä</html>")) {
 			String data;
 
 			// this test can only run for UTF-8
 			if(Charset.defaultCharset().equals(StandardCharsets.UTF_8)) {
 				data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
-				assertEquals("<html>\u00E4</html>", data,
+				assertEquals("<html>ä</html>", data,
 						"Failed whit default charset: " + Charset.defaultCharset());
 			}
 
 			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "UTF-8", 10_000);
-			assertEquals("<html>\u00E4</html>", data);
+			assertEquals("<html>ä</html>", data);
 
 			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "ISO-8859-1", 10_000);
-			assertEquals("<html>\u00c3\u00a4</html>", data);
+			assertEquals("<html>Ã¤</html>", data);
 		} finally {
 			NanoHTTPD.setEncoding(null);
 		}
@@ -352,7 +384,7 @@ class NanoHTTPDTest {
 	@Test
     void testInvalidEncoding() throws IOException {
 		NanoHTTPD.setEncoding("SomeInvalidEncoding");
-		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>ä</html>")) {
 			String data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
 			assertEquals("", data);
 

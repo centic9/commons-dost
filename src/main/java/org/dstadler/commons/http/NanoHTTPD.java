@@ -534,16 +534,17 @@ public class NanoHTTPD
             }
             StringBuilder postLine = new StringBuilder();
 			char[] buf = new char[512];
-            int read = in.read(buf);
-            while ( read >= 0 && size > 0 && !postLine.toString().endsWith("\r\n") )
-            {
-            	size -= read;
-            	postLine.append(String.valueOf(buf, 0, read));
-            	if ( size > 0 ) {
-            		read = in.read(buf);
-            	}
-            }
-            decodeParms( postLine.toString().trim(), parms );
+			if (size > 0) {
+				int read = in.read(buf);
+				while (read >= 0 && size > 0 && !postLine.toString().endsWith("\r\n")) {
+					size -= read;
+					postLine.append(String.valueOf(buf, 0, read));
+					if (size > 0) {
+						read = in.read(buf);
+					}
+				}
+				decodeParms(postLine.toString().trim(), parms);
+			}
         }
 
 		/**
