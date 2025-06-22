@@ -61,8 +61,8 @@ http://github.com/centic9/commons-test for more details.
 
 * This should automatically release the new version on MavenCentral
 * Apply tag in Github
-* Increase version in `gradle.properties` afterwards
-* Afterwards go to the [Github releases page](https://github.com/centic9/commons-test/releases) and add release-notes
+* Increase the version in `gradle.properties` afterwards
+* Afterwards go to the [Github releases page](https://github.com/centic9/commons-dost/releases) and add release-notes
 
 ## Support this project
 
