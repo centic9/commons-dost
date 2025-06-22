@@ -12,20 +12,28 @@ import org.dstadler.commons.net.UrlUtils;
 import org.dstadler.commons.testing.MemoryLeakVerifier;
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test is very similar to HttpClientWrapperTest so that we verify both
@@ -52,7 +60,9 @@ public class HttpAsyncClientWrapperTest {
 
     @AfterEach
     public void tearDown() throws IOException {
-        wrapper.close();
+        if (wrapper != null) {
+            wrapper.close();
+        }
 
         verifier.assertGarbageCollected();
     }
@@ -372,4 +382,27 @@ public class HttpAsyncClientWrapperTest {
 			}
 		});
 	}
+
+    @Test
+    void testBrokenWebPage() throws IOException {
+        try (HttpAsyncClientWrapper wrapper = new HttpAsyncClientWrapper("",
+                null, 1000)) {
+            IOException ioException = assertThrows(IOException.class,
+                    () -> wrapper.simpleGet("https://www.das-babyland.de/navi.php?qs=tr%C3%A4umeland"));
+
+            assertTrue(ioException.getMessage().contains("Host name 'www.das-babyland.de' does not match the certificate subject"),
+                    "Had: " + ioException.getMessage());
+        }
+    }
+
+    @Test
+    void testBrokenWebPage2() throws IOException {
+        try (HttpAsyncClientWrapper wrapper = new HttpAsyncClientWrapper(1000)) {
+            IOException ioException = assertThrows(IOException.class,
+                    () -> wrapper.simpleGet("https://www.das-babyland.de/navi.php?qs=tr%C3%A4umeland"));
+
+            assertTrue(ioException.getMessage().contains("Host name 'www.das-babyland.de' does not match the certificate subject"),
+                    "Had: " + ioException.getMessage());
+        }
+    }
 }

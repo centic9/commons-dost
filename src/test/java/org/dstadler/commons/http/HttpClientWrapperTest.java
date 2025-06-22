@@ -20,7 +20,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
@@ -401,4 +400,25 @@ public class HttpClientWrapperTest {
 			// the effect is only visible in the log, it should not report a line with "Invalid cookie header"
 		}
 	}
+
+    @Test
+    void testBrokenWebPage() throws IOException {
+        try (HttpClientWrapper wrapper = new HttpClientWrapper("",
+                null, 1000)) {
+            IOException ioException = assertThrows(IOException.class,
+                    () -> wrapper.simpleGet("https://www.das-babyland.de/navi.php?qs=tr%C3%A4umeland"));
+
+            assertTrue(ioException.getMessage().contains("StatusCode 404"));
+        }
+    }
+
+    @Test
+    void testBrokenWebPage2() throws IOException {
+        try (HttpClientWrapper wrapper = new HttpClientWrapper(1000)) {
+            IOException ioException = assertThrows(IOException.class,
+                    () -> wrapper.simpleGet("https://www.das-babyland.de/navi.php?qs=tr%C3%A4umeland"));
+
+            assertTrue(ioException.getMessage().contains("StatusCode 404"));
+        }
+    }
 }
