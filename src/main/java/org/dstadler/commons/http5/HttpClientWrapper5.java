@@ -18,6 +18,9 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
@@ -28,18 +31,22 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.ssl.TLS;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 import org.apache.http.client.config.CookieSpecs;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -63,6 +70,17 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 	 * @param timeoutMs The timeout for socket connection and reading, specified in milliseconds
 	 */
 	public HttpClientWrapper5(String user, String password, int timeoutMs) {
+		this(user, password, timeoutMs, false);
+	}
+	/**
+	 * Construct the {@link HttpClient} with the given authentication values
+	 * and all timeouts set to the given number of milliseconds
+	 *
+	 * @param user The username for basic authentication, use an empty string when no authentication is required
+	 * @param password The password for basic authentication, null when no authentication is required
+	 * @param timeoutMs The timeout for socket connection and reading, specified in milliseconds
+	 */
+	public HttpClientWrapper5(String user, String password, int timeoutMs, boolean allowAll) {
 		super(timeoutMs, true);
 
 		BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
@@ -82,7 +100,7 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 				.setDefaultRequestConfig(reqConfig);
 
 		// add a permissive SSL Socket Factory to the builder
-		createSSLSocketFactory(builder);
+		createSSLSocketFactory(builder, allowAll);
 
 		// finally create the HttpClient instance
 		this.httpClient = builder.build();
@@ -95,6 +113,16 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
      * @param timeoutMs The timeout for socket connection and reading, specified in milliseconds
      */
 	public HttpClientWrapper5(int timeoutMs) {
+		this(timeoutMs, false);
+	}
+
+    /**
+     * Construct the {@link HttpClient} without using authentication values
+     * and all timeouts set to the given number of milliseconds
+     *
+     * @param timeoutMs The timeout for socket connection and reading, specified in milliseconds
+     */
+	public HttpClientWrapper5(int timeoutMs, boolean allowAll) {
 		super(timeoutMs, false);
 
 		RequestConfig reqConfig = RequestConfig.custom()
@@ -108,7 +136,7 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 				.setDefaultRequestConfig(reqConfig);
 
 		// add a permissive SSL Socket Factory to the builder
-		createSSLSocketFactory(builder);
+		createSSLSocketFactory(builder, allowAll);
 
 		// finally create the HttpClient instance
 		this.httpClient = builder.build();
@@ -167,13 +195,9 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 		}
 	}
 
-	private void createSSLSocketFactory(HttpClientBuilder builder) {
-		//try {
-	        // Trust all certs, even self-signed and invalid hostnames, ...
-	        //final SSLContext sslcontext = createSSLContext();
-
-			PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
-
+	private void createSSLSocketFactory(HttpClientBuilder builder, boolean allowAll) {
+		try {
+			PoolingHttpClientConnectionManagerBuilder connMgrBuilder = PoolingHttpClientConnectionManagerBuilder.create()
 					.setTlsSocketStrategy(ClientTlsStrategyBuilder.create()
 							.setSslContext(SSLContexts.createSystemDefault())
 							.setTlsVersions(TLS.V_1_3)
@@ -187,13 +211,27 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 							.setSocketTimeout(Timeout.ofMilliseconds(timeoutMs))
 							.setConnectTimeout(Timeout.ofMilliseconds(timeoutMs))
 							.setTimeToLive(TimeValue.ofMinutes(10))
-							.build())
+							.build());
+
+			if (allowAll) {
+				// Trust all certs, even self-signed and invalid hostnames, ...
+				connMgrBuilder.setSSLSocketFactory(
+					SSLConnectionSocketFactoryBuilder.create()
+							.setSslContext(SSLContextBuilder.create()
+									.loadTrustMaterial(TrustAllStrategy.INSTANCE)
+									.build())
+							.setHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+							.build());
+			}
+
+			PoolingHttpClientConnectionManager connectionManager = connMgrBuilder
 					.build();
 
 			builder.setConnectionManager(connectionManager);
-		/*} catch (GeneralSecurityException e) {
+
+		} catch (GeneralSecurityException e) {
 			log.log(Level.WARNING, "Could not create SSLSocketFactory for accepting all certificates", e);
-		}*/
+		}
 	}
 
 	@Override

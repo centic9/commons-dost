@@ -294,9 +294,6 @@ public class HttpAsyncClientWrapperTest {
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
             assertEquals("ok", wrapper.simplePost("http://localhost:" + server.getPort(), null));
-            fail("Body 'null' currently fails because the MockRESTServer cannot handle it");
-        } catch (SocketTimeoutException e) {
-            // expected here
         }
     }
 

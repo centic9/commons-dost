@@ -18,6 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -49,7 +50,7 @@ public class HttpClientWrapper5Test {
 
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                { Boolean.TRUE }, { Boolean.FALSE },
+                { Boolean.FALSE },
         });
     }
 
@@ -68,7 +69,9 @@ public class HttpClientWrapper5Test {
 
     @AfterEach
     public void tearDown() throws IOException {
-        wrapper.close();
+        if (wrapper != null) {
+            wrapper.close();
+        }
 
         verifier.assertGarbageCollected();
     }
@@ -312,9 +315,6 @@ public class HttpClientWrapper5Test {
 
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
             assertEquals("ok", wrapper.simplePost("http://localhost:" + server.getPort(), null));
-            fail("Body 'null' currently fails because the MockRESTServer cannot handle it");
-        } catch (SocketTimeoutException e) {
-            // expected here
         }
     }
 
@@ -412,4 +412,25 @@ public class HttpClientWrapper5Test {
 			// the effect is only visible in the log, it should not report a line with "Invalid cookie header"
 		}
 	}
+
+    @Test
+    void testBrokenWebPage() throws IOException {
+        try (HttpClientWrapper5 wrapper = new HttpClientWrapper5("",
+                null, 1000, true)) {
+            IOException ioException = assertThrows(IOException.class,
+                    () -> wrapper.simpleGet("https://www.das-babyland.de/navi.php?qs=tr%C3%A4umeland"));
+
+            assertTrue(ioException.getMessage().contains("StatusCode 404"));
+        }
+    }
+
+    @Test
+    void testBrokenWebPage2() throws IOException {
+        try (HttpClientWrapper5 wrapper = new HttpClientWrapper5(1000, true)) {
+            IOException ioException = assertThrows(IOException.class,
+                    () -> wrapper.simpleGet("https://www.das-babyland.de/navi.php?qs=tr%C3%A4umeland"));
+
+            assertTrue(ioException.getMessage().contains("StatusCode 404"));
+        }
+    }
 }

@@ -175,18 +175,18 @@ public class UrlUtilsTest {
 
     @Test
 	public void testRetrieveDataStringString() throws Exception {
-		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expected\u00F6\u00C4\u20AC")) {
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expectedöÄ€")) {
 		    NanoHTTPD.setEncoding("UTF-8");
-			assertEquals("expected\u00F6\u00C4\u20AC",
+			assertEquals("expectedöÄ€",
 					UrlUtils.retrieveData("http://localhost:" + server.getPort(), "UTF-8", 0));
 		}
 	}
 
 	@Test
 	public void testRetrieveDataStringStringEncoded() throws Exception {
-		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expected\u00F6\u00C4\u20AC")) {
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expectedöÄ€")) {
 		    NanoHTTPD.setEncoding("ISO-8859-15");
-			assertEquals("expected\u00F6\u00C4\u20AC",
+			assertEquals("expectedöÄ€",
 					UrlUtils.retrieveData("http://localhost:" + server.getPort(), "ISO-8859-15", 0));
 		}
 	}
@@ -308,12 +308,8 @@ public class UrlUtilsTest {
                 TestHelpers.assertContains(e, "POST request body must not be null");
             }
 
-            try {
-                UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "", null, 1000);
-                fail("Should timeout with empty body because of NanoHTTPD implementation details");
-            } catch (@SuppressWarnings("unused") SocketTimeoutException e) {
-				// expected here
-            }
+			assertEquals("expected\n\r\t",
+				UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "", null, 1000));
 
             try {
                 UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "", null, 0);
