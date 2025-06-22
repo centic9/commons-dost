@@ -16,7 +16,6 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
-import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
@@ -24,7 +23,6 @@ import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -38,7 +36,6 @@ import org.apache.hc.core5.util.Timeout;
 import org.apache.http.client.config.CookieSpecs;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -151,16 +148,15 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 		return httpClient;
 	}
 
-
 	protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException {
 		final ClassicHttpRequest httpGet = getHttpGet(url, body);
 
 		final CloseableHttpResponse execute;
-        if(withAuth) {
+        /*if(withAuth) {
 			HttpClientContext context = HttpClientContext.create();
 			HttpHost targetHost = getHttpHostWithAuth(url, context);
             execute = httpClient.execute(targetHost, httpGet, context);
-        } else {
+        } else*/ {
             execute = httpClient.execute(httpGet);
         }
 
@@ -176,14 +172,14 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 	}
 
 	public String simplePost(String url, String body) throws IOException {
-		HttpClientContext context = HttpClientContext.create();
-		HttpHost targetHost = getHttpHostWithAuth(url, context);
+		//HttpClientContext context = HttpClientContext.create();
+		//HttpHost targetHost = getHttpHostWithAuth(url, context);
 
 		final HttpPost httpPost = new HttpPost(url);
 		if(body != null) {
 			httpPost.setEntity(new StringEntity(body));
 		}
-		try (CloseableHttpResponse response = httpClient.execute(targetHost, httpPost, context)) {
+		try (CloseableHttpResponse response = httpClient.execute(/*targetHost,*/ httpPost/*, context*/)) {
 			HttpEntity entity = HttpClientWrapper5.checkAndFetch(response, url);
 
 			try {

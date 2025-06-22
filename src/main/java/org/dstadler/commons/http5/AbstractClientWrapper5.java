@@ -150,20 +150,4 @@ public abstract class AbstractClientWrapper5 implements Closeable {
     }
 
     protected abstract void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException;
-
-    protected HttpHost getHttpHostWithAuth(String url, HttpClientContext context) throws MalformedURLException {
-        // Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth
-        AuthCache authCache = new BasicAuthCache();
-        BasicScheme basicAuth = new BasicScheme();
-
-        // Generate BASIC scheme object and add it to the local auth cache
-        URL cacheUrl = new URL(url);
-        HttpHost targetHost = new HttpHost(cacheUrl.getProtocol(), cacheUrl.getHost(), cacheUrl.getPort());
-        authCache.put(targetHost, basicAuth);
-
-        // Add AuthCache to the execution context
-        //context.setCredentialsProvider(credsProvider);
-        context.setAuthCache(authCache);
-        return targetHost;
-    }
 }

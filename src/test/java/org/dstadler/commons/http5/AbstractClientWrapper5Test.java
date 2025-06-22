@@ -94,15 +94,6 @@ public class AbstractClientWrapper5Test {
 
 	@MethodSource("data")
 	@ParameterizedTest(name = "UseAuth: {0}")
-	public void testGetHttpHostWithAuth(Boolean withAuth) throws MalformedURLException {
-		setUp(withAuth);
-        HttpClientContext context = HttpClientContext.create();
-        HttpHost host = wrapper.getHttpHostWithAuth("http://url", context);
-        assertNotNull(host);
-    }
-
-	@MethodSource("data")
-	@ParameterizedTest(name = "UseAuth: {0}")
 	public void testWithIOException(Boolean withAuth) throws IOException {
 		setUp(withAuth);
         try (AbstractClientWrapper5 wrapper = new AbstractClientWrapper5(60_000, withAuth) {
