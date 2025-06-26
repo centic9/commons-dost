@@ -1,6 +1,7 @@
 package org.dstadler.commons.http;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.dstadler.commons.http.NanoHTTPD.Response;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@SuppressWarnings("UnnecessaryUnicodeEscape")		// Tests break on Windows otherwise
 class NanoHTTPDTest {
 	@BeforeAll
 	public static void setUpClass() throws Exception {
@@ -325,15 +327,16 @@ class NanoHTTPDTest {
 
 		try (Socket socket = new Socket("localhost", port)) {
 			// write some bits
-			socket.getOutputStream().write(("POST / HTTP/1.1\n" +
-					"Accept-Encoding: gzip, x-gzip, deflate\n" +
-					"Host: localhost:15100\n" +
-					"Content-Length: 2\n" +
-					"Content-Type: text/plain; charset=UTF-8\n" +
-					"Connection: keep-alive\n" +
-					"User-Agent: Apache-HttpClient/5.5 (Java/17.0.15)\n" +
-					"\n" +
-					"ab").getBytes(StandardCharsets.UTF_8));
+			socket.getOutputStream().write(("""
+					POST / HTTP/1.1
+					Accept-Encoding: gzip, x-gzip, deflate
+					Host: localhost:15100
+					Content-Length: 2
+					Content-Type: text/plain; charset=UTF-8
+					Connection: keep-alive
+					User-Agent: Apache-HttpClient/5.5 (Java/17.0.15)
+					
+					ab""").getBytes(StandardCharsets.UTF_8));
 
 			// wait some time to trigger the timeout
 			Thread.sleep(1000);
@@ -361,21 +364,22 @@ class NanoHTTPDTest {
 	@Test
     void testEncoding() throws IOException {
 		NanoHTTPD.setEncoding("UTF-8");
-		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>ä</html>")) {
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
 			String data;
 
 			// this test can only run for UTF-8
 			if(Charset.defaultCharset().equals(StandardCharsets.UTF_8)) {
 				data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
-				assertEquals("<html>ä</html>", data,
+				assertEquals("<html>\u00E4</html>", data,
 						"Failed whit default charset: " + Charset.defaultCharset());
 			}
 
 			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "UTF-8", 10_000);
-			assertEquals("<html>ä</html>", data);
+			assertEquals("<html>\u00E4</html>", data);
 
 			data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), "ISO-8859-1", 10_000);
-			assertEquals("<html>Ã¤</html>", data);
+			assertEquals("<html>\u00c3\u00a4</html>", data,
+					"Had diff: " + StringUtils.difference(data, "<html>Ã¤</html>"));
 		} finally {
 			NanoHTTPD.setEncoding(null);
 		}
@@ -384,7 +388,7 @@ class NanoHTTPDTest {
 	@Test
     void testInvalidEncoding() throws IOException {
 		NanoHTTPD.setEncoding("SomeInvalidEncoding");
-		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>ä</html>")) {
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "<html>\u00E4</html>")) {
 			String data = UrlUtils.retrieveData("http://localhost:" + server.getPort(), 10_000);
 			assertEquals("", data);
 

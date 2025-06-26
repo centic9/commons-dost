@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("UnnecessaryUnicodeEscape")		// Tests break on Windows otherwise
 public class UrlUtilsTest {
     private static final Logger log = LoggerFactory.make();
 
@@ -175,18 +176,18 @@ public class UrlUtilsTest {
 
     @Test
 	public void testRetrieveDataStringString() throws Exception {
-		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expectedöÄ€")) {
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expected\u00F6\u00C4\u20AC")) {
 		    NanoHTTPD.setEncoding("UTF-8");
-			assertEquals("expectedöÄ€",
+			assertEquals("expected\u00F6\u00C4\u20AC",
 					UrlUtils.retrieveData("http://localhost:" + server.getPort(), "UTF-8", 0));
 		}
 	}
 
 	@Test
 	public void testRetrieveDataStringStringEncoded() throws Exception {
-		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expectedöÄ€")) {
+		try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expected\u00F6\u00C4\u20AC")) {
 		    NanoHTTPD.setEncoding("ISO-8859-15");
-			assertEquals("expectedöÄ€",
+			assertEquals("expected\u00F6\u00C4\u20AC",
 					UrlUtils.retrieveData("http://localhost:" + server.getPort(), "ISO-8859-15", 0));
 		}
 	}

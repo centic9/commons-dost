@@ -103,6 +103,9 @@ test {
     // avoid failures because Gradle provides it's own version of JNA in the system properties
     systemProperties['jna.boot.library.path'] = null
 
+	// make sure tests do not use the local encoding
+	systemProperty "file.encoding", "UTF-8"
+
     useJUnitPlatform()
 }
 
