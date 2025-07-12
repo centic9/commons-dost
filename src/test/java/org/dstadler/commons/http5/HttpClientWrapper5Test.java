@@ -476,6 +476,13 @@ public class HttpClientWrapper5Test {
         } finally {
             server.stop();
         }
+    }
 
+    @Test
+    void testTLSv12() {
+        IOException e = assertThrows(IOException.class,
+                () -> HttpClientWrapper5.retrieveData("https://cdn.podseed.org/"));
+
+        assertTrue(e.getMessage().contains("HTTP StatusCode 403"));
     }
 }

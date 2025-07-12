@@ -196,7 +196,7 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 			PoolingHttpClientConnectionManagerBuilder connMgrBuilder = PoolingHttpClientConnectionManagerBuilder.create()
 					.setTlsSocketStrategy(ClientTlsStrategyBuilder.create()
 							.setSslContext(SSLContexts.createSystemDefault())
-							.setTlsVersions(TLS.V_1_3)
+							.setTlsVersions(TLS.V_1_2, TLS.V_1_3)
 							.buildClassic())
 					.setDefaultSocketConfig(SocketConfig.custom()
 							.setSoTimeout(Timeout.ofMilliseconds(timeoutMs))
