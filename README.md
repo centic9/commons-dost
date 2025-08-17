@@ -65,6 +65,7 @@ http://github.com/centic9/commons-test for more details.
 * Afterwards go to the [Github tags page](https://github.com/centic9/commons-dost/tags) and 
   create a release and add release-notes for the published version
 * The resulting binaries should appear at https://repo1.maven.org/maven2/org/dstadler/commons-dost/
+
 ## Support this project
 
 If you find this library useful and would like to support it, you can [Sponsor the author](https://github.com/sponsors/centic9)
