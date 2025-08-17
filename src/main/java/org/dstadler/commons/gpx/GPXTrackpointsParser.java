@@ -21,6 +21,17 @@ import org.dstadler.commons.xml.AbstractSimpleContentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * Parser for GPX files that extracts track points with various attributes such as latitude, longitude,
+ * elevation, time, heart rate, cadence, speed, temperature, and sea level pressure.
+ * <p>
+ * Supports parsing of trkpt, rtept, and wpt elements from GPX files, handling multiple timestamp formats,
+ * and provides a utility main method for testing and parsing files from the command line.
+ * <p>
+ * The parsed track points are returned as a sorted map keyed by their timestamp.
+ *
+ * Parsing timestamp can be disabled to improve parsing performance when handling many GPX files.
+ */
 public class GPXTrackpointsParser extends AbstractSimpleContentHandler<Long, TrackPoint> {
     private static final Logger log = LoggerFactory.make();
 
@@ -106,18 +117,47 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
 	private boolean metaData = false;
 
+	/**
+	 * Default constructor of the parser
+	 */
 	public GPXTrackpointsParser() {
 		this(true);
 	}
 
+	/**
+	 * Constructor which allows to disable parsing timestamp to speed up
+	 * parsing when handling many GPX files.
+	 *
+	 * If parsing of timestamps is disabled, trackpoints have an increasing
+	 * long-value assigned for time, i.e. 1, 2, 3, ...
+	 *
+	 * @param parseTimestamp If tiemstamps in the GPX file should be parsed or not
+	 */
 	public GPXTrackpointsParser(boolean parseTimestamp) {
 		this.parseTimestamp = parseTimestamp;
 	}
 
+	/**
+	 * Parse the contents of the given file
+	 *
+	 * @param file A GPX file that should be parsed
+	 * @return A time-sorted map of TrackPoint elements.
+	 * @throws IOException If an error occurs while reading the file
+	 */
 	public static SortedMap<Long, TrackPoint> parseContent(File file) throws IOException {
 		return parseContent(file, true);
 	}
 
+	/**
+	 * Parse the contents of the given file. Allows to disable
+	 * parsing timestamps to speed up processing when handling many
+	 * files.
+	 *
+	 * @param file A GPX file that should be parsed
+	 * @param parseTimestamp If timestamps in the file should be parsed
+	 * @return A time-sorted map of TrackPoint elements.
+	 * @throws IOException If an error occurs while reading the file
+	 */
     public static SortedMap<Long, TrackPoint> parseContent(File file, boolean parseTimestamp) throws IOException {
         GPXTrackpointsParser parser = new GPXTrackpointsParser(parseTimestamp);
 
@@ -128,8 +168,8 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 		}
     }
 
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) {
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if(localName.equals(TAG_TRKPT) || localName.equals(TAG_RTEPT) || localName.equals(TAG_WPT)) {
             if (currentTags != null) {
                 throw new IllegalStateException("Should not have tags when a config starts in the XML, but had: " + currentTags);
