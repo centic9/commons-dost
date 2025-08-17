@@ -11,11 +11,17 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TimeZone;
 import java.util.stream.Stream;
@@ -63,6 +69,31 @@ public class GPXTrackpointsParserTest {
 		assertEquals("01:41", point.formatTime(1393494078420L));
 		assertEquals("23224902:59", point.formatTime(0L));
     }
+
+	@Test
+    public void parseWithoutTimestamp() throws Exception {
+		GPXTrackpointsParser parser = new GPXTrackpointsParser(false);
+		SortedMap<Long, TrackPoint> map =
+				parser.parseContent(new ByteArrayInputStream(GPX_XML.getBytes(StandardCharsets.UTF_8)));
+
+		assertNotNull(map);
+		assertEquals(1, map.size(), "Had: " + map);
+		TrackPoint point = map.get(map.firstKey());
+		assertEquals(48.456194, point.getLatitude(), 0.000001);
+		assertEquals(13.99866, point.getLongitude(), 0.000001);
+		assertEquals(512, point.getElevation(), 0.000001);
+		assertEquals(0.413765975271989, point.getSpeed(), 0.000001);
+		assertEquals(0, point.getHr());
+		assertEquals(1L, point.getTime());
+		assertEquals("01:00:00", point.getTimeString());
+
+		assertEquals("00:00", point.formatTime(1L));
+		assertEquals("00:00", point.formatTime(2L));
+		assertEquals("00:00", point.formatTime(3L));
+		assertEquals("00:00", point.formatTime(4L));
+		assertEquals("01:00", point.formatTime(-60_000L));
+		assertEquals("00:00", point.formatTime(0L));
+	}
 
 	@Test
 	public void parseMetaData() throws Exception {
@@ -371,7 +402,7 @@ public class GPXTrackpointsParserTest {
 						return;
 					}
 
-					System.out.println(count.getValue() + ": Processing: " + gpxFile);
+					System.out.println(count.get() + ": Processing: " + gpxFile);
 					try {
 						String str = FileUtils.readFileToString(gpxFile, "UTF-8").trim();
 						if (str.contains("301 Moved Permanently") ||
@@ -611,4 +642,79 @@ public class GPXTrackpointsParserTest {
 				.parse("2018-08-05T08:36:59-07:00");
 		assertNotNull(date);
 	}
+
+	private static final int FILE_COUNT = 150;
+
+	@Disabled("for local micro-benchmarking only")
+	@Test
+	void microBenchmarkGetSquareString() throws IOException {
+		final List<Path> files = new ArrayList<>();
+
+        //noinspection NullableProblems
+        Files.walkFileTree(Path.of("/opt/svn/SuuntoHarvest/data"), new SimpleFileVisitor<>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+				if (file.toString().endsWith(".gpx")) {
+					files.add(file);
+				}
+				return FileVisitResult.CONTINUE;
+			}
+		});
+
+		files.sort(Comparator.naturalOrder());
+
+		System.out.println("Warmup with " + FILE_COUNT + " files");
+		for (Path file : files.subList(files.size() - FILE_COUNT, files.size())) {
+			final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(file.toFile(), false);
+			assertNotNull(trackPoints);
+		}
+
+		System.out.println("Starting test " + FILE_COUNT + " files");
+		for (int j = 0; j < 10; j++) {
+			long start = System.currentTimeMillis();
+			for (Path file : files.subList(files.size() - FILE_COUNT, files.size())) {
+				final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(file.toFile(), false);
+				assertNotNull(trackPoints);
+			}
+			System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
+		}
+	}
+
+	/*
+	initial:
+Took: 1669ms
+Took: 2089ms
+Took: 1635ms
+Took: 1256ms
+Took: 1302ms
+Took: 1224ms
+Took: 1216ms
+Took: 1252ms
+Took: 1222ms
+Took: 1219ms
+
+	direct-20-or-24-length
+Took: 1415ms
+Took: 1207ms
+Took: 1136ms
+Took: 1110ms
+Took: 1121ms
+Took: 1164ms
+Took: 1660ms
+Took: 1324ms
+Took: 1705ms
+Took: 1620ms
+
+	disable timestamp
+Took: 1156ms
+Took: 1055ms
+Took: 999ms
+Took: 979ms
+Took: 1010ms
+Took: 981ms
+Took: 967ms
+Took: 971ms
+Took: 997ms
+Took: 1134ms
+	 */
 }

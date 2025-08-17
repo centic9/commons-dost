@@ -102,11 +102,24 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 	};
 
 	private final AtomicLong syntheticTime = new AtomicLong();
+	private final boolean parseTimestamp;
 
 	private boolean metaData = false;
 
-    public static SortedMap<Long, TrackPoint> parseContent(File file) throws IOException {
-        GPXTrackpointsParser parser = new GPXTrackpointsParser();
+	public GPXTrackpointsParser() {
+		this(true);
+	}
+
+	public GPXTrackpointsParser(boolean parseTimestamp) {
+		this.parseTimestamp = parseTimestamp;
+	}
+
+	public static SortedMap<Long, TrackPoint> parseContent(File file) throws IOException {
+		return parseContent(file, true);
+	}
+
+    public static SortedMap<Long, TrackPoint> parseContent(File file, boolean parseTimestamp) throws IOException {
+        GPXTrackpointsParser parser = new GPXTrackpointsParser(parseTimestamp);
 
         try (InputStream stream = new BufferedInputStream(new FileInputStream(file), 200*1024)) {
             return parser.parseContent(stream);
@@ -141,8 +154,10 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 			checkState(currentTags.getLatitude() != 0 && currentTags.getLongitude() != 0,
 					"Expected to have tag 'lat' and 'lon' for trkpt in the XML, but did not find it for tag %s1 in: %s2",
 					localName, currentTags);
+
 			// GPX files for a planned route do not contain time-markers,
 			// let's use a counter in this case to still sort trackpoints properly
+			// this is also used when parsing timestamps is turned off
 			if (currentTags.time == null) {
 				currentTags.setTime(new Date(syntheticTime.incrementAndGet()));
 			}
@@ -165,8 +180,12 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 						break;
 					}
 
+					if (!parseTimestamp) {
+						break;
+					}
+
 					if (currentTags == null) {
-						log.warning("Found " + TAG_TIME + " with value '" + value + "' outside of " + TAG_TRKPT);
+						//log.warning("Found " + TAG_TIME + " with value '" + value + "' outside of " + TAG_TRKPT);
 						break;
 					}
 
