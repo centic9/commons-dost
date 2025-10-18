@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class DotUtils {
 	 * @param writer A writer where the header is written to.
 	 * @param dpi The resulting resolution, can be 0 for using the default DPI-setting of dot
 	 * @param rankDir The direction of the graph, can be null
-	 * @param id The id of the graph, cannot be null, needs to start with a alphabetical character, can contain numbers, alphabetic characters and underscore only.
+	 * @param id The id of the graph, cannot be null, needs to start with an alphabetic character, can contain numbers, alphabetic characters and underscore only.
 	 * @param attribLines Additional attributes, can be null
 	 *
 	 * @throws IOException if writing to the Writer fails
@@ -111,9 +112,11 @@ public class DotUtils {
 		CommandLine cmdLine = new CommandLine(DOT_EXE);
 		cmdLine.addArgument("-T" + StringUtils.substringAfterLast(resultfile.getAbsolutePath(), "."));
 		cmdLine.addArgument(dotfile.getAbsolutePath());
-		DefaultExecutor executor = new DefaultExecutor();
+		DefaultExecutor executor = DefaultExecutor.builder().get();
 		executor.setExitValue(0);
-		ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
+		ExecuteWatchdog watchdog = ExecuteWatchdog.builder().
+                setTimeout(Duration.ofSeconds(60)).
+                get();
 		executor.setWatchdog(watchdog);
 		try {
 			try (FileOutputStream out2 = new FileOutputStream(resultfile)) {
@@ -144,9 +147,11 @@ public class DotUtils {
 		// call graphviz-dot via commons-exec
 		CommandLine cmdLine = new CommandLine(DOT_EXE);
 		cmdLine.addArgument("-V");
-		DefaultExecutor executor = new DefaultExecutor();
+		DefaultExecutor executor = DefaultExecutor.builder().get();
 		executor.setExitValue(0);
-		ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
+		ExecuteWatchdog watchdog = ExecuteWatchdog.builder().
+                setTimeout(Duration.ofSeconds(60)).
+                get();
 		executor.setWatchdog(watchdog);
 		executor.setStreamHandler(new PumpStreamHandler(System.out, System.err));
 		int exitValue = executor.execute(cmdLine);

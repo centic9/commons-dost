@@ -14,6 +14,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemUtils;
 import org.dstadler.commons.exec.ExecutionHelper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -190,7 +191,7 @@ public class ChromeDriverUtils {
             try {
                 ExecutionHelper.getCommandResultIntoStream(cmdLine, new File("."), 0, 10_000, out);
                 // cut out the leading text
-                version = StringUtils.removeStart(out.toString(), "Google Chrome ").trim();
+                version = Strings.CS.removeStart(out.toString(), "Google Chrome ").trim();
             } finally {
                 out.close();
                 log.info("Having result from calling '" + cmdLine + "': " + out.toString(StandardCharsets.UTF_8).trim());

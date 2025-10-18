@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.dstadler.commons.arrays.ArrayUtils;
 import org.dstadler.commons.exec.ExecutionHelper;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -555,7 +556,7 @@ public class SVNCommands {
      * @param directory The local working directory
      * @param branch The name of the branch to merge
      * @param baseUrl       The SVN url to connect to
-     * @return true if only mergeinfo changes were done, false otherwise.
+     * @return a MergeResult which indicates if only merge-info changes were done or if conflicts were encountered
      * @throws IOException Execution of the SVN sub-process failed or the
      *          sub-process returned a exit value indicating a failure
      */
@@ -641,9 +642,9 @@ public class SVNCommands {
             }
         }
 
-        String MERGED_REVISIONS = StringUtils.removeStart(MERGED_REVISIONS_BUILD.toString(), ",");
+        String MERGED_REVISIONS = Strings.CS.removeStart(MERGED_REVISIONS_BUILD.toString(), ",");
 
-        if (MERGED_REVISIONS.equals("")) {
+        if (MERGED_REVISIONS.isEmpty()) {
             throw new IllegalStateException("Could not read merged revision with command " + cmdLine + " in directory " + directory);
         }
 
@@ -662,7 +663,7 @@ public class SVNCommands {
                 }
             } else {
                 // non-inheritable merge adds a "*" to the rev, see https://groups.google.com/forum/?fromgroups=#!topic/subversion-svn/ArXTv1rUk5w
-                rev = StringUtils.removeEnd(rev, "*");
+                rev = Strings.CS.removeEnd(rev, "*");
 
                 revList.add(Long.parseLong(rev));
             }

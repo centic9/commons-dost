@@ -2,7 +2,7 @@ package org.dstadler.commons.svn;
 
 import java.util.Arrays;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.dstadler.commons.xml.AbstractSimpleContentHandler;
 import org.xml.sax.Attributes;
 
@@ -129,7 +129,7 @@ public class SVNLogFileParser extends AbstractSimpleContentHandler<Long, LogEntr
 				case TAG_PATH:
 					// remove the initial branchname to reduce screen and memory size of the paths
 					for (String branch : branches) {
-						value = StringUtils.removeStart(value, branch);
+						value = Strings.CS.removeStart(value, branch);
 					}
 
 					// only store a few paths to not go OOM with too many paths stored
