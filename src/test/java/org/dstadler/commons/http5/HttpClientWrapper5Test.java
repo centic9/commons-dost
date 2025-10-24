@@ -5,8 +5,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpHead;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -137,23 +137,25 @@ public class HttpClientWrapper5Test {
             assertEquals("ok", wrapper.simpleGet("http://localhost:" + server.getPort()));
 
             final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
-            try (CloseableHttpResponse response = wrapper.getHttpClient().execute(httpGet)) {
-                HttpEntity entity = HttpClientWrapper5.checkAndFetch(response, "http://localhost:" + server.getPort());
+			wrapper.getHttpClient().execute(httpGet, (HttpClientResponseHandler<Void>) response -> {
+				HttpEntity entity = HttpClientWrapper5.checkAndFetch(response, "http://localhost:" + server.getPort());
 
-                // ensure none of the objects stays in memory after the client is closed
-                verifier.addObject(httpGet);
-                verifier.addObject(response);
-                verifier.addObject(entity);
-                verifier.addObject(entity.getContent());
+				// ensure none of the objects stays in memory after the client is closed
+				verifier.addObject(httpGet);
+				verifier.addObject(response);
+				verifier.addObject(entity);
+				verifier.addObject(entity.getContent());
 
-                try {
-                    String string = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
-                    assertNotNull(string);
-                } finally {
-                    // ensure all content is taken out to free resources
-                    EntityUtils.consume(entity);
-                }
-            }
+				try {
+					String string = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
+					assertNotNull(string);
+				} finally {
+					// ensure all content is taken out to free resources
+					EntityUtils.consume(entity);
+				}
+
+				return null;
+			});
         }
     }
 
@@ -211,12 +213,15 @@ public class HttpClientWrapper5Test {
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
             try {
                 final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
-                try (CloseableHttpResponse response = wrapper.getHttpClient().execute(httpGet)) {
-                    verifier.addObject(httpGet);
-                    verifier.addObject(response);
+				wrapper.getHttpClient().execute(httpGet, response -> {
+					verifier.addObject(httpGet);
+					verifier.addObject(response);
 
-                    HttpClientWrapper5.checkAndFetch(response, "http://localhost:" + server.getPort());
-                }
+					HttpClientWrapper5.checkAndFetch(response, "http://localhost:" + server.getPort());
+
+					return null;
+				});
+
                 fail("Should throw an exception");
             } catch (IOException e) {
                 TestHelpers.assertContains(e, "500", "test error");
@@ -382,7 +387,7 @@ public class HttpClientWrapper5Test {
 				try (HttpClientWrapper5 httpClient = new HttpClientWrapper5(10_000)) {
 					String url = "http://localhost:" + server.getPort();
 					final HttpUriRequest httpGet = new HttpHead(url);
-					try (CloseableHttpResponse response = httpClient.getHttpClient().execute(httpGet)) {
+					httpClient.getHttpClient().execute(httpGet, response -> {
 						verifier.addObject(httpGet);
 						verifier.addObject(response);
 
@@ -390,7 +395,9 @@ public class HttpClientWrapper5Test {
 
 						// this will throw an IOException, previously we caught a NullPointerException
 						HttpClientWrapper5.checkAndFetch(response, url);
-					}
+
+						return null;
+					});
 				}
 			}
 		});
@@ -451,7 +458,7 @@ public class HttpClientWrapper5Test {
     }
 
     @Test
-    void testAuth() throws IOException {
+    void testAuthSimpleGet() throws IOException {
         int port = getNextFreePort();
 
         AtomicReference<Properties> headers = new AtomicReference<>();
@@ -467,11 +474,35 @@ public class HttpClientWrapper5Test {
             try (HttpClientWrapper5 wrapper = new HttpClientWrapper5("sample", "pwd", 10_000, true)) {
                 assertEquals("ok", wrapper.simpleGet("http://localhost:" + port));
 
-                // verify credentials were passed along
+				// check that simpleGet() does set authorization-headers correctly
                 assertNotNull(headers.get());
-                // TODO: How to get authorization header?
-                //  assertNotNull(headers.get().get("Authorization"), "Had: " + headers);
-                // assertEquals("", headers.get().get("Authorization"));
+				assertEquals("Basic c2FtcGxlOnB3ZA==", headers.get().get("authorization"));
+            }
+        } finally {
+            server.stop();
+        }
+    }
+
+    @Test
+    void testAuthSimplePost() throws IOException {
+        int port = getNextFreePort();
+
+        AtomicReference<Properties> headers = new AtomicReference<>();
+        NanoHTTPD server = new NanoHTTPD(port) {
+            @Override
+            public Response serve(String uri, String method, Properties header, Properties params) {
+                headers.set(header);
+
+                return new NanoHTTPD.Response(NanoHTTPD.HTTP_OK, "text/plain", "ok");
+            }
+        };
+        try {
+            try (HttpClientWrapper5 wrapper = new HttpClientWrapper5("sample", "pwd", 10_000, true)) {
+                assertEquals("ok", wrapper.simplePost("http://localhost:" + port, "somebody"));
+
+				// check that simpleGet() does set authorization-headers correctly
+				assertNotNull(headers.get());
+				assertEquals("Basic c2FtcGxlOnB3ZA==", headers.get().get("authorization"));
             }
         } finally {
             server.stop();

@@ -20,6 +20,7 @@ import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.apache.hc.client5.http.ssl.TrustAllStrategy;
+import org.apache.hc.client5.http.utils.Base64;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
@@ -57,6 +58,9 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 
 	private final CloseableHttpClient httpClient;
 
+	private final String user;
+	private final String password;
+
 	/**
 	 * Construct the {@link HttpClient} with the given authentication values
 	 * and all timeouts set to the given number of milliseconds
@@ -68,6 +72,7 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 	public HttpClientWrapper5(String user, String password, int timeoutMs) {
 		this(user, password, timeoutMs, false);
 	}
+
 	/**
 	 * Construct the {@link HttpClient} with the given authentication values
 	 * and all timeouts set to the given number of milliseconds
@@ -78,6 +83,8 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 	 */
 	public HttpClientWrapper5(String user, String password, int timeoutMs, boolean allowAll) {
 		super(timeoutMs, true);
+		this.user = user;
+		this.password = password;
 
 		BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(
@@ -120,6 +127,8 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
      */
 	public HttpClientWrapper5(int timeoutMs, boolean allowAll) {
 		super(timeoutMs, false);
+		this.user = null;
+		this.password = null;
 
 		RequestConfig reqConfig = RequestConfig.custom()
 			    .setConnectionRequestTimeout(Timeout.ofMilliseconds(timeoutMs))
@@ -150,6 +159,11 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 	protected void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException {
 		final ClassicHttpRequest httpGet = getHttpGet(url, body);
 
+		if (StringUtils.isNotBlank(user)) {
+			httpGet.setHeader("Authorization", "Basic " +
+					Base64.encodeBase64String((user + ":" + password).getBytes(StandardCharsets.UTF_8)));
+		}
+
 		httpClient.execute(httpGet, response -> {
 			HttpEntity entity = checkAndFetch(response, url);
 			try {
@@ -170,6 +184,11 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 		final HttpPost httpPost = new HttpPost(url);
 		if(body != null) {
 			httpPost.setEntity(new StringEntity(body));
+		}
+
+		if (StringUtils.isNotBlank(user)) {
+			httpPost.setHeader("Authorization", "Basic " +
+					Base64.encodeBase64String((user + ":" + password).getBytes(StandardCharsets.UTF_8)));
 		}
 
 		return httpClient.execute(httpPost, response -> {
