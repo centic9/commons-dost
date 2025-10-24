@@ -1,31 +1,24 @@
 package org.dstadler.commons.http5;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hc.client5.http.auth.AuthCache;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
-import org.apache.hc.client5.http.impl.auth.BasicScheme;
-import org.apache.hc.client5.http.protocol.HttpClientContext;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.HttpHost;
-import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.function.IOConsumer;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 
 public abstract class AbstractClientWrapper5 implements Closeable {
     protected final int timeoutMs;
@@ -129,16 +122,16 @@ public abstract class AbstractClientWrapper5 implements Closeable {
      *
      * @param url The URL to query
      * @param consumer A Consumer which receives the InputStream and can process the data
-     *                 on-the-fly in streaming fashion without retrieving all of the data into memory
+     *                 on-the-fly in streaming fashion without retrieving all the data into memory
      *                 at once.
      *
      * @throws IOException if the HTTP status code is not 200.
      */
-    public void simpleGet(String url, Consumer<InputStream> consumer) throws IOException {
+    public void simpleGet(String url, IOConsumer<InputStream> consumer) throws IOException {
         simpleGetInternal(url, consumer, null);
     }
 
-    protected ClassicHttpRequest getHttpGet(String url, String body) throws UnsupportedEncodingException {
+    protected ClassicHttpRequest getHttpGet(String url, String body) {
         final BasicClassicHttpRequest httpGet;
         if(body == null) {
             httpGet = new HttpGet(url);
@@ -149,5 +142,5 @@ public abstract class AbstractClientWrapper5 implements Closeable {
         return httpGet;
     }
 
-    protected abstract void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException;
+    protected abstract void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException;
 }

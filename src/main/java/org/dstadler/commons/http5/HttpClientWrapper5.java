@@ -2,6 +2,7 @@ package org.dstadler.commons.http5;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.function.IOConsumer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
@@ -11,7 +12,6 @@ import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -148,27 +147,20 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 		return httpClient;
 	}
 
-	protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException {
+	protected void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException {
 		final ClassicHttpRequest httpGet = getHttpGet(url, body);
 
-		final CloseableHttpResponse execute;
-        /*if(withAuth) {
-			HttpClientContext context = HttpClientContext.create();
-			HttpHost targetHost = getHttpHostWithAuth(url, context);
-            execute = httpClient.execute(targetHost, httpGet, context);
-        } else*/ {
-            execute = httpClient.execute(httpGet);
-        }
-
-        try (CloseableHttpResponse response = execute) {
+		httpClient.execute(httpGet, response -> {
 			HttpEntity entity = checkAndFetch(response, url);
-		    try {
+			try {
 				consumer.accept(entity.getContent());
-		    } finally {
-			    // ensure all content is taken out to free resources
-			    EntityUtils.consume(entity);
-		    }
-		}
+			} finally {
+				// ensure all content is taken out to free resources
+				EntityUtils.consume(entity);
+			}
+
+			return null;
+		});
 	}
 
 	public String simplePost(String url, String body) throws IOException {
@@ -179,7 +171,8 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 		if(body != null) {
 			httpPost.setEntity(new StringEntity(body));
 		}
-		try (CloseableHttpResponse response = httpClient.execute(/*targetHost,*/ httpPost/*, context*/)) {
+
+		return httpClient.execute(httpPost, response -> {
 			HttpEntity entity = HttpClientWrapper5.checkAndFetch(response, url);
 
 			try {
@@ -188,7 +181,7 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 				// ensure all content is taken out to free resources
 				EntityUtils.consume(entity);
 			}
-		}
+		});
 	}
 
 	private void createSSLSocketFactory(HttpClientBuilder builder, boolean allowAll) {

@@ -1,27 +1,24 @@
 package org.dstadler.commons.http5;
 
-import org.apache.commons.io.input.NullInputStream;
-import org.apache.hc.client5.http.protocol.HttpClientContext;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.HttpHost;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.commons.io.function.IOConsumer;
+import org.apache.commons.io.input.NullInputStream;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class AbstractClientWrapper5Test {
     public static Collection<Object[]> data() {
@@ -36,7 +33,7 @@ public class AbstractClientWrapper5Test {
     public void setUp(boolean withAuth) {
         wrapper = new AbstractClientWrapper5(60_000, withAuth) {
             @Override
-            protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) {
+            protected void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException {
                 simpleGetCount.incrementAndGet();
                 consumer.accept(new NullInputStream());
             }
@@ -98,7 +95,7 @@ public class AbstractClientWrapper5Test {
 		setUp(withAuth);
         try (AbstractClientWrapper5 wrapper = new AbstractClientWrapper5(60_000, withAuth) {
             @Override
-            protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) {
+            protected void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException {
                 simpleGetCount.incrementAndGet();
                 consumer.accept(new InputStream() {
                     @Override
