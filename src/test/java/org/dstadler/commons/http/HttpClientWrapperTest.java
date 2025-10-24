@@ -20,9 +20,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -421,4 +423,53 @@ public class HttpClientWrapperTest {
             assertTrue(ioException.getMessage().contains("StatusCode 404"));
         }
     }
+
+	private static int getNextFreePort() throws IOException {
+		for (int port = 15000; port < 15010; port++) {
+			try {
+				ServerSocket sock = new ServerSocket(port);
+				sock.close();
+				//
+				return port;
+			} catch (IOException e) {
+				// seems to be taken, try next one
+			}
+		}
+
+		throw new IOException("No free port found in the range of [15000,15010]");
+	}
+
+	@Test
+	void testAuth() throws IOException {
+		int port = getNextFreePort();
+
+		AtomicReference<Properties> headers = new AtomicReference<>();
+		NanoHTTPD server = new NanoHTTPD(port) {
+			@Override
+			public Response serve(String uri, String method, Properties header, Properties params) {
+				headers.set(header);
+
+				return new NanoHTTPD.Response(NanoHTTPD.HTTP_OK, "text/plain", "ok");
+			}
+		};
+		try {
+			try (HttpClientWrapper wrapper = new HttpClientWrapper("sample", "pwd", 10_000)) {
+				assertEquals("ok", wrapper.simpleGet("http://localhost:" + port));
+
+				// check that simpleGet() does set authorization-headers correctly
+				assertNotNull(headers.get());
+				assertEquals("Basic c2FtcGxlOnB3ZA==", headers.get().get("authorization"));
+			}
+		} finally {
+			server.stop();
+		}
+	}
+
+	@Test
+	void testTLSv12() {
+		IOException e = assertThrows(IOException.class,
+				() -> HttpClientWrapper.retrieveData("https://cdn.podseed.org/"));
+
+		assertTrue(e.getMessage().contains("HTTP StatusCode 403"));
+	}
 }
