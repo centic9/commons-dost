@@ -1,6 +1,7 @@
 package org.dstadler.commons.http;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.function.IOConsumer;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -122,7 +123,7 @@ public class HttpAsyncClientWrapper extends AbstractClientWrapper implements Clo
         httpClient.close();
     }
 
-    protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException {
+    protected void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException {
         final HttpUriRequest httpGet = getHttpGet(url, body);
 
         final HttpResponse execute;

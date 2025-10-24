@@ -1,5 +1,6 @@
 package org.dstadler.commons.http;
 
+import org.apache.commons.io.function.IOConsumer;
 import org.apache.commons.io.input.NullInputStream;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -16,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +33,7 @@ public class AbstractClientWrapperTest {
     public void setUp(boolean withAuth) {
         wrapper = new AbstractClientWrapper(60_000, withAuth) {
             @Override
-            protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) {
+            protected void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException {
                 simpleGetCount.incrementAndGet();
                 consumer.accept(new NullInputStream());
             }
@@ -104,7 +104,7 @@ public class AbstractClientWrapperTest {
 		setUp(withAuth);
         try (AbstractClientWrapper wrapper = new AbstractClientWrapper(60_000, withAuth) {
             @Override
-            protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) {
+            protected void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException {
                 simpleGetCount.incrementAndGet();
                 consumer.accept(new InputStream() {
                     @Override

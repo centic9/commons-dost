@@ -1,6 +1,7 @@
 package org.dstadler.commons.http;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.function.IOConsumer;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.methods.HttpGet;
@@ -131,9 +132,9 @@ public abstract class AbstractClientWrapper implements Closeable {
      *                 on-the-fly in streaming fashion without retrieving all of the data into memory
      *                 at once.
      *
-     * @throws IOException if the HTTP status code is not 200.
+     * @throws IOException if the HTTP status code is not 200 or the consumer throws an IOException
      */
-    public void simpleGet(String url, Consumer<InputStream> consumer) throws IOException {
+    public void simpleGet(String url, IOConsumer<InputStream> consumer) throws IOException {
         simpleGetInternal(url, consumer, null);
     }
 
@@ -148,7 +149,7 @@ public abstract class AbstractClientWrapper implements Closeable {
         return httpGet;
     }
 
-    protected abstract void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException;
+    protected abstract void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException;
 
     protected HttpHost getHttpHostWithAuth(String url, HttpClientContext context) throws MalformedURLException {
         // Required to avoid two requests instead of one: See http://stackoverflow.com/questions/20914311/httpclientbuilder-basic-auth

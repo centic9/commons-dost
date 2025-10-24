@@ -2,6 +2,7 @@ package org.dstadler.commons.http;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.function.IOConsumer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -127,7 +128,7 @@ public class HttpClientWrapper extends AbstractClientWrapper implements Closeabl
 	}
 
 
-	protected void simpleGetInternal(String url, Consumer<InputStream> consumer, String body) throws IOException {
+	protected void simpleGetInternal(String url, IOConsumer<InputStream> consumer, String body) throws IOException {
 		final HttpUriRequest httpGet = getHttpGet(url, body);
 
 		final CloseableHttpResponse execute;
