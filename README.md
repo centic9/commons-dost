@@ -60,7 +60,7 @@ http://github.com/centic9/commons-test for more details.
     ./gradlew --console=plain publishToMavenCentral
 
 * This should automatically release the new version on MavenCentral
-* Apply tag in Github
+* Apply tag in Github (`git tag` && `git push --tags`)
 * Increase the version in `gradle.properties` afterwards
 * Afterwards go to the [Github tags page](https://github.com/centic9/commons-dost/tags) and 
   create a release and add release-notes for the published version
