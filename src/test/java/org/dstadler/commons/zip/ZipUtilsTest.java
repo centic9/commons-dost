@@ -18,6 +18,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -730,6 +732,59 @@ public class ZipUtilsTest {
 	}
 
 	@Test
+	public void testZipFileVisitorReadData() throws IOException {
+		File zipfile = createNestedZip();
+
+		try {
+    		final AtomicBoolean found = new AtomicBoolean(false);
+    		ZipFileVisitor visitor = new ZipFileVisitor() {
+
+    			@Override
+    			public void visit(ZipEntry entry, InputStream data) throws IOException {
+					IOUtils.toString(data, StandardCharsets.UTF_8);
+    				found.set(true);
+    			}
+    		};
+
+    		try (InputStream zipFile2 = new FileInputStream(zipfile)) {
+    			visitor.walk(zipFile2);
+    		}
+
+    		assertTrue(found.get(), "Expect to have found at least some files");
+        } finally {
+            assertTrue(zipfile.exists());
+            assertTrue(zipfile.delete());
+        }
+	}
+
+	@Test
+	public void testZipFileVisitorReadDataAndClose() throws IOException {
+		File zipfile = createNestedZip();
+
+		try {
+    		final AtomicBoolean found = new AtomicBoolean(false);
+    		ZipFileVisitor visitor = new ZipFileVisitor() {
+
+    			@Override
+    			public void visit(ZipEntry entry, InputStream data) throws IOException {
+					IOUtils.toString(data, StandardCharsets.UTF_8);
+					data.close();
+    				found.set(true);
+    			}
+    		};
+
+    		try (InputStream zipFile2 = new FileInputStream(zipfile)) {
+    			visitor.walk(zipFile2);
+    		}
+
+    		assertTrue(found.get(), "Expect to have found at least some files");
+        } finally {
+            assertTrue(zipfile.exists());
+            assertTrue(zipfile.delete());
+        }
+	}
+
+	@Test
 	public void testZipFileVisitorFails() throws IOException {
 		File zipfile = createNestedZip();
 
@@ -746,7 +801,7 @@ public class ZipUtilsTest {
     		try (InputStream zipFile2 = new FileInputStream(zipfile) {
 
     			@Override
-    			public int read(byte[] b, int off, int len) throws IOException {
+    			public int read(@Nonnull byte[] b, int off, int len) throws IOException {
     				throw new IOException("testexception");
     			}
     		}) {

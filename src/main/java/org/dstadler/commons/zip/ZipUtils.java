@@ -7,6 +7,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -149,7 +150,6 @@ public class ZipUtils {
 	 *
 	 * @throws IOException If the file cannot be found or an error occurs while opening the file.
 	 */
-	@SuppressWarnings("resource")
 	public static InputStream getZipContentsRecursive(final String file) throws IOException {
 		// return local file directly
 		int pos = file.indexOf('!');
@@ -536,7 +536,7 @@ public class ZipUtils {
 		        	}
 
 		        	try {
-		        		visit(entry, stream);
+		        		visit(entry, new UnclosableInputStream(stream));
 		        	} finally {
 		        		stream.closeEntry();
 		        	}
@@ -554,5 +554,16 @@ public class ZipUtils {
 		 * @throws IOException If extracting the data fails.
 		 */
 		public abstract void visit(ZipEntry entry, InputStream data) throws IOException;
+	}
+
+	private static final class UnclosableInputStream extends FilterInputStream {
+		UnclosableInputStream(InputStream in) {
+			super(in);
+		}
+
+		@Override
+		public void close() {
+			// Ignore close attempts since underlying InputStream is shared.
+		}
 	}
 }
