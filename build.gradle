@@ -31,9 +31,9 @@ apply plugin: 'codenarc'
 apply plugin: 'signing'
 
 java {
-  toolchain {
-	  sourceCompatibility = JavaVersion.VERSION_17
-  }
+    toolchain {
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 group = 'org.dstadler'
@@ -103,8 +103,8 @@ test {
     // avoid failures because Gradle provides it's own version of JNA in the system properties
     systemProperties['jna.boot.library.path'] = null
 
-	// make sure tests do not use the local encoding
-	systemProperty "file.encoding", "UTF-8"
+    // make sure tests do not use the local encoding
+    systemProperty "file.encoding", "UTF-8"
 
     useJUnitPlatform()
 }
