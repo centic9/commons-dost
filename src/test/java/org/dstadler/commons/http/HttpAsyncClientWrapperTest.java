@@ -385,13 +385,12 @@ public class HttpAsyncClientWrapperTest {
 
     @Test
     void testBrokenWebPage() throws IOException {
-        try (HttpAsyncClientWrapper wrapper = new HttpAsyncClientWrapper("",
-                null, 1000)) {
+        try (HttpAsyncClientWrapper wrapper = new HttpAsyncClientWrapper("", null, 10_000)) {
             IOException ioException = assertThrows(IOException.class,
                     () -> wrapper.simpleGet("https://www.das-babyland.de/navi.php?qs=tr%C3%A4umeland"));
 
             assertTrue(ioException.getMessage().contains("Host name 'www.das-babyland.de' does not match the certificate subject"),
-                    "Had: " + ioException.getMessage());
+                    "Expected exception message 'Host name 'www.das-babyland.de' does not match the certificate subject', but had: " + ioException.getMessage());
         }
     }
 
