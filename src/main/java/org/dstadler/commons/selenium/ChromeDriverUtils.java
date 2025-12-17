@@ -7,16 +7,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.mutable.Mutable;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.dstadler.commons.exec.ExecutionHelper;
+import org.dstadler.commons.http5.HttpClientWrapper5;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.util.SuppressForbidden;
 import org.dstadler.commons.zip.ZipUtils;
@@ -77,34 +77,27 @@ public class ChromeDriverUtils {
         // https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_win32.zip
 
         String versionUrl = getVersionUrl(chromeVersion);
-        String driverVersion = null;
+        final Mutable<String> driverVersion = new MutableObject<>();
+		final Mutable<String> url = new MutableObject<>();
 		String downloadUrl;
-        try {
-			// try to fetch versions via a JSON file if the old way fails to find the version
-			String versionJson = IOUtils.toString(new URL(VERSION_JSON), StandardCharsets.UTF_8);
+        try (HttpClientWrapper5 httpClient = new HttpClientWrapper5(60_000)) {
+			httpClient.simpleGet(VERSION_JSON, s -> {
+				try (ChromeVersionInputStream in = new ChromeVersionInputStream(s, chromeVersion)) {
+					in.consumeAndClose();
 
-			// match the latest build with that version
-			// https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/115.0.5790.170/linux64/chromedriver-linux64.zip
-			// https://storage.googleapis.com/chrome-for-testing-public/121.0.6167.0/linux64/chromedriver-linux64.zip
-			Matcher matcher = Pattern.
-					compile(	"https://(edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing|storage.googleapis.com/chrome-for-testing-public)/(" + chromeVersion + "[0-9.]+)/linux64/chromedriver-linux64.zip").
-					matcher(versionJson);
+					driverVersion.setValue(in.getDriverVersion());
+					url.setValue(in.getDriverVersion());
+				}
+			});
 
-			// iterate over all matches to use the latest versions
-			String url = null;
-			while (matcher.find()) {
-				driverVersion = matcher.group(2);
-				url = matcher.group(1);
+			if (driverVersion.get() == null) {
+				throw new IOException("Failed for " + VERSION_JSON + " and " + VERSION_JSON);
 			}
 
-			if (driverVersion == null) {
-				throw new IOException("Failed for " + VERSION_JSON + " and " + versionJson);
-			}
-
-			checkState(StringUtils.isNotBlank(driverVersion),
+			checkState(StringUtils.isNotBlank(driverVersion.get()),
 					"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
 
-			downloadUrl = "https://" + url + "/" + driverVersion +
+			downloadUrl = "https://" + url.get() + "/" + driverVersion.get() +
 					(SystemUtils.IS_OS_WINDOWS ?
 						"/win64/chromedriver-win64.zip" :
 						"/linux64/chromedriver-linux64.zip");

@@ -4,8 +4,10 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.dstadler.commons.exec.ExecutionHelper;
+import org.dstadler.commons.util.SuppressForbidden;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -121,4 +123,33 @@ public class ChromeDriverUtilsTest {
 	public void testPrivateConstructor() throws Exception {
 		org.dstadler.commons.testing.PrivateConstructorCoverage.executePrivateConstructor(ChromeDriverUtils.class);
 	}
+
+	@Disabled("Only used for local performance testing")
+	@SuppressForbidden(reason = "Uses System.out for time-measurements")
+	@Test
+	public void microBenchmark() throws IOException {
+		assumeGoogleChrome();
+
+		assertTrue(StringUtils.isBlank(System.getProperty(PROPERTY_CHROME_DRIVER)),
+				"System property for chrome-driver should not be set before starting this test");
+
+		// run a few times to calculate times
+		for (int i = 0; i < 10; i++) {
+			long start = System.currentTimeMillis();
+			ChromeDriverUtils.configureMatchingChromeDriver();
+			ChromeDriverUtils.configureMatchingChromeDriver();
+
+			System.out.println("Duration run " + i + ": " + (System.currentTimeMillis() - start) + "ms");
+		}
+
+		String driverFile = System.getProperty(PROPERTY_CHROME_DRIVER);
+		assertTrue(StringUtils.isNotBlank(driverFile), "System property for chrome-driver should be set now");
+
+		assertTrue(new File(driverFile).exists(), "Did not find file " + driverFile);
+
+		// running it again does not change the result
+		ChromeDriverUtils.configureMatchingChromeDriver();
+		assertEquals(driverFile, System.getProperty(PROPERTY_CHROME_DRIVER));
+	}
+
 }
