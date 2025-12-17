@@ -80,7 +80,7 @@ public class ChromeDriverUtils {
 				try (ChromeVersionInputStream in = new ChromeVersionInputStream(s, chromeVersion)) {
 					in.consumeAndClose();
 
-					fetchChromeDriver(chromeVersion, in.getDriverVersion(), versionUrl, in.getDriverVersion());
+					fetchChromeDriver(chromeVersion, in.getDriverVersion(), versionUrl, in.getUrl());
 				}
 			});
         } catch (IOException e) {
