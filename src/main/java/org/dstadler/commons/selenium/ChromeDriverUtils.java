@@ -13,8 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.commons.lang3.mutable.Mutable;
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.dstadler.commons.exec.ExecutionHelper;
 import org.dstadler.commons.http5.HttpClientWrapper5;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -67,6 +65,7 @@ public class ChromeDriverUtils {
     public static void configureMatchingChromeDriver(String chromeVersion) throws IOException {
 		checkState(StringUtils.isNotBlank(chromeVersion), "Need a version of chrome to configure, but had '" +
 						chromeVersion + "'");
+		String versionUrl = getVersionUrl(chromeVersion);
 
         // See https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection
         //
@@ -76,44 +75,41 @@ public class ChromeDriverUtils {
         // https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_linux64.zip
         // https://chromedriver.storage.googleapis.com/91.0.4472.19/chromedriver_win32.zip
 
-        String versionUrl = getVersionUrl(chromeVersion);
-        final Mutable<String> driverVersion = new MutableObject<>();
-		final Mutable<String> url = new MutableObject<>();
-		String downloadUrl;
         try (HttpClientWrapper5 httpClient = new HttpClientWrapper5(60_000)) {
 			httpClient.simpleGet(VERSION_JSON, s -> {
 				try (ChromeVersionInputStream in = new ChromeVersionInputStream(s, chromeVersion)) {
 					in.consumeAndClose();
 
-					driverVersion.setValue(in.getDriverVersion());
-					url.setValue(in.getDriverVersion());
+					fetchChromeDriver(chromeVersion, in.getDriverVersion(), versionUrl, in.getDriverVersion());
 				}
 			});
-
-			if (driverVersion.get() == null) {
-				throw new IOException("Failed for " + VERSION_JSON + " and " + VERSION_JSON);
-			}
-
-			checkState(StringUtils.isNotBlank(driverVersion.get()),
-					"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
-
-			downloadUrl = "https://" + url.get() + "/" + driverVersion.get() +
-					(SystemUtils.IS_OS_WINDOWS ?
-						"/win64/chromedriver-win64.zip" :
-						"/linux64/chromedriver-linux64.zip");
         } catch (IOException e) {
             throw new IOException("Failed for " + versionUrl, e);
         }
+    }
 
-        File chromeDriverFile = new File("chromedriver-" + driverVersion +
-                (SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+	private static void fetchChromeDriver(String chromeVersion, String driverVersion, String versionUrl, String url) throws IOException {
+		if (driverVersion == null) {
+			throw new IOException("Failed for " + VERSION_JSON + " and " + VERSION_JSON);
+		}
 
-        // download the driver if not available locally yet
-        if (!chromeDriverFile.exists()) {
-            log.info("Downloading matching chromedriver from " + downloadUrl +
-                    " and extracting to " + chromeDriverFile);
+		checkState(StringUtils.isNotBlank(driverVersion),
+				"Did not find a chrome-driver-version for " + chromeVersion + " at " + versionUrl);
 
-            File fileZip = File.createTempFile("chromedriver", ".zip");
+		String downloadUrl = "https://" + url + "/" + driverVersion +
+				(SystemUtils.IS_OS_WINDOWS ?
+						"/win64/chromedriver-win64.zip" :
+						"/linux64/chromedriver-linux64.zip");
+
+		File chromeDriverFile = new File("chromedriver-" + driverVersion +
+				(SystemUtils.IS_OS_WINDOWS ? ".exe" : ""));
+
+		// download the driver if not available locally yet
+		if (!chromeDriverFile.exists()) {
+			log.info("Downloading matching chromedriver from " + downloadUrl +
+					" and extracting to " + chromeDriverFile);
+
+			File fileZip = File.createTempFile("chromedriver", ".zip");
 			try {
 				FileUtils.copyURLToFile(new URL(downloadUrl), fileZip);
 
@@ -135,18 +131,18 @@ public class ChromeDriverUtils {
 				FileUtils.deleteDirectory(new File("chromedriver-win64"));
 				FileUtils.deleteDirectory(new File("chromedriver-linux64"));
 			}
-        }
+		}
 
-        // make sure the binary is executable
-        if (!chromeDriverFile.canExecute()) {
-            if (!chromeDriverFile.setExecutable(true)) {
-                throw new IOException("Could not make binary " + chromeDriverFile + " executable.");
-            }
-        }
+		// make sure the binary is executable
+		if (!chromeDriverFile.canExecute()) {
+			if (!chromeDriverFile.setExecutable(true)) {
+				throw new IOException("Could not make binary " + chromeDriverFile + " executable.");
+			}
+		}
 
-        log.info("Using chromedriver from " + chromeDriverFile.getAbsolutePath());
-        System.setProperty(PROPERTY_CHROME_DRIVER, chromeDriverFile.getAbsolutePath());
-    }
+		log.info("Using chromedriver from " + chromeDriverFile.getAbsolutePath());
+		System.setProperty(PROPERTY_CHROME_DRIVER, chromeDriverFile.getAbsolutePath());
+	}
 
 	protected static String getVersionUrl(String chromeVersion) {
 		return "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_" + chromeVersion;
