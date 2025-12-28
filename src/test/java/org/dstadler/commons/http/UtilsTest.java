@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
@@ -71,20 +73,20 @@ public class UtilsTest {
 	 * Test method for {@link org.dstadler.commons.http.Utils#getURL(java.lang.String, java.util.concurrent.atomic.AtomicInteger, long)}.
 	 */
 	@Test
-	public void testGetURL() throws IOException {
-	    Assumptions.assumeTrue(checkURL(new URL("http://dstadler.org/")),
-	            "Could not access http://dstadler.org/");
+	public void testGetURL() throws IOException, URISyntaxException {
+	    Assumptions.assumeTrue(checkURL(new URI("https://dstadler.org/").toURL()),
+	            "Could not access https://dstadler.org/");
 
-		assertTrue(Utils.getURL("http://dstadler.org", new AtomicInteger(), 2),
-				"Expect URL http://dstadler.org to work, but didn't");
-		assertTrue(Utils.getURL("http://dstadler.org", new AtomicInteger(99), 2),
-				"Expect URL http://dstadler.org to work, but didn't");
-		assertTrue(Utils.getURL("http://dstadler.org", new AtomicInteger(100), 2),
-				"Expect URL http://dstadler.org to work, but didn't");
+		assertTrue(Utils.getURL("https://dstadler.org", new AtomicInteger(), 2),
+				"Expect URL https://dstadler.org to work, but didn't");
+		assertTrue(Utils.getURL("https://dstadler.org", new AtomicInteger(99), 2),
+				"Expect URL https://dstadler.org to work, but didn't");
+		assertTrue(Utils.getURL("https://dstadler.org", new AtomicInteger(100), 2),
+				"Expect URL https://dstadler.org to work, but didn't");
 		assertFalse(Utils.getURL("invalidurl", new AtomicInteger(100), 2),
-				"Expect URL http://dstadler.org to not work, but did");
+				"Expect URL https://dstadler.org to not work, but did");
 		assertFalse(Utils.getURL("http://notexistingsomestrangeurlwhichshouldnotexist.com", new AtomicInteger(100), 2),
-				"Expect URL http://dstadler.org to not work, but did");
+				"Expect URL https://dstadler.org to not work, but did");
 	}
 
 	private boolean checkURL(URL url) {

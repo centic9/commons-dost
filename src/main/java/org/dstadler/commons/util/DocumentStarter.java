@@ -96,18 +96,18 @@ public class DocumentStarter {
 		final String localHref = href;
 		if(SystemUtils.IS_OS_UNIX) {
 			try {
-				Runtime.getRuntime().exec("xdg-open " + href);
+				Runtime.getRuntime().exec(new String[] { "xdg-open " + href });
 			} catch (IOException e1) {
 				// try gnome-open if xdg-open cannot be found
 				try {
-					Runtime.getRuntime().exec("gnome-open " + href);
+					Runtime.getRuntime().exec(new String[] { "gnome-open " + href});
 				} catch (IOException e2) {
 					// try kde-open if gnome-open did not work
 					try {
-						Runtime.getRuntime().exec("kde-open " + href);
+						Runtime.getRuntime().exec(new String[] { "kde-open " + href});
 					} catch (IOException e3) {
 						// try kde-open5 if gnome-open did not work
-						Runtime.getRuntime().exec("kde-open5 " + href);
+						Runtime.getRuntime().exec(new String[] { "kde-open5 " + href});
 					}
 				}
 			}

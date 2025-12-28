@@ -92,13 +92,15 @@ public class UrlUtilsTest {
 	}
 
 	@Test
-	public void testRetrieveRawDataInvalidHost() throws Exception {
-		try {
-			UrlUtils.retrieveRawData("http://localhost:19992", 0);
-			fail("Expecting an exception here");
-		} catch (@SuppressWarnings("unused") ConnectException e) {
-			// expected
-		}
+	public void testRetrieveRawDataInvalidHost() {
+		assertThrows(ConnectException.class,
+            () -> UrlUtils.retrieveRawData("http://localhost:19992", 0));
+	}
+
+	@Test
+	public void testRetrieveRawDataInvalidUrl() {
+        assertThrows(IOException.class,
+            () -> UrlUtils.retrieveRawData("invalid", 0));
 	}
 
 	@Test
@@ -198,7 +200,7 @@ public class UrlUtilsTest {
             try {
                 Thread.sleep(1300);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new IllegalStateException(e);
             }
         }, NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "OK")) {
 			UrlUtils.retrieveData("http://localhost:" + server.getPort(), null, 1000);

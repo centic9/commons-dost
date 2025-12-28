@@ -4,7 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
@@ -111,7 +112,7 @@ public class ChromeDriverUtils {
 
 			File fileZip = File.createTempFile("chromedriver", ".zip");
 			try {
-				FileUtils.copyURLToFile(new URL(downloadUrl), fileZip);
+				FileUtils.copyURLToFile(new URI(downloadUrl).toURL(), fileZip);
 
 				// unzip the driver-files to the local directory
 				ZipUtils.extractZip(fileZip, new File("."));
@@ -126,7 +127,9 @@ public class ChromeDriverUtils {
 							"chromedriver-win64/chromedriver.exe" :
 							"chromedriver-linux64/chromedriver"), chromeDriverFile);
 				}
-			} finally {
+			} catch (IllegalArgumentException | URISyntaxException e) {
+                throw new IOException("Failed for " + downloadUrl, e);
+            } finally {
 				FileUtils.delete(fileZip);
 				FileUtils.deleteDirectory(new File("chromedriver-win64"));
 				FileUtils.deleteDirectory(new File("chromedriver-linux64"));

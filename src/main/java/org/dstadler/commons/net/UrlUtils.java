@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -113,7 +115,12 @@ public class UrlUtils {
      * @throws IOException If accessing the resource fails.
      */
     public static byte[] retrieveRawData(String sUrl, int timeout, SSLSocketFactory sslFactory) throws IOException {
-        URL url = new URL(sUrl);
+        URL url;
+        try {
+            url = new URI(sUrl).toURL();
+        } catch (IllegalArgumentException | URISyntaxException e) {
+            throw new IOException("Failed for " + sUrl, e);
+        }
 
         LOGGER.fine("Using the following URL for retrieving the data: " + url);
 
@@ -213,7 +220,12 @@ public class UrlUtils {
             throw new IllegalArgumentException("POST request body must not be null");
         }
 
-        URL url = new URL(sUrl);
+        URL url;
+        try {
+            url = new URI(sUrl).toURL();
+        } catch (IllegalArgumentException | URISyntaxException e) {
+            throw new IOException("Failed for " + sUrl, e);
+        }
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         try {
             prepareConnection(connection, timeout, sslFactory);
@@ -369,9 +381,9 @@ public class UrlUtils {
     * @return null if connection works, an error message if some problem happens.
      * @throws IllegalArgumentException if the destination URL is invalid
     */
-   public static String getAccessError(String destinationUrl, boolean fireRequest, boolean ignoreHTTPSHostCheck, int timeout) throws IllegalArgumentException {
-       return getAccessError(destinationUrl, fireRequest, ignoreHTTPSHostCheck, timeout, null);
-   }
+    public static String getAccessError(String destinationUrl, boolean fireRequest, boolean ignoreHTTPSHostCheck, int timeout) throws IllegalArgumentException {
+        return getAccessError(destinationUrl, fireRequest, ignoreHTTPSHostCheck, timeout, null);
+    }
 
     /**
      *
@@ -388,8 +400,8 @@ public class UrlUtils {
     public static String getAccessError(String destinationUrl, boolean fireRequest, boolean ignoreHTTPSHostCheck, int timeout, SSLSocketFactory sslFactory) throws IllegalArgumentException {
         URL url;
         try {
-            url = new URL(destinationUrl);
-        } catch (MalformedURLException e) {
+            url = new URI(destinationUrl).toURL();
+        } catch (IllegalArgumentException | URISyntaxException | MalformedURLException e) {
             throw new IllegalArgumentException("Invalid destination URL", e);
         }
 
