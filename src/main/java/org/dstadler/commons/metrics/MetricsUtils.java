@@ -1,16 +1,15 @@
 package org.dstadler.commons.metrics;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.dstadler.commons.http.HttpClientWrapper;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.dstadler.commons.http.NanoHTTPD;
+import org.dstadler.commons.http5.HttpClientWrapper5;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
 import java.io.IOException;
@@ -26,7 +25,7 @@ public class MetricsUtils {
     /**
      * Send the given value for the given metric and timestamp.
      *
-     * Authentication can be provided via the configured {@link HttpClient} instance.
+     * Authentication can be provided via the configured {@link org.apache.hc.client5.http.impl.classic.CloseableHttpClient} instance.
      *
      * @param metric The key of the metric
      * @param value The value of the measurement
@@ -38,7 +37,7 @@ public class MetricsUtils {
      * @throws IOException If the HTTP call fails with an HTTP status code.
      */
     public static void sendMetric(String metric, int value, long ts, String url, String user, String password) throws IOException {
-        try (HttpClientWrapper metrics = new HttpClientWrapper(user, password, 60_000)) {
+        try (HttpClientWrapper5 metrics = new HttpClientWrapper5(user, password, 60_000)) {
             sendMetric(metric, value, ts, metrics.getHttpClient(), url);
         }
     }
@@ -46,7 +45,7 @@ public class MetricsUtils {
     /**
      * Send the given value for the given metric and timestamp.
      *
-     * Authentication can be provided via the configured {@link HttpClient} instance.
+     * Authentication can be provided via the configured {@link org.apache.http.impl.client.CloseableHttpClient} instance.
      *
      * @param metric The key of the metric
      * @param value The value of the measurement
@@ -64,7 +63,7 @@ public class MetricsUtils {
     /**
      * Send the given value for the given metric and timestamp.
      *
-     * Authentication can be provided via the configured {@link HttpClient} instance.
+     * Authentication can be provided via the configured {@link CloseableHttpClient} instance.
      *
      * @param splitting Allows to define multiple values for one metric at one point in time, e.g. by machine, ...
      *                  Can be null if no splitting should be set
@@ -89,7 +88,7 @@ public class MetricsUtils {
     /**
      * Send the given document to the given Elasticsearch URL/Index
      *
-     * Authentication can be provided via the configured {@link HttpClient} instance.
+     * Authentication can be provided via the configured {@link CloseableHttpClient} instance.
      *
      * @param json The json-string to store as document
      * @param httpClient The HTTP Client that can be used to send metrics.
@@ -104,8 +103,8 @@ public class MetricsUtils {
         httpPut.setEntity(new StringEntity(
                 json, ContentType.APPLICATION_JSON));
 
-        try (CloseableHttpResponse response = httpClient.execute(httpPut)) {
-            HttpEntity entity = HttpClientWrapper.checkAndFetch(response, url);
+        httpClient.execute(httpPut, (HttpClientResponseHandler<Void>) response -> {
+            HttpEntity entity = HttpClientWrapper5.checkAndFetch(response, url);
 
             try {
                 log.info("Had result when sending document to Elasticsearch at " + url + ": " + IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
@@ -113,6 +112,8 @@ public class MetricsUtils {
                 // ensure all content is taken out to free resources
                 EntityUtils.consume(entity);
             }
-        }
+
+            return null;
+        });
     }
 }

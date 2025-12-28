@@ -9,11 +9,11 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
-import org.dstadler.commons.http.HttpClientWrapper;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.dstadler.commons.http5.HttpClientWrapper5;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -38,28 +38,36 @@ public abstract class AbstractSimpleContentHandler<K extends Comparable<K>,V> ex
 	public SortedMap<K, V> parseContent(URL url, String user, String password, int timeoutMs) throws IOException, SAXException {
 		log.info("Using the following URL for retrieving the list of elements: " + url.toString());
 
-		try (final HttpClientWrapper httpClient = new HttpClientWrapper(user, password, timeoutMs)) {
+		try (final HttpClientWrapper5 httpClient = new HttpClientWrapper5(user, password, timeoutMs)) {
 			final HttpGet httpGet = new HttpGet(url.toURI());
-			try (final CloseableHttpResponse response = httpClient.getHttpClient().execute(httpGet)) {
-				int statusCode = response.getStatusLine().getStatusCode();
-				if(statusCode != 200) {
-					String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " + response.getStatusLine().getReasonPhrase();
-					log.warning(msg);
+            return httpClient.getHttpClient().execute(httpGet, (HttpClientResponseHandler<SortedMap<K, V>>) response -> {
+                int statusCode = response.getCode();
+                if(statusCode != 200) {
+                    String msg = "Had HTTP StatusCode " + statusCode + " for request: " + url + ", response: " + response.getReasonPhrase();
+                    log.warning(msg);
 
-					throw new IOException(msg);
-				}
-			    HttpEntity entity = response.getEntity();
+                    throw new IOException(msg);
+                }
+                HttpEntity entity = response.getEntity();
 
-			    try {
-					return parseContent(entity.getContent());
-			    } finally {
-				    // ensure all content is taken out to free resources
-				    EntityUtils.consume(entity);
-			    }
-			}
+                try {
+                    return parseContent(entity.getContent());
+                } catch (SAXException e) {
+                    throw new IOException(e);
+                } finally {
+                    // ensure all content is taken out to free resources
+                    EntityUtils.consume(entity);
+                }
+            });
 		} catch (URISyntaxException e) {
 			throw new IOException(e);
-		}
+		} catch (IOException e) {
+            if (e.getCause() instanceof SAXException) {
+                throw (SAXException) e.getCause();
+            }
+
+            throw e;
+        }
 	}
 
 	public SortedMap<K, V> parseContent(InputStream strm) throws SAXException, IOException {

@@ -34,7 +34,6 @@ import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
-import org.apache.http.client.config.CookieSpecs;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
 import java.io.Closeable;
@@ -94,7 +93,7 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 		RequestConfig reqConfig = RequestConfig.custom()
 			    .setConnectionRequestTimeout(Timeout.ofMilliseconds(timeoutMs))
 				// https://www.lenar.io/invalid-cookie-header-invalid-expires-attribute/
-				.setCookieSpec(CookieSpecs.STANDARD)
+				.setCookieSpec("standard")
 			    .build();
 
 		// configure the builder for HttpClients
@@ -133,7 +132,7 @@ public class HttpClientWrapper5 extends AbstractClientWrapper5 implements Closea
 		RequestConfig reqConfig = RequestConfig.custom()
 			    .setConnectionRequestTimeout(Timeout.ofMilliseconds(timeoutMs))
 				// https://www.lenar.io/invalid-cookie-header-invalid-expires-attribute/
-				.setCookieSpec(CookieSpecs.STANDARD)
+				.setCookieSpec("standard")
 			    .build();
 
 		// configure the builder for HttpClients

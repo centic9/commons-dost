@@ -18,14 +18,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.zip.ZipUtils.ZipFileVisitor;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -801,7 +800,7 @@ public class ZipUtilsTest {
     		try (InputStream zipFile2 = new FileInputStream(zipfile) {
 
     			@Override
-    			public int read(@Nonnull byte[] b, int off, int len) throws IOException {
+    			public int read(@NonNull byte[] b, int off, int len) throws IOException {
     				throw new IOException("testexception");
     			}
     		}) {
