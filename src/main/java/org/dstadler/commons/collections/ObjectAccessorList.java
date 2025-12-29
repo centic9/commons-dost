@@ -82,7 +82,7 @@ public class ObjectAccessorList<R, E> extends UnsupportedList<R> {
 		if (original.isEmpty()) {
 			throw new NoSuchElementException();
 		} else {
-			return accessor.apply(original.get(0));
+			return accessor.apply(original.getFirst());
 		}
 	}
 
@@ -91,7 +91,7 @@ public class ObjectAccessorList<R, E> extends UnsupportedList<R> {
 		if (original.isEmpty()) {
 			throw new NoSuchElementException();
 		} else {
-			return accessor.apply(original.get(original.size() - 1));
+			return accessor.apply(original.getLast());
 		}
 	}
 }

@@ -19,7 +19,7 @@ public class MapUtilsTest {
 		map.put("Three", 3);
 
 		List<Map.Entry<String, Integer>> sorted = MapUtils.sortByValue(map);
-		assertEquals("One", sorted.get(0).getKey(), "First");
+		assertEquals("One", sorted.getFirst().getKey(), "First");
 		assertEquals("Two", sorted.get(1).getKey(), "Second");
 		assertEquals("Three", sorted.get(2).getKey(), "Third");
 	}
@@ -33,7 +33,7 @@ public class MapUtilsTest {
 		map.put("Four", 1);
 
 		List<Map.Entry<String, Integer>> sorted = MapUtils.sortByValue(map);
-		assertEquals("Four", sorted.get(0).getKey());
+		assertEquals("Four", sorted.getFirst().getKey());
 		assertEquals("Two", sorted.get(1).getKey());
 		assertEquals("Three", sorted.get(2).getKey());
 		assertEquals("One", sorted.get(3).getKey());
@@ -47,7 +47,7 @@ public class MapUtilsTest {
 		map.put("Three", 3);
 
 		List<Map.Entry<String, Integer>> sorted = MapUtils.sortByValueAndKey(map);
-		assertEquals("One", sorted.get(0).getKey(), "First");
+		assertEquals("One", sorted.getFirst().getKey(), "First");
 		assertEquals("Two", sorted.get(1).getKey(), "Second");
 		assertEquals("Three", sorted.get(2).getKey(), "Third");
 
@@ -58,7 +58,7 @@ public class MapUtilsTest {
 		map.put("Thref", 3);
 
 		sorted = MapUtils.sortByValueAndKey(map);
-		assertEquals("One", sorted.get(0).getKey(), "First");
+		assertEquals("One", sorted.getFirst().getKey(), "First");
 		assertEquals("Two", sorted.get(1).getKey(), "Second");
 		assertEquals("Threa", sorted.get(2).getKey(), "Third");
 		assertEquals("Threb", sorted.get(3).getKey(), "Third");
@@ -76,7 +76,7 @@ public class MapUtilsTest {
 		map.put("Three", 1);
 
 		List<Map.Entry<String, Integer>> sorted = MapUtils.sortByValueAndKey(map);
-		assertEquals("One", sorted.get(0).getKey(), "First");
+		assertEquals("One", sorted.getFirst().getKey(), "First");
 		assertEquals("Three", sorted.get(1).getKey(), "Second");
 		assertEquals("Two", sorted.get(2).getKey(), "Third");
 	}

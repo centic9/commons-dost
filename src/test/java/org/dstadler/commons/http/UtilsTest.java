@@ -73,8 +73,8 @@ public class UtilsTest {
 	 * Test method for {@link org.dstadler.commons.http.Utils#getURL(java.lang.String, java.util.concurrent.atomic.AtomicInteger, long)}.
 	 */
 	@Test
-	public void testGetURL() throws IOException, URISyntaxException {
-	    Assumptions.assumeTrue(checkURL(new URI("https://dstadler.org/").toURL()),
+	public void testGetURL() throws IOException {
+	    Assumptions.assumeTrue(checkURL(URI.create("https://dstadler.org/").toURL()),
 	            "Could not access https://dstadler.org/");
 
 		assertTrue(Utils.getURL("https://dstadler.org", new AtomicInteger(), 2),

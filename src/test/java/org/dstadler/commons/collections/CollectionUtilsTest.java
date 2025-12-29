@@ -38,7 +38,7 @@ public class CollectionUtilsTest {
         }
         assertEquals("1023-3227", CollectionUtils.getCombinedText(longs));
 
-        longs.add(0, 832L);
+        longs.addFirst(832L);
         assertEquals("832,1023-3227", CollectionUtils.getCombinedText(longs));
 
         longs.clear();

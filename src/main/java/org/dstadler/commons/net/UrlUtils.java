@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -117,8 +116,8 @@ public class UrlUtils {
     public static byte[] retrieveRawData(String sUrl, int timeout, SSLSocketFactory sslFactory) throws IOException {
         URL url;
         try {
-            url = new URI(sUrl).toURL();
-        } catch (IllegalArgumentException | URISyntaxException e) {
+            url = URI.create(sUrl).toURL();
+        } catch (IllegalArgumentException e) {
             throw new IOException("Failed for " + sUrl, e);
         }
 
@@ -222,8 +221,8 @@ public class UrlUtils {
 
         URL url;
         try {
-            url = new URI(sUrl).toURL();
-        } catch (IllegalArgumentException | URISyntaxException e) {
+            url = URI.create(sUrl).toURL();
+        } catch (IllegalArgumentException e) {
             throw new IOException("Failed for " + sUrl, e);
         }
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -400,8 +399,8 @@ public class UrlUtils {
     public static String getAccessError(String destinationUrl, boolean fireRequest, boolean ignoreHTTPSHostCheck, int timeout, SSLSocketFactory sslFactory) throws IllegalArgumentException {
         URL url;
         try {
-            url = new URI(destinationUrl).toURL();
-        } catch (IllegalArgumentException | URISyntaxException | MalformedURLException e) {
+            url = URI.create(destinationUrl).toURL();
+        } catch (IllegalArgumentException | MalformedURLException e) {
             throw new IllegalArgumentException("Invalid destination URL", e);
         }
 

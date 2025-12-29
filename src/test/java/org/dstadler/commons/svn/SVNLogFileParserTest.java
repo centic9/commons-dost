@@ -77,7 +77,7 @@ public class SVNLogFileParserTest {
 			it.next();
 			pair = it.next();
 			next = pair.getLeft();
-			assertNotEquals(next, LogEntry.MORE, "Last path is '...', had: " + entry.paths);
+			assertNotEquals(LogEntry.MORE, next, "Last path is '...', had: " + entry.paths);
 			assertEquals("A", pair.getRight());
 
 			// rev. 1797: 1 path
@@ -85,7 +85,7 @@ public class SVNLogFileParserTest {
 			assertNotNull(entry);
 			assertNotNull(entry.paths);
 			assertEquals(1, entry.paths.size(), "Expect 1 paths, but had: " + entry.paths);
-			assertNotEquals(entry.paths.iterator().next().getLeft(), LogEntry.MORE, "Path is '...', had: " + entry.paths);
+			assertNotEquals(LogEntry.MORE, entry.paths.getFirst().getLeft(), "Path is '...', had: " + entry.paths);
 
 			// rev. 1791: 0 paths
 			entry = parsed.get(1791L);

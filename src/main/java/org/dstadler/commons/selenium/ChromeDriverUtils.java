@@ -112,7 +112,7 @@ public class ChromeDriverUtils {
 
 			File fileZip = File.createTempFile("chromedriver", ".zip");
 			try {
-				FileUtils.copyURLToFile(new URI(downloadUrl).toURL(), fileZip);
+				FileUtils.copyURLToFile(URI.create(downloadUrl).toURL(), fileZip);
 
 				// unzip the driver-files to the local directory
 				ZipUtils.extractZip(fileZip, new File("."));
@@ -127,7 +127,7 @@ public class ChromeDriverUtils {
 							"chromedriver-win64/chromedriver.exe" :
 							"chromedriver-linux64/chromedriver"), chromeDriverFile);
 				}
-			} catch (IllegalArgumentException | URISyntaxException e) {
+			} catch (IllegalArgumentException e) {
                 throw new IOException("Failed for " + downloadUrl, e);
             } finally {
 				FileUtils.delete(fileZip);

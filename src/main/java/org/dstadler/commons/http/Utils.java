@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Date;
@@ -167,8 +166,8 @@ CIDR-Adressblock 	Adressbereich 	Beschreibung 	RFC
 
 		final URL url;
 		try {
-			url = new URI(sUrl).toURL();
-		} catch (IllegalArgumentException | URISyntaxException | MalformedURLException e) {
+			url = URI.create(sUrl).toURL();
+		} catch (IllegalArgumentException | MalformedURLException e) {
 			logger.info("URL-Failed(" + count + "): " + e);
 			return false;
         }

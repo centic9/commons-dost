@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Disabled;
@@ -45,7 +45,7 @@ public class DocumentStarterTest {
 		try {
 			starter.openFile(tempFile);
 			starter.openURL("http://www.compuware.com");
-			starter.openURL(new URL("http://www.compuware.com"));
+			starter.openURL(URI.create("http://www.compuware.com").toURL());
 		} finally {
 			assertTrue(tempFile.delete());
 		}

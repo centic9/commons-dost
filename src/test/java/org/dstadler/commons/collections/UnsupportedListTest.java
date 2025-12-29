@@ -25,7 +25,7 @@ public class UnsupportedListTest extends AbstractUnsupportedCollectionTest<Unsup
 		assertThrows(UnsupportedOperationException.class,
 				() -> coll.add(null));
 		assertThrows(UnsupportedOperationException.class,
-				() -> coll.get(0));
+                coll::getFirst);
 		assertThrows(UnsupportedOperationException.class,
 				coll::reversed);
 		assertThrows(UnsupportedOperationException.class,

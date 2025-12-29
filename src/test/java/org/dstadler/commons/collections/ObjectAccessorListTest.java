@@ -46,7 +46,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         objects.add(obj3);
 
         List<Integer> list = new ObjectAccessorList<>(objects, Object::hashCode) {};
-        assertEquals((Integer)obj1.hashCode(), list.get(0));
+        assertEquals((Integer)obj1.hashCode(), list.getFirst());
         assertEquals((Integer)obj2.hashCode(), list.get(1));
         assertEquals((Integer)obj3.hashCode(), list.get(2));
         assertEquals(3, list.size());
@@ -74,7 +74,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         assertEquals(((long)obj1.hashCode())+obj2.hashCode()+obj3.hashCode(), sum.get());
 
 		assertThrows(UnsupportedOperationException.class,
-				() -> list.remove(0));
+				() -> list.removeFirst());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         // modify the list
         objects.remove(obj2);
 
-        assertEquals((Integer)obj1.hashCode(), list.get(0));
+        assertEquals((Integer)obj1.hashCode(), list.getFirst());
         assertEquals((Integer)obj3.hashCode(), list.get(1));
         assertEquals(2, list.size());
         assertFalse(list.isEmpty());
@@ -117,7 +117,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         assertEquals(((long)obj1.hashCode())+obj3.hashCode(), sum.get());
 
 		assertThrows(UnsupportedOperationException.class,
-				() -> list.remove(0));
+				() -> list.removeFirst());
 
         // remove all objects
         objects.remove(obj1);
@@ -141,7 +141,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
 		//noinspection ConstantValue
 		assertEquals(0, list.size());
 		assertThrows(IndexOutOfBoundsException.class,
-				() -> list.get(0));
+				() -> list.getFirst());
 		assertThrows(IndexOutOfBoundsException.class,
 				() -> list.get(2363));
 		//noinspection CastCanBeRemovedNarrowingVariableType

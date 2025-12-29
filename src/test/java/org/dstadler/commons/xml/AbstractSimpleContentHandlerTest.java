@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.SortedMap;
@@ -66,7 +67,7 @@ public class AbstractSimpleContentHandlerTest {
 		};
 
 		try {
-			handler.parseContent(new URL("http://invalidhostname/doesnotexist"), "", null, 10_000);
+			handler.parseContent(URI.create("http://invalidhostname/doesnotexist").toURL(), "", null, 10_000);
 			fail("Should catch exception");
 		} catch (UnknownHostException e) {
 			TestHelpers.assertContains(e, "invalidhostname");	// NOPMD
