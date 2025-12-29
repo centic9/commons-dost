@@ -140,8 +140,13 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
 		assertTrue(list.isEmpty());
 		//noinspection ConstantValue
 		assertEquals(0, list.size());
-		assertThrows(IndexOutOfBoundsException.class,
-				() -> list.getFirst());
+        //noinspection SequencedCollectionMethodCanBeUsed
+        assertThrows(IndexOutOfBoundsException.class,
+                () -> list.get(0));
+		assertThrows(NoSuchElementException.class,
+                list::getFirst);
+		assertThrows(NoSuchElementException.class,
+                list::getLast);
 		assertThrows(IndexOutOfBoundsException.class,
 				() -> list.get(2363));
 		//noinspection CastCanBeRemovedNarrowingVariableType

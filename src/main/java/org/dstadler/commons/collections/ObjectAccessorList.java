@@ -1,5 +1,6 @@
 package org.dstadler.commons.collections;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,7 +25,7 @@ import java.util.function.Function;
  *
  * Changes to the underlying list should usually have the expected effect on this implementation.
  *
- * Reading fom the the underlying list in multiple threads should work, modifying the underlying
+ * Reading fom the underlying list in multiple threads should work, modifying the underlying
  * list in multiple threads concurrently is not supported.
  *
  * @param <E> The type of objects stored in the underlying list
@@ -55,9 +56,10 @@ public class ObjectAccessorList<R, E> extends UnsupportedList<R> {
         return original.isEmpty();
     }
 
+    @Nonnull
     @Override
     public Iterator<R> iterator() {
-        return new Iterator<R>() {
+        return new Iterator<>() {
             private final Iterator<E> it = original.iterator();
 
             @Override
