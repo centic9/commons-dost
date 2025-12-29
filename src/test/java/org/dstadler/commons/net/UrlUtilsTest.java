@@ -351,7 +351,7 @@ public class UrlUtilsTest {
     }
 
     @Test
-    public void testSSLHostWithFacctory() throws IOException {
+    public void testSSLHostWithFactory() throws IOException {
     	Assumptions.assumeTrue(UrlUtils.isAvailable("https://dstadler.org/", false, 10000),
     			"Need access to https://dstadler.org/ for this test to run");
 
