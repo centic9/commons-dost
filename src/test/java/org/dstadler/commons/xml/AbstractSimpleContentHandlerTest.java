@@ -87,13 +87,8 @@ public class AbstractSimpleContentHandlerTest {
 		try {
 			handler.parseContent(URI.create("http://inv\"!$%()(§$)(alidhostname/doesnotexist").toURL(), "", null, 10_000);
 			fail("Should catch exception");
-		} catch (IOException e) {
-			if (System.getProperty("java.specification.version", "99.0").equals("21")) {
-				TestHelpers.assertNotContains(e.getMessage(), "inv\"!$%()(§$)(alidhostname");    // NOPMD
-				TestHelpers.assertContains(e, "host: '\"'");
-			} else {
-				TestHelpers.assertContains(e, "inv\"!$%()(§$)(alidhostname");    // NOPMD
-			}
+		} catch (IllegalArgumentException e) {
+            TestHelpers.assertContains(e, "inv\"!$%()(§$)(alidhostname");    // NOPMD
 		}
 	}
 
