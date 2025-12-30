@@ -81,13 +81,13 @@ public class ThreadDumpTest {
         ThreadDump dump = new ThreadDump(true, true);
 
         TestHelpers.assertContains(dump.toString(), "main", "testthread", "owned by");
+        TestHelpers.assertNotContains(dump.toString(), "(suspended)");
 
         rw.writeLock().unlock();
 
         thread.join();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testThreadDumpWithSuspended() throws Exception {
         final Semaphore sem = new Semaphore(0);
@@ -108,28 +108,10 @@ public class ThreadDumpTest {
         // sleep a bit to let the thread start
         Thread.sleep(100);
 
-		boolean suspended = true;
-		try {
-			thread.suspend();
-		} catch (UnsupportedOperationException e) {
-			// thrown in JDK 20+
-			suspended = false;
-		}
-
         ThreadDump dump = new ThreadDump(true, true);
 
 		TestHelpers.assertContains(dump.toString(), "main", "testthread");
-		if (suspended) {
-			TestHelpers.assertContains(dump.toString(), "(suspended)");
-		} else {
-			TestHelpers.assertNotContains(dump.toString(), "(suspended)");
-		}
-
-		try {
-			thread.resume();
-		} catch (UnsupportedOperationException e) {
-			// thrown in JDK 20+
-		}
+        TestHelpers.assertNotContains(dump.toString(), "(suspended)");
 
         sem.release(1);
         thread.join();

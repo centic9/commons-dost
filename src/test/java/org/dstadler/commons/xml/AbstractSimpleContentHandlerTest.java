@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.SortedMap;
 
@@ -35,7 +34,7 @@ public class AbstractSimpleContentHandlerTest {
 		};
 
 		try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
-			SortedMap<String, String> map = handler.parseContent(new URL("http://localhost:" + server.getPort()), "", null, 10_000);
+			SortedMap<String, String> map = handler.parseContent(URI.create("http://localhost:" + server.getPort()).toURL(), "", null, 10_000);
 			assertTrue(map.isEmpty(), "Parsing not implemented in abstract base class");
 		}
 	}
@@ -52,7 +51,7 @@ public class AbstractSimpleContentHandlerTest {
 
 		try {
 			try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
-				handler.parseContent(new URL("http://localhost:" + server.getPort()), "", null, 10_000);
+				handler.parseContent(URI.create("http://localhost:" + server.getPort()).toURL(), "", null, 10_000);
 			}
 			fail("Should catch exception here");
 		} catch (IOException e) {
@@ -86,7 +85,7 @@ public class AbstractSimpleContentHandlerTest {
 		};
 
 		try {
-			handler.parseContent(new URL("http://inv\"!$%()(§$)(alidhostname/doesnotexist"), "", null, 10_000);
+			handler.parseContent(URI.create("http://inv\"!$%()(§$)(alidhostname/doesnotexist").toURL(), "", null, 10_000);
 			fail("Should catch exception");
 		} catch (IOException e) {
 			if (System.getProperty("java.specification.version", "99.0").equals("21")) {
@@ -106,7 +105,7 @@ public class AbstractSimpleContentHandlerTest {
 
 		try (MockRESTServer server = new MockRESTServer("404", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
 		    try {
-    			handler.parseContent(new URL("http://localhost:" + server.getPort() + "/notfound"), "", null, 10_000);
+    			handler.parseContent(URI.create("http://localhost:" + server.getPort() + "/notfound").toURL(), "", null, 10_000);
     			fail("Should catch exception");
     		} catch (IOException e) {
     			TestHelpers.assertContains(e, "http://localhost:" + server.getPort() + "/notfound");

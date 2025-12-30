@@ -27,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -81,7 +82,7 @@ class NanoHTTPDTest {
         NanoHTTPD httpd = new NanoHTTPD(port);
 		try {
 
-            final URL url = new URL("http://localhost:" + port);
+            final URL url = URI.create("http://localhost:" + port).toURL();
 
             final URLConnection con;
             con = url.openConnection();
@@ -446,7 +447,7 @@ class NanoHTTPDTest {
 	}
 
 	private static void retrieveData(String sUrl) throws IOException {
-		URL url = new URL(sUrl);
+		URL url = URI.create(sUrl).toURL();
 
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		try {

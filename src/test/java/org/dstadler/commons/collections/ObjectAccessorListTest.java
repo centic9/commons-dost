@@ -55,10 +55,8 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
 		assertThrows(IndexOutOfBoundsException.class,
 				() -> list.get(2363));
 
-		//noinspection CastCanBeRemovedNarrowingVariableType
-		assertEquals((Integer)obj1.hashCode(), ((UnsupportedList<Integer>)list).getFirst());
-		//noinspection CastCanBeRemovedNarrowingVariableType
-		assertEquals((Integer)obj3.hashCode(), ((UnsupportedList<Integer>)list).getLast());
+		assertEquals((Integer)obj1.hashCode(), list.getFirst());
+		assertEquals((Integer)obj3.hashCode(), list.getLast());
 
         Iterator<Integer> it = list.iterator();
         assertTrue(it.hasNext());
@@ -74,7 +72,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         assertEquals(((long)obj1.hashCode())+obj2.hashCode()+obj3.hashCode(), sum.get());
 
 		assertThrows(UnsupportedOperationException.class,
-				() -> list.removeFirst());
+                list::removeFirst);
     }
 
     @Test
@@ -100,10 +98,8 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
 		assertThrows(IndexOutOfBoundsException.class,
 				() -> list.get(2363));
 
-		//noinspection CastCanBeRemovedNarrowingVariableType
-		assertEquals((Integer)obj1.hashCode(), ((UnsupportedList<Integer>)list).getFirst());
-		//noinspection CastCanBeRemovedNarrowingVariableType
-		assertEquals((Integer)obj3.hashCode(), ((UnsupportedList<Integer>)list).getLast());
+		assertEquals((Integer)obj1.hashCode(), list.getFirst());
+		assertEquals((Integer)obj3.hashCode(), list.getLast());
 
 		Iterator<Integer> it = list.iterator();
         assertTrue(it.hasNext());
@@ -117,7 +113,7 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
         assertEquals(((long)obj1.hashCode())+obj3.hashCode(), sum.get());
 
 		assertThrows(UnsupportedOperationException.class,
-				() -> list.removeFirst());
+                list::removeFirst);
 
         // remove all objects
         objects.remove(obj1);
@@ -149,11 +145,9 @@ public class ObjectAccessorListTest  extends AbstractUnsupportedCollectionTest<O
                 list::getLast);
 		assertThrows(IndexOutOfBoundsException.class,
 				() -> list.get(2363));
-		//noinspection CastCanBeRemovedNarrowingVariableType
 		assertThrows(NoSuchElementException.class,
-				() -> ((UnsupportedList<Integer>)list).getFirst());
-		//noinspection CastCanBeRemovedNarrowingVariableType
+                list::getFirst);
 		assertThrows(NoSuchElementException.class,
-				() -> ((UnsupportedList<Integer>)list).getLast());
+                list::getLast);
 	}
 }
