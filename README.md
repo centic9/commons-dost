@@ -51,6 +51,8 @@ http://github.com/centic9/commons-test for more details.
     cd commons-dost
     ./gradlew check jacocoTestReport
 
+Resulting coverage report is at `build/reports/jacoco/test/html/index.html`
+
 ### Release it
 
 * Check the version defined in `gradle.properties`
