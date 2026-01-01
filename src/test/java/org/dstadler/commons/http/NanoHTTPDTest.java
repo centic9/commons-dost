@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import javax.net.ssl.SSLException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -32,6 +33,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -128,81 +130,88 @@ class NanoHTTPDTest {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
 		NanoHTTPD httpd = new NanoHTTPD(port);
 
-		assertEquals(
-				NanoHTTPD.HTTP_INTERNALERROR,
-				httpd.serveFile(null, null, new File("somefile"), true).status,
-				"Should fail when not a directory.");
+        try {
+            assertEquals(
+                    NanoHTTPD.HTTP_INTERNALERROR,
+                    httpd.serveFile(null, null, new File("somefile"), true).status,
+                    "Should fail when not a directory.");
 
-		assertEquals(
-				NanoHTTPD.HTTP_FORBIDDEN,
-				httpd.serveFile("../build.gradle", null, new File("."), true).status,
-				"Should not serve path with ..");
+            assertEquals(
+                    NanoHTTPD.HTTP_FORBIDDEN,
+                    httpd.serveFile("../build.gradle", null, new File("."), true).status,
+                    "Should not serve path with ..");
 
-		assertEquals(
-				NanoHTTPD.HTTP_FORBIDDEN,
-				httpd.serveFile("build.gradle/..", null, new File("."), true).status,
-				"Should not serve path with ..");
+            assertEquals(
+                    NanoHTTPD.HTTP_FORBIDDEN,
+                    httpd.serveFile("build.gradle/..", null, new File("."), true).status,
+                    "Should not serve path with ..");
 
-		assertEquals(
-				NanoHTTPD.HTTP_FORBIDDEN,
-				httpd.serveFile("somepath/../build.gradle", null, new File("."), true).status,
-				"Should not serve path with ..");
+            assertEquals(
+                    NanoHTTPD.HTTP_FORBIDDEN,
+                    httpd.serveFile("somepath/../build.gradle", null, new File("."), true).status,
+                    "Should not serve path with ..");
 
-		assertEquals(
-				NanoHTTPD.HTTP_NOTFOUND,
-				httpd.serveFile("somepath", null, new File("."), true).status,
-				"File not found..");
+            assertEquals(
+                    NanoHTTPD.HTTP_NOTFOUND,
+                    httpd.serveFile("somepath", null, new File("."), true).status,
+                    "File not found..");
 
-		assertEquals(
-				NanoHTTPD.HTTP_OK,
-				httpd.serveFile("build.gradle?param=1", new Properties(), new File("."), true).status,
-				"File is found");
+            assertEquals(
+                    NanoHTTPD.HTTP_OK,
+                    httpd.serveFile("build.gradle?param=1", new Properties(), new File("."), true).status,
+                    "File is found");
 
-        assertEquals(
-				NanoHTTPD.HTTP_OK,
-				httpd.serveFile(".gitignore", new Properties(), new File("."), true).status,
-				"File is found");
+            assertEquals(
+                    NanoHTTPD.HTTP_OK,
+                    httpd.serveFile(".gitignore", new Properties(), new File("."), true).status,
+                    "File is found");
 
-        assertEquals(
-				NanoHTTPD.HTTP_OK,
-				httpd.serveFile("gradlew", new Properties(), new File("."), true).status,
-				"File is found");
+            assertEquals(
+                    NanoHTTPD.HTTP_OK,
+                    httpd.serveFile("gradlew", new Properties(), new File("."), true).status,
+                    "File is found");
 
-        assertEquals(
-				NanoHTTPD.HTTP_OK,
-				httpd.serveFile("src/test/data/empty.txt", new Properties(), new File("."), true).status,
-				"File is found");
+            assertEquals(
+                    NanoHTTPD.HTTP_OK,
+                    httpd.serveFile("src/test/data/empty.txt", new Properties(), new File("."), true).status,
+                    "File is found");
 
-        Properties header = new Properties();
-        header.put("range", "something");
-        assertEquals(NanoHTTPD.HTTP_OK,
-				httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
-				"File is found");
+            Properties header = new Properties();
+            header.put("range", "something");
+            assertEquals(NanoHTTPD.HTTP_OK,
+                    httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+                    "File is found");
 
-        header.put("range", "bytes=12");
-        assertEquals(
-				NanoHTTPD.HTTP_OK, httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
-				"File is found");
+            header.put("range", "bytes=12");
+            assertEquals(
+                    NanoHTTPD.HTTP_OK, httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+                    "File is found");
 
-        header.put("range", "bytes=-121234");
-        assertEquals(
-				NanoHTTPD.HTTP_OK,
-				httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
-				"File is found");
+            header.put("range", "bytes=-121234");
+            assertEquals(
+                    NanoHTTPD.HTTP_OK,
+                    httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+                    "File is found");
 
-        header.put("range", "bytes=123-121234");
-        assertEquals(
-				NanoHTTPD.HTTP_OK,
-				httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
-				"File is found");
+            header.put("range", "bytes=123-121234");
+            assertEquals(
+                    NanoHTTPD.HTTP_OK,
+                    httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
+                    "File is found");
 
-        header.put("range", "bytes=illegal");
-        assertEquals(
-				NanoHTTPD.HTTP_OK,
-				httpd.serveFile("build.gradle?param=1", header, new File("."), true).status,
-				"File is found");
+            header.put("range", "bytes=illegal");
+            Response response = httpd.serveFile("build.gradle?param=1", header, new File("."), true);
+            assertEquals(
+                    NanoHTTPD.HTTP_OK,
+                    response.status,
+                    "File is found");
 
-        httpd.stop();
+            assertTrue(IOUtils.toString(response.data, StandardCharsets.UTF_8).contains("apply plugin"));
+
+            response.data.close();
+        } finally {
+            httpd.stop();
+        }
 	}
 
 	@Test
@@ -469,4 +478,116 @@ class NanoHTTPDTest {
 			conn.disconnect();
 		}
 	}
+
+    @Test
+    public void testServeFileReturnsStreamAndContentMatches() throws Exception {
+        File tempDir = Files.createTempDirectory("nanohttpd-test").toFile();
+        try {
+            File f = new File(tempDir, "hello.txt");
+            String content = "Hello world!";
+            try (FileOutputStream fos = new FileOutputStream(f)) {
+                fos.write(content.getBytes(StandardCharsets.UTF_8));
+            }
+
+            NanoHTTPD nh = new NanoHTTPD(0);
+            try {
+                Properties header = new Properties();
+                NanoHTTPD.Response r = nh.serveFile("hello.txt", header, tempDir, false);
+                assertNotNull(r);
+                assertEquals(NanoHTTPD.HTTP_OK, r.status);
+                assertNotNull(r.data);
+
+                byte[] got = IOUtils.toByteArray(r.data);
+                assertEquals(content, new String(got, StandardCharsets.UTF_8));
+
+                String contentLength = r.header.getProperty("Content-length");
+                assertNotNull(contentLength);
+                assertEquals(String.valueOf(f.length()), contentLength);
+            } finally {
+                nh.stop();
+            }
+        } finally {
+            // cleanup recursively
+            deleteRecursively(tempDir);
+        }
+    }
+
+    @Test
+    public void testServeFileWithRangeSkipsBytes() throws Exception {
+        File tempDir = Files.createTempDirectory("nanohttpd-test").toFile();
+        try {
+            File f = new File(tempDir, "greet.txt");
+            String content = "0123456789ABCDEFGHIJKLMNOPQ";
+            try (FileOutputStream fos = new FileOutputStream(f)) {
+                fos.write(content.getBytes(StandardCharsets.UTF_8));
+            }
+
+            NanoHTTPD nh = new NanoHTTPD(0);
+            try {
+                Properties header = new Properties();
+                header.setProperty("range", "bytes=10-");
+                NanoHTTPD.Response r = nh.serveFile("greet.txt", header, tempDir, false);
+                assertNotNull(r);
+                assertEquals(NanoHTTPD.HTTP_OK, r.status);
+                assertNotNull(r.data);
+
+                byte[] got = IOUtils.toByteArray(r.data);
+                String gotStr = new String(got, StandardCharsets.UTF_8);
+                assertEquals(content.substring(10), gotStr);
+
+                String contentLength = r.header.getProperty("Content-length");
+                assertNotNull(contentLength);
+                assertEquals(Integer.toString(content.length() - 10), contentLength);
+            } finally {
+                nh.stop();
+            }
+        } finally {
+            deleteRecursively(tempDir);
+        }
+    }
+
+    @Test
+    public void testCreateDirListingReturnsHtml() throws Exception {
+        File tempDir = Files.createTempDirectory("nanohttpd-test").toFile();
+        try {
+            File sub = new File(tempDir, "subdir");
+            assertTrue(sub.mkdirs());
+            File f1 = new File(sub, "a.txt");
+            try (FileOutputStream fos = new FileOutputStream(f1)) {
+                fos.write("x".getBytes(StandardCharsets.UTF_8));
+            }
+
+            NanoHTTPD nh = new NanoHTTPD(0);
+            try {
+                Properties header = new Properties();
+                // uri should end with '/' to trigger directory listing body
+                NanoHTTPD.Response r = nh.serveFile("subdir/", header, tempDir, true);
+                assertNotNull(r);
+                assertEquals(NanoHTTPD.HTTP_OK, r.status);
+                assertEquals(NanoHTTPD.MIME_HTML, r.mimeType);
+                assertNotNull(r.data);
+
+                String html = new String(IOUtils.toByteArray((InputStream) r.data), StandardCharsets.UTF_8);
+                assertTrue(html.contains("a.txt"), "Directory listing should contain the filename");
+            } finally {
+                nh.stop();
+            }
+        } finally {
+            deleteRecursively(tempDir);
+        }
+    }
+
+    private static void deleteRecursively(File f) {
+        if (f == null || !f.exists()) return;
+        if (f.isDirectory()) {
+            File[] c = f.listFiles();
+            if (c != null) {
+                for (File child : c) {
+                    deleteRecursively(child);
+                }
+            }
+        }
+
+        assertTrue(f.delete());
+    }
 }

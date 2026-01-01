@@ -602,8 +602,13 @@ public class NanoHTTPD
 				String e = st.nextToken();
 				int sep = e.indexOf( '=' );
 				if ( sep >= 0 ) {
-					p.put( decodePercent( e.substring( 0, sep )).trim(),
-						   decodePercent( e.substring( sep+1 )));
+					String key = decodePercent(e.substring(0, sep));
+					String val = decodePercent(e.substring(sep+1));
+					if (key == null || val == null) {
+						// decoding failed (bad percent-encoding), skip this parameter
+						continue;
+					}
+					p.put(key.trim(), val);
 				}
 			}
 		}
@@ -794,7 +799,9 @@ public class NanoHTTPD
 			// Support (simple) skipping:
 			long startFrom = getRange(header);
 
-			try (InputStream fis = new FileInputStream( f )) {
+			InputStream fis = null;
+			try {
+				fis = new FileInputStream( f );
 				if(fis.skip( startFrom ) != startFrom) {
 					logger.info("Skipped less bytes than expected: " + startFrom);
 				}
@@ -803,6 +810,12 @@ public class NanoHTTPD
 				r.addHeader( "Content-range", "" + startFrom + "-" +
 							(f.length()-1) + '/' + f.length());
 				return r;
+			} catch (IOException ioe) {
+				// If we failed after opening the stream, make sure to close it
+				if (fis != null) {
+					try { fis.close(); } catch (IOException ignored) { }
+				}
+				throw ioe;
 			}
 		}
 		catch( IOException ioe )
@@ -843,8 +856,11 @@ public class NanoHTTPD
     }
 
     private String createDirListing(String uri, File f) {
-        String[] files = f.list();
-        StringBuilder msg = new StringBuilder("<html><body><h1>Directory " + uri + "</h1><br/>");
+		String[] files = f.list();
+		if (files == null) {
+			return "<html><body><h1>Directory " + uri + "</h1><br/>Unable to list directory contents.</body></html>";
+		}
+		StringBuilder msg = new StringBuilder("<html><body><h1>Directory " + uri + "</h1><br/>");
 
         if ( uri.length() > 1 )
         {
