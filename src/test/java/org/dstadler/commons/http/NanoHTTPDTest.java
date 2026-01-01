@@ -567,7 +567,7 @@ class NanoHTTPDTest {
                 assertEquals(NanoHTTPD.MIME_HTML, r.mimeType);
                 assertNotNull(r.data);
 
-                String html = new String(IOUtils.toByteArray((InputStream) r.data), StandardCharsets.UTF_8);
+                String html = new String(IOUtils.toByteArray(r.data), StandardCharsets.UTF_8);
                 assertTrue(html.contains("a.txt"), "Directory listing should contain the filename");
             } finally {
                 nh.stop();
@@ -589,5 +589,124 @@ class NanoHTTPDTest {
         }
 
         assertTrue(f.delete());
+    }
+
+
+    @Test
+    public void testServeFileInvalidRangeIsIgnored() throws Exception {
+        File tempDir = Files.createTempDirectory("nanohttpd-test2").toFile();
+        try {
+            File f = new File(tempDir, "full.txt");
+            String content = "abcdefghijklmnopqrstuvwxyz";
+            try (FileOutputStream fos = new FileOutputStream(f)) {
+                fos.write(content.getBytes(StandardCharsets.UTF_8));
+            }
+
+            NanoHTTPD nh = new NanoHTTPD(0);
+            try {
+                Properties header = new Properties();
+                header.setProperty("range", "bytes=foo-");
+                NanoHTTPD.Response r = nh.serveFile("full.txt", header, tempDir, false);
+                assertNotNull(r);
+                assertEquals(NanoHTTPD.HTTP_OK, r.status);
+
+                byte[] got = IOUtils.toByteArray(r.data);
+                assertEquals(content, new String(got, StandardCharsets.UTF_8));
+
+                String contentLength = r.header.getProperty("Content-length");
+                assertNotNull(contentLength);
+                assertEquals(String.valueOf(f.length()), contentLength);
+            } finally {
+                nh.stop();
+            }
+        } finally {
+            deleteRecursively(tempDir);
+        }
+    }
+
+    @Test
+    public void testServeDirectoryRedirectWhenNoTrailingSlash() throws Exception {
+        File tempDir = Files.createTempDirectory("nanohttpd-test3").toFile();
+        try {
+            File sub = new File(tempDir, "d1");
+            assertTrue(sub.mkdirs());
+
+            NanoHTTPD nh = new NanoHTTPD(0);
+            try {
+                Properties header = new Properties();
+                NanoHTTPD.Response r = nh.serveFile("d1", header, tempDir, true);
+                assertNotNull(r);
+                assertEquals(NanoHTTPD.HTTP_REDIRECT, r.status);
+                String location = r.header.getProperty("Location");
+                assertNotNull(location);
+                assertTrue(location.endsWith("/"));
+            } finally {
+                nh.stop();
+            }
+        } finally {
+            deleteRecursively(tempDir);
+        }
+    }
+
+    @Test
+    public void testHomeDirNotDirectoryReturnsInternalError() throws Exception {
+        File tempDir = Files.createTempDirectory("nanohttpd-test5").toFile();
+        try {
+            File f = new File(tempDir, "afile");
+            try (FileOutputStream fos = new FileOutputStream(f)) {
+                fos.write("x".getBytes(StandardCharsets.UTF_8));
+            }
+
+            NanoHTTPD nh = new NanoHTTPD(0);
+            try {
+                Properties header = new Properties();
+                NanoHTTPD.Response r = nh.serveFile("anything", header, f, true);
+                assertNotNull(r);
+                assertEquals(NanoHTTPD.HTTP_INTERNALERROR, r.status);
+            } finally {
+                nh.stop();
+            }
+        } finally {
+            deleteRecursively(tempDir);
+        }
+    }
+
+    @Test
+    public void testServeFileNotFound() throws Exception {
+        File tempDir = Files.createTempDirectory("nanohttpd-test6").toFile();
+        try {
+            NanoHTTPD nh = new NanoHTTPD(0);
+            try {
+                Properties header = new Properties();
+                NanoHTTPD.Response r = nh.serveFile("no-such-file.txt", header, tempDir, true);
+                assertNotNull(r);
+                assertEquals(NanoHTTPD.HTTP_NOTFOUND, r.status);
+            } finally {
+                nh.stop();
+            }
+        } finally {
+            deleteRecursively(tempDir);
+        }
+    }
+
+    @Test
+    public void testDirectoryListingForbiddenWhenNotAllowed() throws Exception {
+        File tempDir = Files.createTempDirectory("nanohttpd-test7").toFile();
+        try {
+            File sub = new File(tempDir, "dno");
+            assertTrue(sub.mkdirs());
+
+            NanoHTTPD nh = new NanoHTTPD(0);
+            try {
+                Properties header = new Properties();
+                NanoHTTPD.Response r = nh.serveFile("dno/", header, tempDir, false);
+                assertNotNull(r);
+                assertEquals(NanoHTTPD.HTTP_FORBIDDEN, r.status);
+            } finally {
+                nh.stop();
+            }
+        } finally {
+            deleteRecursively(tempDir);
+        }
     }
 }
