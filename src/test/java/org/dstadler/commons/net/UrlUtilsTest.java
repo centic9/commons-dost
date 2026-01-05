@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,6 +90,12 @@ public class UrlUtilsTest {
 		try (MockRESTServer server = new MockRESTServer("201 CREATED", NanoHTTPD.MIME_HTML, "expected")) {
 			assertArrayEquals("expected".getBytes(), UrlUtils.retrieveRawData("http://localhost:" + server.getPort(), 0));
 		}
+	}
+
+	@Test
+	public void testRetrieveDataInvalidHost() {
+		assertThrows(UnknownHostException.class,
+				() -> UrlUtils.retrieveData("http://illegalhostname", 10_000));
 	}
 
 	@Test
@@ -284,7 +291,7 @@ public class UrlUtilsTest {
 	}
 
 	@Test
-	public void testRunWithDifferentLoglevel() throws Exception {
+	public void testRunWithDifferentLogLevel() throws Exception {
 		final AtomicReference<Exception> exc = new AtomicReference<>(null);
 		TestHelpers.runTestWithDifferentLogLevel(() -> {
             try {
@@ -363,7 +370,7 @@ public class UrlUtilsTest {
 		assertNotNull(UrlUtils.retrieveData("https://www.dstadler.org/mambo2/", null, 10000, sslFactory),
 				"Contacting https://dstadler.org/ failed");
 
-		// this will fail with 405 Method not allowed
+		// this can fail with 405 Method not allowed
 		try {
 			UrlUtils.retrieveDataPost("https://dstadler.org/", null, "content-length:234\n\r", null, 10000, sslFactory);
 		} catch (@SuppressWarnings("unused") IOException e) {
@@ -383,11 +390,19 @@ public class UrlUtilsTest {
 		assertNotNull(UrlUtils.retrieveData("https://www.dstadler.org/mambo2/", null, 20000, null),
 				"Contacting https://dstadler.org/ failed");
 
-		// this will fail with 405 Method not allowed
+		// this can fail with 405 Method not allowed
 		try {
 			UrlUtils.retrieveDataPost("https://dstadler.org/", null, "content-length:234\n\r", null, 10000, null);
 		} catch (@SuppressWarnings("unused") IOException e) {
 			// expected, url does not support POST method
 		}
     }
+
+	@Test
+	void testRetrieveData() throws IOException {
+		assertNotNull(UrlUtils.retrieveData("https://www.google.com", 10_000));
+
+		// with redirect
+		assertNotNull(UrlUtils.retrieveData("http://www.google.com", 10_000));
+	}
 }
