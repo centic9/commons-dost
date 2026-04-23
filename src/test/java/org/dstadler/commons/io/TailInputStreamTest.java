@@ -1,5 +1,6 @@
 package org.dstadler.commons.io;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -175,6 +176,43 @@ public class TailInputStreamTest {
 			assertCount(file, 1000, 1000);
 			assertCount(file, 1000, 1001);
 			assertCount(file, 1000, 2001);
+		} finally {
+			assertTrue(file.delete());
+		}
+	}
+
+	@Test
+	public void testTailInputStreamBytes() throws Exception {
+		File file = File.createTempFile("TailInputStream", ".test");
+		try {
+			byte[] bytes = new byte[256];
+			for (int i = 0; i < 256; i++) {
+				bytes[i] = (byte) i;
+			}
+
+			FileUtils.writeByteArrayToFile(file, bytes);
+
+
+			assertEquals(256, file.length());
+
+			// nothing is read because the stream only returns data after the first full line
+			assertCount(file, 0, 20);
+			assertCount(file, 0, 100);
+			assertCount(file, 256, 999);
+			assertCount(file, 256, 1000);
+			assertCount(file, 256, 1001);
+			assertCount(file, 256, 2001);
+
+			try (InputStream stream = new TailInputStream(file, 1000)) {
+				try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+					IOUtils.copy(stream, out);
+
+					assertArrayEquals(bytes,
+							out.toByteArray(),
+							"Bytes read via TailInputStream should match written bytes");
+				}
+			}
+
 		} finally {
 			assertTrue(file.delete());
 		}
