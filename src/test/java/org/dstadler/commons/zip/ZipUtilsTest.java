@@ -98,37 +98,25 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testGetZipContentsRecursiveError() throws Exception {
-		try {
-			ZipUtils.getZipContentsRecursive("notexistingfile");
-			fail("Should catch Exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "notexistingfile");
-		}
+		IOException e = assertThrows(IOException.class,
+				() -> ZipUtils.getZipContentsRecursive("notexistingfile"));
+		TestHelpers.assertContains(e, "notexistingfile");
 
-		try {
-			ZipUtils.getZipContentsRecursive("notexistingfile!somefile");
-			fail("Should catch Exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "notexistingfile");
-		}
+		e = assertThrows(IOException.class,
+				() -> ZipUtils.getZipContentsRecursive("notexistingfile!somefile"));
+		TestHelpers.assertContains(e, "notexistingfile");
 
-		try {
-			ZipUtils.getZipContentsRecursive(".!somefile");
-			fail("Should catch Exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, ".");
-		}
+		e = assertThrows(IOException.class,
+				() -> ZipUtils.getZipContentsRecursive(".!somefile"));
+		TestHelpers.assertContains(e, ".");
 
 		File file = File.createTempFile("ZipUtils", ".test");
 		FileUtils.writeStringToFile(file, "", "UTF-8");
 		assertEquals(0, file.length());
 		try {
-			try {
-				ZipUtils.getZipContentsRecursive(file.getAbsolutePath() + "!somefile");
-				fail("Should catch Exception here");
-			} catch (IOException e) {
-				TestHelpers.assertContains(e, file.getAbsolutePath());
-			}
+			e = assertThrows(IOException.class,
+					() -> ZipUtils.getZipContentsRecursive(file.getAbsolutePath() + "!somefile"));
+			TestHelpers.assertContains(e, file.getAbsolutePath());
 		} finally {
 			assertTrue(file.delete());
 		}
@@ -154,9 +142,8 @@ public class ZipUtilsTest {
 		File zipfile = createNestedZip();
 
 		try {
-			ZipUtils.getZipContentsRecursive(zipfile.getAbsolutePath() + "!zipfileDiff.zip!filename");
-			fail("Should catch exception here");
-		} catch (IOException e) {
+			IOException e = assertThrows(IOException.class,
+					() -> ZipUtils.getZipContentsRecursive(zipfile.getAbsolutePath() + "!zipfileDiff.zip!filename"));
 			TestHelpers.assertContains(e, "zipfileDiff.zip");
         } finally {
             assertTrue(zipfile.exists());
@@ -166,12 +153,9 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testGetZipContentsInvalidZipFile() {
-		try {
-			ZipUtils.getZipContentsRecursive("zipfileNotExist.zip!filename");
-			fail("Should catch exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "zipfileNotExist.zip");
-		}
+		IOException e = assertThrows(IOException.class,
+				() -> ZipUtils.getZipContentsRecursive("zipfileNotExist.zip!filename"));
+		TestHelpers.assertContains(e, "zipfileNotExist.zip");
 	}
 
 	@Test
@@ -381,37 +365,25 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testGetZipStringContentsRecursiveError() throws Exception {
-		try {
-			ZipUtils.getZipStringContentsRecursive("notexistingfile");
-			fail("Should catch Exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "notexistingfile");
-		}
+		IOException e = assertThrows(IOException.class,
+				() -> ZipUtils.getZipStringContentsRecursive("notexistingfile"));
+		TestHelpers.assertContains(e, "notexistingfile");
 
-		try {
-			ZipUtils.getZipStringContentsRecursive("notexistingfile!somefile");
-			fail("Should catch Exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "notexistingfile");
-		}
+		e = assertThrows(IOException.class,
+				() -> ZipUtils.getZipStringContentsRecursive("notexistingfile!somefile"));
+		TestHelpers.assertContains(e, "notexistingfile");
 
-		try {
-			ZipUtils.getZipStringContentsRecursive(".!somefile");
-			fail("Should catch Exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, ".");
-		}
+		e = assertThrows(IOException.class,
+				() -> ZipUtils.getZipStringContentsRecursive(".!somefile"));
+		TestHelpers.assertContains(e, ".");
 
 		File file = File.createTempFile("ZipUtils", ".test");
 		FileUtils.writeStringToFile(file, "", "UTF-8");
 		assertEquals(0, file.length());
 		try {
-			try {
-				ZipUtils.getZipStringContentsRecursive(file.getAbsolutePath() + "!somefile");
-				fail("Should catch Exception here");
-			} catch (IOException e) {
-				TestHelpers.assertContains(e, file.getAbsolutePath());
-			}
+			e = assertThrows(IOException.class,
+					() -> ZipUtils.getZipStringContentsRecursive(file.getAbsolutePath() + "!somefile"));
+			TestHelpers.assertContains(e, file.getAbsolutePath());
 		} finally {
 			assertTrue(file.delete());
 		}
@@ -437,9 +409,8 @@ public class ZipUtilsTest {
 		File zipfile = createNestedZip();
 
 		try {
-			ZipUtils.getZipStringContentsRecursive(zipfile.getAbsolutePath() + "!zipfileDiff.zip!filename");
-			fail("Should catch exception here");
-		} catch (IOException e) {
+			IOException e = assertThrows(IOException.class,
+					() -> ZipUtils.getZipStringContentsRecursive(zipfile.getAbsolutePath() + "!zipfileDiff.zip!filename"));
 			TestHelpers.assertContains(e, "zipfileDiff.zip");
 		} finally {
 		    assertTrue(zipfile.exists());
@@ -449,12 +420,9 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testGetZipStringContentsInvalidZipFile() {
-		try {
-			ZipUtils.getZipStringContentsRecursive("zipfileNotExist.zip!filename");
-			fail("Should catch exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "zipfileNotExist.zip");
-		}
+		IOException e = assertThrows(IOException.class,
+				() -> ZipUtils.getZipStringContentsRecursive("zipfileNotExist.zip!filename"));
+		TestHelpers.assertContains(e, "zipfileNotExist.zip");
 	}
 
 	@Disabled("Local test, will not work in other places")
@@ -489,15 +457,12 @@ public class ZipUtilsTest {
 		File zipfile2 = createNestedZip();
 
 		try {
-    		try {
-				assertFalse(invalidDir.exists(),
-						"Directory should not exist: " + invalidDir.getAbsolutePath());
+			assertFalse(invalidDir.exists(),
+					"Directory should not exist: " + invalidDir.getAbsolutePath());
 
-				ZipUtils.extractZip(zipfile2, invalidDir);
-    			fail("Should catch exception here");
-    		} catch (IOException e) {
-    			TestHelpers.assertContains(e, invalidDir.getName(), "does not exist");
-    		}
+			IOException e = assertThrows(IOException.class,
+					() -> ZipUtils.extractZip(zipfile2, invalidDir));
+			TestHelpers.assertContains(e, invalidDir.getName(), "does not exist");
 
     		File toDir = File.createTempFile("toDir", "");
     		assertTrue(toDir.delete());
@@ -535,9 +500,11 @@ public class ZipUtilsTest {
 		assertTrue(toDir.mkdir());
 
 		try {
-			ZipUtils.extractZip(zipfile, toDir);
-			fail("Should fail because file does not exist");
-		} catch (FileNotFoundException | NoSuchFileException e) {
+			IOException e = assertThrows(IOException.class,
+					() -> ZipUtils.extractZip(zipfile, toDir),
+					"Should fail because file does not exist");
+			assertTrue(e instanceof FileNotFoundException || e instanceof NoSuchFileException,
+					"Had: " + e.getClass());
 			TestHelpers.assertContains(e, "nonexistingfile.zip");
 		} finally {
 		    FileUtils.deleteDirectory(toDir);
@@ -555,9 +522,9 @@ public class ZipUtilsTest {
 			assertTrue(toDir.mkdir());
 
 			try {
-				ZipUtils.extractZip(zipfile, toDir);
-				fail("Should fail because file is invalid");
-			} catch (IOException e) {
+				IOException e = assertThrows(IOException.class,
+						() -> ZipUtils.extractZip(zipfile, toDir),
+						"Should fail because file is invalid");
 				TestHelpers.assertContains(e, "nonexistingfile.zip");
 			} finally {
 			    FileUtils.deleteDirectory(toDir);
@@ -573,15 +540,12 @@ public class ZipUtilsTest {
 		File zipfile2 = createNestedZip();
 
 		try (InputStream stream = new FileInputStream(zipfile2)){
-    		try {
-				assertFalse(invalidDir.exists(),
-						"Directory should not exist: " + invalidDir.getAbsolutePath());
+			assertFalse(invalidDir.exists(),
+					"Directory should not exist: " + invalidDir.getAbsolutePath());
 
-				ZipUtils.extractZip(stream, invalidDir);
-    			fail("Should catch exception here");
-    		} catch (IOException e) {
-    			TestHelpers.assertContains(e, invalidDir.getName(), "does not exist");
-    		}
+			IOException e = assertThrows(IOException.class,
+					() -> ZipUtils.extractZip(stream, invalidDir));
+			TestHelpers.assertContains(e, invalidDir.getName(), "does not exist");
 
     		File toDir = File.createTempFile("toDir", "");
     		assertTrue(toDir.delete());
@@ -607,36 +571,24 @@ public class ZipUtilsTest {
 
 	@Test
 	public void testReplaceInZipFailed() {
-		try {
-			ZipUtils.replaceInZip(null, "somedata", null);
-			fail("Should catch exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "inside a ZIP file");
-		}
+		IOException e = assertThrows(IOException.class,
+				() -> ZipUtils.replaceInZip(null, "somedata", null));
+		TestHelpers.assertContains(e, "inside a ZIP file");
 
-		try {
-			ZipUtils.replaceInZip("somefile", "somedata", null);
-			fail("Should catch exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "inside a ZIP file");
-		}
+		e = assertThrows(IOException.class,
+				() -> ZipUtils.replaceInZip("somefile", "somedata", null));
+		TestHelpers.assertContains(e, "inside a ZIP file");
 
-		try {
-			ZipUtils.replaceInZip("somefile!somefile", "somedata", null);
-			fail("Should catch exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "inside a ZIP file");
-		}
+		e = assertThrows(IOException.class,
+				() -> ZipUtils.replaceInZip("somefile!somefile", "somedata", null));
+		TestHelpers.assertContains(e, "inside a ZIP file");
 
-		try {
-			ZipUtils.replaceInZip("somezip.zip!somefile", "somedata", null);
-			fail("Should catch exception here");
-		} catch (IOException e) {
-			// error is different between JDK 6 and 7
-			assertTrue(e.getMessage().contains("ZIP file must have at least one entry")
-					|| e.getMessage().contains("somezip.zip"),
-					"Had: " + e);
-		}
+		e = assertThrows(IOException.class,
+				() -> ZipUtils.replaceInZip("somezip.zip!somefile", "somedata", null));
+		// error is different between JDK 6 and 7
+		assertTrue(e.getMessage().contains("ZIP file must have at least one entry")
+				|| e.getMessage().contains("somezip.zip"),
+				"Had: " + e);
 	}
 
 	@Test
@@ -804,9 +756,7 @@ public class ZipUtilsTest {
     				throw new IOException("testexception");
     			}
     		}) {
-    			visitor.walk(zipFile2);
-    			fail("Should catch IOException here");
-    		} catch (IOException e) {
+    			IOException e = assertThrows(IOException.class, () -> visitor.walk(zipFile2));
     			TestHelpers.assertContains(e, "testexception");
     		}
 

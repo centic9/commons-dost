@@ -41,13 +41,10 @@ public class LoggerFactoryTest {
                 }
             });
 
-            try {
-                LoggerFactory.initLogging();
-                fail("Should throw Exception, seems we found a resource: " + Thread.currentThread().getContextClassLoader().getResource("logging.properties"));
-            } catch (IOException e) {
-                // expected if we do not have a logging.properties here
-                assertNotNull(e);
-            }
+            assertThrows(IOException.class,
+                    LoggerFactory::initLogging,
+                    () -> "Should throw Exception, seems we found a resource: "
+                            + Thread.currentThread().getContextClassLoader().getResource("logging.properties"));
 
             try (URLClassLoader cl = new URLClassLoader(new URL[] {new File("src/test/resources").toURI().toURL()}, prev)) {
                 Thread.currentThread().setContextClassLoader(cl);
@@ -137,12 +134,9 @@ public class LoggerFactoryTest {
 
             shouldFail.set(true);
 
-            try {
-                LoggerFactory.rolloverLogfile();
-                fail("Should catch exception");
-            } catch (IllegalStateException e) {
-                TestHelpers.assertContains(ExceptionUtils.getStackTrace(e), "testexception");
-            }
+            IllegalStateException e = assertThrows(IllegalStateException.class,
+                    LoggerFactory::rolloverLogfile);
+            TestHelpers.assertContains(ExceptionUtils.getStackTrace(e), "testexception");
         } finally {
         	handler.close();
             log.removeHandler(handler);

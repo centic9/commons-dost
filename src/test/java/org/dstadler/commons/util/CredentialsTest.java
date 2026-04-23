@@ -71,12 +71,8 @@ public class CredentialsTest {
 	@Test
 	public void testGetCredentialOrFail() {
 		// we don't store any in Git, so we can only test the missing ones
-		try {
-			Credentials.getCredentialOrFail("somenonexistingkey");
-			fail("Should fail here");
-		} catch (@SuppressWarnings("unused") IllegalStateException e) {
-			// expected here
-		}
+		assertThrows(IllegalStateException.class,
+				() -> Credentials.getCredentialOrFail("somenonexistingkey"));
 	}
 
 

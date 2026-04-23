@@ -41,8 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("UnnecessaryUnicodeEscape")		// Tests break on Windows otherwise
 class NanoHTTPDTest {
@@ -267,14 +267,8 @@ class NanoHTTPDTest {
 	}
 
 	@Test
-    void testPortOutOfRange() throws IOException {
-		try {
-			NanoHTTPD server = new NanoHTTPD(128000);
-			assertNotNull(server);
-			fail("Should not be possible to assign port out of range");
-		} catch (@SuppressWarnings("unused") IllegalArgumentException e) {
-			// expected
-		}
+    void testPortOutOfRange() {
+		assertThrows(IllegalArgumentException.class, () -> new NanoHTTPD(128000));
 	}
 
 	@Disabled("may not work on all machines")
@@ -362,13 +356,8 @@ class NanoHTTPDTest {
 	@Test
     void testServeInvalidBindName() throws Exception {
 		int port = SocketUtils.getNextFreePort(9000, 9010);
-		try {
-			NanoHTTPD nanoHTTPD = new NanoHTTPD(port, InetAddress.getByName("192.168.123.234"));
-			assertNotNull(nanoHTTPD);
-			fail("Should catch exception here");
-		} catch (@SuppressWarnings("unused") BindException e) {
-			// expected to an exception here
-		}
+		InetAddress bindAddress = InetAddress.getByName("192.168.123.234");
+		assertThrows(BindException.class, () -> new NanoHTTPD(port, bindAddress));
 	}
 
 	@Test
@@ -440,17 +429,19 @@ class NanoHTTPDTest {
 	@Test
     void testRegexSearchParserSSLException()  throws Exception {
 		try (MockRESTServer server = new MockRESTServer("200 OK", NanoHTTPD.MIME_HTML + "; charset=UTF-8", "")) {
-			try {
-				retrieveData("https://localhost:" + server.getPort());
-				fail("Should catch exception because SSL does not work in NanoHTTP");
-			} catch (SSLException e) {
+			IOException e = assertThrows(IOException.class,
+					() -> retrieveData("https://localhost:" + server.getPort()),
+					"Should throw because SSL does not work in NanoHTTP");
+			if (e instanceof SSLException) {
 				String str = e.getMessage();
 				assertTrue(str.contains("SSL message") || str.contains("Remote host terminated the handshake"),
 						". Expected to find an SSL error message, but was not contained in provided string '" + str +
 								"'\n" + ExceptionUtils.getStackTrace(e));
-			} catch (SocketTimeoutException e) {
+			} else if (e instanceof SocketTimeoutException) {
 				assertTrue(SystemUtils.IS_OS_WINDOWS,
 						"On Windows closing the socket does not wake up the thread in NanoHTTP when it is blocked reading properties");
+			} else {
+				throw new AssertionError("Unexpected exception type: " + e.getClass(), e);
 			}
 		}
 	}

@@ -134,21 +134,19 @@ public class SVNLogFileParserTest {
 	}
 
 	@Test
-	public void testInvalidXML1InvalidNesting() throws SAXException, IOException {
+	public void testInvalidXML1InvalidNesting() throws IOException {
 		try (InputStream inStr = new FileInputStream("src/test/data/svnlogfail1.xml")) {
-			new SVNLogFileParser(new String[] {}).parseContent(inStr);
-			fail("Should catch exception here");
-		} catch (IllegalStateException e) {
+			IllegalStateException e = assertThrows(IllegalStateException.class,
+					() -> new SVNLogFileParser(new String[] {}).parseContent(inStr));
 			TestHelpers.assertContains(e, "Should not have tags when a config starts in the XML", "267726");
 		}
 	}
 
 	@Test
-	public void testInvalidXML2NoRevision() throws SAXException, IOException {
+	public void testInvalidXML2NoRevision() throws IOException {
 		try (InputStream inStr = new FileInputStream("src/test/data/svnlogfail2.xml")) {
-			new SVNLogFileParser(new String[] {}).parseContent(inStr);
-			fail("Should catch exception here");
-		} catch (IllegalStateException e) {
+			IllegalStateException e = assertThrows(IllegalStateException.class,
+					() -> new SVNLogFileParser(new String[] {}).parseContent(inStr));
 			TestHelpers.assertContains(e, "Expected to have tag 'revision'");
 		}
 	}

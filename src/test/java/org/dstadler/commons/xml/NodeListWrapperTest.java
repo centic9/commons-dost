@@ -5,12 +5,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.dstadler.commons.testing.TestHelpers;
 
 public class NodeListWrapperTest {
+	private static void assertUnsupported(Executable op) {
+		UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, op);
+		assertNull(e.getMessage());
+	}
+
 	@Test
 	public void testNodeListWrapper() {
 		NodeListWrapper wrapper = new NodeListWrapper(new EmptyNodeList());
@@ -40,163 +46,37 @@ public class NodeListWrapperTest {
 		}
 
 		// ensure that we get an error if we access out of bounds
-		try {
-			it.next();
-		} catch (NoSuchElementException e) {
-			TestHelpers.assertContains(e, "Cannot access beyond end of iterator", "23");
-		}
+		NoSuchElementException nse = assertThrows(NoSuchElementException.class, it::next);
+		TestHelpers.assertContains(nse, "Cannot access beyond end of iterator", "23");
 
-		try {
-			wrapper.add(null);
-			fail("Add should not be supported");
-		} catch (UnsupportedOperationException e) {
-			// expected here
-		}
+		assertThrows(UnsupportedOperationException.class, () -> wrapper.add(null),
+				"Add should not be supported");
 	}
 
 	@Test
 	public void testNodeListWrapperUnsupportedOperations() {
 		NodeListWrapper wrapper = new NodeListWrapper(new CountNodeList(12));
 
-		try {
-			wrapper.iterator().remove();
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			assertTrue(wrapper.contains(null));
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.toArray();
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.toArray(new String[] {});
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.add(null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.remove(null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.addAll(null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.containsAll(null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.addAll(2, null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.removeAll(null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.retainAll(null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.clear();
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.set(1, null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.add(3, null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.remove(2);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.indexOf(null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.lastIndexOf(null);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.listIterator();
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.listIterator(4);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
-
-		try {
-			wrapper.subList(2, 6);
-			fail("should throw exception");
-		} catch (UnsupportedOperationException e) {
-			assertNull(e.getMessage());
-		}
+		assertUnsupported(() -> wrapper.iterator().remove());
+		assertUnsupported(() -> wrapper.contains(null));
+		assertUnsupported(wrapper::toArray);
+		assertUnsupported(() -> wrapper.toArray(new String[] {}));
+		assertUnsupported(() -> wrapper.add(null));
+		assertUnsupported(() -> wrapper.remove(null));
+		assertUnsupported(() -> wrapper.addAll(null));
+		assertUnsupported(() -> wrapper.containsAll(null));
+		assertUnsupported(() -> wrapper.addAll(2, null));
+		assertUnsupported(() -> wrapper.removeAll(null));
+		assertUnsupported(() -> wrapper.retainAll(null));
+		assertUnsupported(wrapper::clear);
+		assertUnsupported(() -> wrapper.set(1, null));
+		assertUnsupported(() -> wrapper.add(3, null));
+		assertUnsupported(() -> wrapper.remove(2));
+		assertUnsupported(() -> wrapper.indexOf(null));
+		assertUnsupported(() -> wrapper.lastIndexOf(null));
+		assertUnsupported(wrapper::listIterator);
+		assertUnsupported(() -> wrapper.listIterator(4));
+		assertUnsupported(() -> wrapper.subList(2, 6));
 	}
 
 	private static final class CountNodeList implements NodeList {

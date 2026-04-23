@@ -88,28 +88,22 @@ public class ZipFileWalkerTest {
 		try {
 			ZipFileWalker walker = new ZipFileWalker(nestedZip);
 
-			try {
-				walker.walk((file, content) -> {
-                    throw new IOException("testexception");
-                });
-				fail("Should catch exception here");
-			} catch (IOException e) {
-				TestHelpers.assertContains(e, "testexception");
-			}
+			IOException e = assertThrows(IOException.class,
+					() -> walker.walk((file, content) -> {
+						throw new IOException("testexception");
+					}));
+			TestHelpers.assertContains(e, "testexception");
 		} finally {
 			assertTrue(nestedZip.delete());
 		}
 	}
 
 	@Test
-	public void testWalkNotexisting() throws Exception {
-		try {
-			ZipFileWalker walker = new ZipFileWalker(new File("notexisting"));
-			walker.walk(null);
-			fail("Should catch exception here");
-		} catch (@SuppressWarnings("unused") FileNotFoundException | NoSuchFileException e) {
-			// expected
-		}
+	public void testWalkNotexisting() {
+		ZipFileWalker walker = new ZipFileWalker(new File("notexisting"));
+		IOException e = assertThrows(IOException.class, () -> walker.walk(null));
+		assertTrue(e instanceof FileNotFoundException || e instanceof NoSuchFileException,
+				"Had: " + e.getClass());
 	}
 
 	public static File createNestedZip() throws IOException {

@@ -67,13 +67,11 @@ public class UrlUtilsTest {
 	@Test
 	public void testRetrieveDataStringFailed() throws Exception {
 		try (MockRESTServer server = new MockRESTServer("404 NOT FOUND", NanoHTTPD.MIME_HTML, "expected")) {
-		    try {
-    			UrlUtils.retrieveData("http://localhost:" + server.getPort(), 0);
-    			fail("Should catch IOException with connection error information here");
-    		} catch (IOException e) {
-    			TestHelpers.assertContains(e, "404", "http://localhost:" + server.getPort()); // error code and url are mentioned in
-    // the error message
-    		}
+			String url = "http://localhost:" + server.getPort();
+			IOException e = assertThrows(IOException.class,
+					() -> UrlUtils.retrieveData(url, 0));
+			// error code and url are mentioned in the error message
+			TestHelpers.assertContains(e, "404", url);
 	    }
 	}
 
@@ -147,12 +145,9 @@ public class UrlUtilsTest {
 		NanoHTTPD httpd = new NanoHTTPD(port);
 
 		try {
-			try {
-				UrlUtils.retrieveRawData("http://localhost:" + port + "/empty.txt", 0);
-				fail("Should catch 404 error");
-			} catch(IOException e) {
-				TestHelpers.assertContains(e, "404");
-			}
+			IOException e = assertThrows(IOException.class,
+					() -> UrlUtils.retrieveRawData("http://localhost:" + port + "/empty.txt", 0));
+			TestHelpers.assertContains(e, "404");
 
 			assertArrayEquals("".getBytes(), UrlUtils.retrieveRawData("http://localhost:" + port + "/src/test/data/empty.txt", 0));
 		} finally {
@@ -170,12 +165,9 @@ public class UrlUtilsTest {
         NanoHTTPD httpd = new NanoHTTPD(port);
 
         try {
-            try {
-                UrlUtils.retrieveDataPost("http://localhost:" + port + "/empty.txt", null, "somevar:234\n\r", null, 1000);
-                fail("Should catch 404 error");
-            } catch(IOException e) {
-                TestHelpers.assertContains(e, "404");
-            }
+            IOException e = assertThrows(IOException.class,
+                    () -> UrlUtils.retrieveDataPost("http://localhost:" + port + "/empty.txt", null, "somevar:234\n\r", null, 1000));
+            TestHelpers.assertContains(e, "404");
 
             assertEquals("", UrlUtils.retrieveDataPost("http://localhost:" + port + "/src/test/data/empty.txt", null, "somevar:234\n\r", null, 1000));
         } finally {
@@ -206,13 +198,13 @@ public class UrlUtilsTest {
 		try (MockRESTServer server = new MockRESTServer(() -> {
             try {
                 Thread.sleep(1300);
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
+            } catch (InterruptedException ie) {
+                throw new IllegalStateException(ie);
             }
         }, NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "OK")) {
-			UrlUtils.retrieveData("http://localhost:" + server.getPort(), null, 1000);
-			fail("Should timeout here!");
-		} catch (SocketTimeoutException e) {
+			SocketTimeoutException e = assertThrows(SocketTimeoutException.class,
+					() -> UrlUtils.retrieveData("http://localhost:" + server.getPort(), null, 1000),
+					"Should timeout here!");
 			TestHelpers.assertContains(e, "Read timed out");
 		}
 	}
@@ -238,19 +230,13 @@ public class UrlUtilsTest {
 
 			assertNotNull(UrlUtils.getAccessError("https://notexistinghost:" + server.getPort(), true, true, 30000));
 
-			try {
-				UrlUtils.getAccessError("https://notexistinghost:" + server.getPort(), true, true, -234);
-				fail("Should catch exception here");
-			} catch (IllegalArgumentException e) {
-				TestHelpers.assertContains(e, "timeouts can't be negative");
-			}
+			IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+					() -> UrlUtils.getAccessError("https://notexistinghost:" + server.getPort(), true, true, -234));
+			TestHelpers.assertContains(e, "timeouts can't be negative");
 
-            try {
-                UrlUtils.getAccessError("some://notexistinghost:" + server.getPort(), true, false, 0);
-                fail("Should catch exception here");
-            } catch (IllegalArgumentException e) {
-                TestHelpers.assertContains(e, "Invalid destination URL");
-            }
+            e = assertThrows(IllegalArgumentException.class,
+                    () -> UrlUtils.getAccessError("some://notexistinghost:" + server.getPort(), true, false, 0));
+            TestHelpers.assertContains(e, "Invalid destination URL");
 		}
 	}
 
@@ -269,19 +255,13 @@ public class UrlUtilsTest {
 
 	@Test
 	public void testIsAvailableInvalidUrl() {
-		try {
-			UrlUtils.isAvailable("invalidurl", true, 0);
-			fail("Should catch exception because of invalid url here");
-		} catch (IllegalArgumentException e) {
-			TestHelpers.assertContains(e, "Invalid destination URL");
-		}
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+				() -> UrlUtils.isAvailable("invalidurl", true, 0));
+		TestHelpers.assertContains(e, "Invalid destination URL");
 
-		try {
-			UrlUtils.getAccessError("invalidurl", true, false, 30000);
-			fail("Should catch exception because of invalid url here");
-		} catch (IllegalArgumentException e) {
-			TestHelpers.assertContains(e, "Invalid destination URL");
-		}
+		e = assertThrows(IllegalArgumentException.class,
+				() -> UrlUtils.getAccessError("invalidurl", true, false, 30000));
+		TestHelpers.assertContains(e, "Invalid destination URL");
 	}
 
 	// helper method to get coverage of the unused constructor
@@ -311,29 +291,23 @@ public class UrlUtilsTest {
     @Test
     public void testRetrieveDataPost() throws Exception {
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, NanoHTTPD.MIME_HTML, "expected\n\r\t")) {
-            try {
-                UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, null, null, 1000);
-                fail("Should fail with null-body");
-            } catch (IllegalArgumentException e) {
-                TestHelpers.assertContains(e, "POST request body must not be null");
-            }
+            IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
+                    () -> UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, null, null, 1000),
+                    "Should fail with null-body");
+            TestHelpers.assertContains(iae, "POST request body must not be null");
 
 			assertEquals("expected\n\r\t",
 				UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "", null, 1000));
 
-            try {
-                UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "", null, 0);
-                fail("Should fail with 0 timeout");
-            } catch (IllegalArgumentException e) {
-                TestHelpers.assertContains(e, "Zero (infinite) timeouts not permitted");
-            }
+            iae = assertThrows(IllegalArgumentException.class,
+                    () -> UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "", null, 0),
+                    "Should fail with 0 timeout");
+            TestHelpers.assertContains(iae, "Zero (infinite) timeouts not permitted");
 
-            try {
-                UrlUtils.retrieveDataPost("http://invalidhost:" + server.getPort(), null, "some-var:234\n\r", null, 1000);
-                fail("Should fail with invalid host");
-            } catch (IOException e) {
-                TestHelpers.assertContains(e, "invalidhost");
-            }
+            IOException ioe = assertThrows(IOException.class,
+                    () -> UrlUtils.retrieveDataPost("http://invalidhost:" + server.getPort(), null, "some-var:234\n\r", null, 1000),
+                    "Should fail with invalid host");
+            TestHelpers.assertContains(ioe, "invalidhost");
 
             assertEquals("expected\n\r\t",
                     UrlUtils.retrieveDataPost("http://localhost:" + server.getPort(), null, "some-var:234\n\r", null, 1000));

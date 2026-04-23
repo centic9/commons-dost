@@ -1,7 +1,7 @@
 package org.dstadler.commons.net;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -44,12 +44,9 @@ public class SocketUtilsTest {
 		}
 
 		// now retrieving another port should fail
-		try {
-			SocketUtils.getNextFreePort(29000, 29009);
-			fail("Should throw Exception here");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "29000", "29009", "No free port");
-		}
+		IOException e = assertThrows(IOException.class,
+				() -> SocketUtils.getNextFreePort(29000, 29009));
+		TestHelpers.assertContains(e, "29000", "29009", "No free port");
 
 		// free up sockets again
 		for(ServerSocket socket : sock) {

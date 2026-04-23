@@ -63,33 +63,27 @@ class ExecutionHelperTest {
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notExists");
 
-		try {
-			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000);
-			Assertions.fail("Should throw exception");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "While executing (.)", SVN_CMD, "notExists");
-			Assertions.assertNotNull(e.getCause());
-			Assertions.assertNotNull(e.getCause().getCause());
-			TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
-		}
+		IOException e = assertThrows(IOException.class,
+				() -> ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000));
+		TestHelpers.assertContains(e, "While executing (.)", SVN_CMD, "notExists");
+		Assertions.assertNotNull(e.getCause());
+		Assertions.assertNotNull(e.getCause().getCause());
+		TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 	}
 
 	@Test
 	void testGetCommandResultFailureNoOutput() {
 		CommandLine cmdLine = new CommandLine("/bin/false");
 
-		try {
-			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000);
-			Assertions.fail("Should throw exception");
-		} catch (IOException e) {
-			if (SystemUtils.IS_OS_WINDOWS) {
-				TestHelpers.assertContains(e, "The system cannot find the file specified", "\\bin\\false");
-			} else {
-				TestHelpers.assertContains(e, "While executing (.)", "/bin/false");
-				Assertions.assertNotNull(e.getCause());
-				Assertions.assertNotNull(e.getCause().getCause());
-				TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
-			}
+		IOException e = assertThrows(IOException.class,
+				() -> ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000));
+		if (SystemUtils.IS_OS_WINDOWS) {
+			TestHelpers.assertContains(e, "The system cannot find the file specified", "\\bin\\false");
+		} else {
+			TestHelpers.assertContains(e, "While executing (.)", "/bin/false");
+			Assertions.assertNotNull(e.getCause());
+			Assertions.assertNotNull(e.getCause().getCause());
+			TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 		}
 	}
 
@@ -177,15 +171,13 @@ class ExecutionHelperTest {
 		CommandLine cmdLine = new CommandLine(SVN_CMD);
 		cmdLine.addArgument("notexists");
 
-		try {
-			ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000, new ByteArrayInputStream(new byte[] {}));
-			Assertions.fail("Should throw exception");
-		} catch (IOException e) {
-			TestHelpers.assertContains(e, "While executing (.)", SVN_CMD, "notexists");
-			Assertions.assertNotNull(e.getCause());
-			Assertions.assertNotNull(e.getCause().getCause());
-			TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
-		}
+		IOException e = assertThrows(IOException.class,
+				() -> ExecutionHelper.getCommandResult(cmdLine, new File("."), 0, 60000,
+						new ByteArrayInputStream(new byte[] {})));
+		TestHelpers.assertContains(e, "While executing (.)", SVN_CMD, "notexists");
+		Assertions.assertNotNull(e.getCause());
+		Assertions.assertNotNull(e.getCause().getCause());
+		TestHelpers.assertContains(e.getCause().getCause(), "Process exited with an error: 1");
 	}
 
 	private static void addDefaultArguments(CommandLine cmdLine) {

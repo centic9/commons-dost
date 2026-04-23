@@ -58,12 +58,8 @@ public class DeleteOnCloseInputStreamTest {
 				assertTrue(file.exists());
 				assertTrue(file.length() > 0);
 
-				try {
-					stream.reset();
-					fail("Mark/Reset not supported");
-				} catch (IOException e) {
-					TestHelpers.assertContains(e, "mark/reset not supported");
-				}
+				IOException e = assertThrows(IOException.class, stream::reset);
+				TestHelpers.assertContains(e, "mark/reset not supported");
 
 				// cover the overwritten methods
 				assertEquals('s', stream.read());
@@ -72,12 +68,8 @@ public class DeleteOnCloseInputStreamTest {
 				stream.mark(2);
 
 				assertEquals(1, stream.skip(1));
-				try {
-					stream.reset();
-					fail("Mark/Reset not supported");
-				} catch (IOException e) {
-					TestHelpers.assertContains(e, "mark/reset not supported");
-				}
+				e = assertThrows(IOException.class, stream::reset);
+				TestHelpers.assertContains(e, "mark/reset not supported");
 				assertFalse(stream.markSupported());
 			}
 
@@ -128,15 +120,9 @@ public class DeleteOnCloseInputStreamTest {
 	}
 
 	@Test
-	public void testNullDelegate() throws IOException {
-		try {
-			// fail-fast with an NPE in the constructor already, not later when we do not see any more where it was coming from
-			try (InputStream stream = new DeleteOnCloseInputStream(null, new File("."))) {
-				assertNotNull(stream);
-			}
-			fail("Should catch exception here");
-		} catch (@SuppressWarnings("unused") NullPointerException e) {
-			// expected here
-		}
+	public void testNullDelegate() {
+		// fail-fast with an NPE in the constructor, not later when we can no longer tell where it came from
+		assertThrows(NullPointerException.class,
+				() -> new DeleteOnCloseInputStream(null, new File(".")));
 	}
 }

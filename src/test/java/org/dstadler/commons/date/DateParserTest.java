@@ -60,26 +60,17 @@ public class DateParserTest {
 
 	@Test
 	public void testInvalidInput() {
-		try {
-			DateParser.parseURLDate("asdflaqworthgawer", null);
-			fail("Should catch exception here");
-		} catch (IllegalArgumentException e) {
-			TestHelpers.assertContains(e, "asdflaqworthgawer", "yyyy-MM-dd");
-		}
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+				() -> DateParser.parseURLDate("asdflaqworthgawer", null));
+		TestHelpers.assertContains(e, "asdflaqworthgawer", "yyyy-MM-dd");
 
-		try {
-			DateParser.parseURLDate("-asdflaqworthgawer", null);
-			fail("Should catch exception here");
-		} catch (IllegalArgumentException e) {
-			TestHelpers.assertContains(e, "asdflaqworthgawer", "seconds", "hours", "years");
-		}
+		e = assertThrows(IllegalArgumentException.class,
+				() -> DateParser.parseURLDate("-asdflaqworthgawer", null));
+		TestHelpers.assertContains(e, "asdflaqworthgawer", "seconds", "hours", "years");
 
-		try {
-			DateParser.parseURLDate("-234524ss", null);
-			fail("Should catch exception here");
-		} catch (IllegalArgumentException e) {
-			TestHelpers.assertContains(e, "234524ss", "seconds", "hours", "years");
-		}
+		e = assertThrows(IllegalArgumentException.class,
+				() -> DateParser.parseURLDate("-234524ss", null));
+		TestHelpers.assertContains(e, "234524ss", "seconds", "hours", "years");
 	}
 
 	// helper method to get coverage of the unused constructor

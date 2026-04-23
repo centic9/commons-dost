@@ -49,47 +49,38 @@ public class AbstractSimpleContentHandlerTest {
 			}
 		};
 
-		try {
-			try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
-				handler.parseContent(URI.create("http://localhost:" + server.getPort()).toURL(), "", null, 10_000);
-			}
-			fail("Should catch exception here");
-		} catch (IOException e) {
+		try (MockRESTServer server = new MockRESTServer("200", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
+			IOException e = assertThrows(IOException.class,
+					() -> handler.parseContent(URI.create("http://localhost:" + server.getPort()).toURL(), "", null, 10_000));
 			TestHelpers.assertContains(e, "testexception");
 		}
 	}
 
 	@Test
-	public void testParseContentURLFails() throws Exception {
+	public void testParseContentURLFails() {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
 
 		};
 
-		try {
-			handler.parseContent(URI.create("http://invalidhostname/doesnotexist").toURL(), "", null, 10_000);
-			fail("Should catch exception");
-		} catch (UnknownHostException e) {
+		IOException e = assertThrows(IOException.class,
+				() -> handler.parseContent(URI.create("http://invalidhostname/doesnotexist").toURL(), "", null, 10_000));
+		if (e instanceof UnknownHostException) {
 			TestHelpers.assertContains(e, "invalidhostname");	// NOPMD
-		} catch (IOException e) {
+		} else if (SystemUtils.IS_OS_WINDOWS) {
 			// exception only contains details on Windows...
-			if(SystemUtils.IS_OS_WINDOWS) {
-				TestHelpers.assertContains(e, "invalidhostname", "doesnotexist");	// NOPMD
-			}
+			TestHelpers.assertContains(e, "invalidhostname", "doesnotexist");	// NOPMD
 		}
 	}
 
 	@Test
-	public void testParseContentURLSyntaxFails() throws Exception {
+	public void testParseContentURLSyntaxFails() {
 		AbstractSimpleContentHandler< String, String> handler = new AbstractSimpleContentHandler<>() {
 
 		};
 
-		try {
-			handler.parseContent(URI.create("http://inv\"!$%()(§$)(alidhostname/doesnotexist").toURL(), "", null, 10_000);
-			fail("Should catch exception");
-		} catch (IllegalArgumentException e) {
-            TestHelpers.assertContains(e, "inv\"!$%()(§$)(alidhostname");    // NOPMD
-		}
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+				() -> handler.parseContent(URI.create("http://inv\"!$%()(§$)(alidhostname/doesnotexist").toURL(), "", null, 10_000));
+		TestHelpers.assertContains(e, "inv\"!$%()(§$)(alidhostname");    // NOPMD
 	}
 
 	@Test
@@ -99,12 +90,10 @@ public class AbstractSimpleContentHandlerTest {
 		};
 
 		try (MockRESTServer server = new MockRESTServer("404", "text/xml", FileUtils.readFileToString(new File("src/test/data/svnlog.xml"), "UTF-8"))) {
-		    try {
-    			handler.parseContent(URI.create("http://localhost:" + server.getPort() + "/notfound").toURL(), "", null, 10_000);
-    			fail("Should catch exception");
-    		} catch (IOException e) {
-    			TestHelpers.assertContains(e, "http://localhost:" + server.getPort() + "/notfound");
-    		}
+			String url = "http://localhost:" + server.getPort() + "/notfound";
+			IOException e = assertThrows(IOException.class,
+					() -> handler.parseContent(URI.create(url).toURL(), "", null, 10_000));
+			TestHelpers.assertContains(e, url);
 		}
 	}
 

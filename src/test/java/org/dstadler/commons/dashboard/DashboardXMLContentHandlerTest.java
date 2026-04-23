@@ -38,12 +38,9 @@ public class DashboardXMLContentHandlerTest {
 		handler.startElement("", "", "", null);
 
 		// exception if required attributes not found
-		try {
-			handler.startElement("", "dashboard", "dashboard", new AttributesImpl());
-			fail("Should throw an exception");
-		} catch (SAXException e) {
-			TestHelpers.assertContains(e, "Did not have id and href ");
-		}
+		SAXException e = assertThrows(SAXException.class,
+				() -> handler.startElement("", "dashboard", "dashboard", new AttributesImpl()));
+		TestHelpers.assertContains(e, "Did not have id and href ");
 
 		assertEquals(0, handler.getDashboards().size());
 
@@ -53,45 +50,33 @@ public class DashboardXMLContentHandlerTest {
 		handler.startElement("", "dashboard", "dashboard", att);
 		assertEquals(1, handler.getDashboards().size());
 
-		try {
-			att = new AttributesImpl();
-			att.addAttribute("", "id", "id", "", "");
-			att.addAttribute("", "href", "href", "", "somehref");
-			handler.startElement("", "dashboard", "dashboard", att);
-			fail("Expected Exception");
-		} catch (SAXException e) {
-			TestHelpers.assertContains(e, "Did not have id and href on dashboard-tag.");
-		}
+		AttributesImpl emptyId = new AttributesImpl();
+		emptyId.addAttribute("", "id", "id", "", "");
+		emptyId.addAttribute("", "href", "href", "", "somehref");
+		e = assertThrows(SAXException.class,
+				() -> handler.startElement("", "dashboard", "dashboard", emptyId));
+		TestHelpers.assertContains(e, "Did not have id and href on dashboard-tag.");
 
-		try {
-			att = new AttributesImpl();
-			att.addAttribute("", "id", "id", "", "someid");
-			att.addAttribute("", "href", "href", "", "");
-			handler.startElement("", "dashboard", "dashboard", att);
-			fail("Expected Exception");
-		} catch (SAXException e) {
-			TestHelpers.assertContains(e, "Did not have id and href on dashboard-tag.");
-		}
+		AttributesImpl emptyHref = new AttributesImpl();
+		emptyHref.addAttribute("", "id", "id", "", "someid");
+		emptyHref.addAttribute("", "href", "href", "", "");
+		e = assertThrows(SAXException.class,
+				() -> handler.startElement("", "dashboard", "dashboard", emptyHref));
+		TestHelpers.assertContains(e, "Did not have id and href on dashboard-tag.");
 
-		try {
-			att = new AttributesImpl();
-			att.addAttribute("", "id", "id", "", null);
-			att.addAttribute("", "href", "href", "", "somehref");
-			handler.startElement("", "dashboard", "dashboard", att);
-			fail("Expected Exception");
-		} catch (SAXException e) {
-			TestHelpers.assertContains(e, "Did not have id and href on dashboard-tag.");
-		}
+		AttributesImpl nullId = new AttributesImpl();
+		nullId.addAttribute("", "id", "id", "", null);
+		nullId.addAttribute("", "href", "href", "", "somehref");
+		e = assertThrows(SAXException.class,
+				() -> handler.startElement("", "dashboard", "dashboard", nullId));
+		TestHelpers.assertContains(e, "Did not have id and href on dashboard-tag.");
 
-		try {
-			att = new AttributesImpl();
-			att.addAttribute("", "id", "id", "", "someid");
-			att.addAttribute("", "href", "href", "", null);
-			handler.startElement("", "dashboard", "dashboard", att);
-			fail("Expected Exception");
-		} catch (SAXException e) {
-			TestHelpers.assertContains(e, "Did not have id and href on dashboard-tag.");
-		}
+		AttributesImpl nullHref = new AttributesImpl();
+		nullHref.addAttribute("", "id", "id", "", "someid");
+		nullHref.addAttribute("", "href", "href", "", null);
+		e = assertThrows(SAXException.class,
+				() -> handler.startElement("", "dashboard", "dashboard", nullHref));
+		TestHelpers.assertContains(e, "Did not have id and href on dashboard-tag.");
 	}
 
 }

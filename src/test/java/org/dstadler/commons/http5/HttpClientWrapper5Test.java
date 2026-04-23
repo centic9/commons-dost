@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test is very similar to HttpClientAsyncWrapperTest so that we verify both
@@ -197,12 +196,9 @@ public class HttpClientWrapper5Test {
 	public void testSimpleGetFails(Boolean withAuth) throws Exception {
 		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
-            try {
-                wrapper.simpleGet("http://localhost:" + server.getPort());
-                fail("Should throw an exception");
-            } catch (IOException e) {
-                TestHelpers.assertContains(e, "500", "test error");
-            }
+            IOException e = assertThrows(IOException.class,
+                    () -> wrapper.simpleGet("http://localhost:" + server.getPort()));
+            TestHelpers.assertContains(e, "500", "test error");
         }
     }
 
@@ -211,21 +207,19 @@ public class HttpClientWrapper5Test {
 	public void testCheckAndFetchFails(Boolean withAuth) throws Exception {
 		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
-            try {
-                final HttpGet httpGet = new HttpGet("http://localhost:" + server.getPort());
-				wrapper.getHttpClient().execute(httpGet, response -> {
-					verifier.addObject(httpGet);
-					verifier.addObject(response);
+            String url = "http://localhost:" + server.getPort();
+            IOException e = assertThrows(IOException.class, () -> {
+                final HttpGet httpGet = new HttpGet(url);
+                wrapper.getHttpClient().execute(httpGet, response -> {
+                    verifier.addObject(httpGet);
+                    verifier.addObject(response);
 
-					HttpClientWrapper5.checkAndFetch(response, "http://localhost:" + server.getPort());
+                    HttpClientWrapper5.checkAndFetch(response, url);
 
-					return null;
-				});
-
-                fail("Should throw an exception");
-            } catch (IOException e) {
-                TestHelpers.assertContains(e, "500", "test error");
-            }
+                    return null;
+                });
+            });
+            TestHelpers.assertContains(e, "500", "test error");
         }
     }
 
@@ -234,12 +228,9 @@ public class HttpClientWrapper5Test {
 	public void testSimpleGetBytesFails(Boolean withAuth) throws Exception {
 		setUp(withAuth);
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_INTERNALERROR, "text/plain", "test error")) {
-            try {
-                wrapper.simpleGetBytes("http://localhost:" + server.getPort());
-                fail("Should throw an exception");
-            } catch (IOException e) {
-                TestHelpers.assertContains(e, "500", "test error");
-            }
+            IOException e = assertThrows(IOException.class,
+                    () -> wrapper.simpleGetBytes("http://localhost:" + server.getPort()));
+            TestHelpers.assertContains(e, "500", "test error");
         }
     }
 
@@ -250,12 +241,9 @@ public class HttpClientWrapper5Test {
         try (MockRESTServer server = new MockRESTServer(() -> {
             throw new IllegalStateException("testexception");
         }, NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
-            try {
-                wrapper.simpleGet("http://localhost:" + server.getPort());
-                fail("Should throw an exception");
-            } catch (IOException e) {
-                TestHelpers.assertContains(e, "500", "testexception");
-            }
+            IOException e = assertThrows(IOException.class,
+                    () -> wrapper.simpleGet("http://localhost:" + server.getPort()));
+            TestHelpers.assertContains(e, "500", "testexception");
         }
     }
 
@@ -266,12 +254,9 @@ public class HttpClientWrapper5Test {
         try (MockRESTServer server = new MockRESTServer(() -> {
             throw new IllegalStateException("testexception");
         }, NanoHTTPD.HTTP_OK, "text/plain", "ok")) {
-            try {
-                wrapper.simpleGetBytes("http://localhost:" + server.getPort());
-                fail("Should throw an exception");
-            } catch (IOException e) {
-                TestHelpers.assertContains(e, "500", "testexception");
-            }
+            IOException e = assertThrows(IOException.class,
+                    () -> wrapper.simpleGetBytes("http://localhost:" + server.getPort()));
+            TestHelpers.assertContains(e, "500", "testexception");
         }
     }
 

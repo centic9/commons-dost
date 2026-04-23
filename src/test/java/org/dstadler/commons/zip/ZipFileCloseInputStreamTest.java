@@ -40,12 +40,9 @@ public class ZipFileCloseInputStreamTest {
 						assertEquals(1, lines.size());
 					}
 
-					try {
-						zipfile.entries();
-						fail("Should get exception here as the zipfile should be closed already!");
-					} catch (IllegalStateException e) {
-						TestHelpers.assertContains(e, "zip file closed");
-					}
+					IllegalStateException e = assertThrows(IllegalStateException.class, zipfile::entries,
+							"Should throw because the zipfile should be closed already");
+					TestHelpers.assertContains(e, "zip file closed");
 				}
 			} finally {
 				assertTrue(file.delete());
@@ -74,12 +71,8 @@ public class ZipFileCloseInputStreamTest {
 						assertTrue(file.exists());
 						assertTrue(file.length() > 0);
 
-						try {
-							stream.reset();
-							fail("Mark/Reset not supported");
-						} catch (IOException e) {
-							TestHelpers.assertContains(e, "mark/reset not supported");
-						}
+						IOException ioe = assertThrows(IOException.class, stream::reset);
+						TestHelpers.assertContains(ioe, "mark/reset not supported");
 
 						// cover the overwritten methods
 						assertEquals('s', stream.read());
@@ -88,21 +81,14 @@ public class ZipFileCloseInputStreamTest {
 						stream.mark(2);
 
 						assertEquals(1, stream.skip(1));
-						try {
-							stream.reset();
-							fail("Mark/Reset not supported");
-						} catch (IOException e) {
-							TestHelpers.assertContains(e, "mark/reset not supported");
-						}
+						ioe = assertThrows(IOException.class, stream::reset);
+						TestHelpers.assertContains(ioe, "mark/reset not supported");
 						assertFalse(stream.markSupported());
 					}
 
-					try {
-						zipfile.entries();
-						fail("Should get exception here as the zipfile should be closed already!");
-					} catch (IllegalStateException e) {
-						TestHelpers.assertContains(e, "zip file closed");
-					}
+					IllegalStateException e = assertThrows(IllegalStateException.class, zipfile::entries,
+							"Should throw because the zipfile should be closed already");
+					TestHelpers.assertContains(e, "zip file closed");
 				}
 			} finally {
 				assertTrue(file.delete());
@@ -135,12 +121,9 @@ public class ZipFileCloseInputStreamTest {
 					}
 				}
 
-				try {
-					zipfile.entries();
-					fail("Should get exception here as the zipfile should be closed already!");
-				} catch (IllegalStateException e) {
-					TestHelpers.assertContains(e, "zip file closed");
-				}
+				IllegalStateException e = assertThrows(IllegalStateException.class, zipfile::entries,
+						"Should throw because the zipfile should be closed already");
+				TestHelpers.assertContains(e, "zip file closed");
 			} finally {
 				assertTrue(file.delete());
 			}
@@ -170,16 +153,10 @@ public class ZipFileCloseInputStreamTest {
 
 	@Test
 	public void testNullDelegate() throws IOException {
-		try {
-			// fail-fast with an NPE in the constructor already, not later when we do not see any more where it was coming from
-			try (ZipFile prepareZip = prepareZip()) {
-				try (InputStream stream = new ZipFileCloseInputStream(null, prepareZip)) {
-					assertNotNull(stream);
-				}
-			}
-			fail("Should catch exception here");
-		} catch (@SuppressWarnings("unused") NullPointerException e) {
-			// expected here
+		// fail-fast with an NPE in the constructor, not later when we can no longer tell where it came from
+		try (ZipFile prepareZip = prepareZip()) {
+			assertThrows(NullPointerException.class,
+					() -> new ZipFileCloseInputStream(null, prepareZip));
 		}
 	}
 }

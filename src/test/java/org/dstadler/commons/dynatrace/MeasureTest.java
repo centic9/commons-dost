@@ -63,12 +63,8 @@ public class MeasureTest {
 	public void testDynamicMeasureNameRequired() {
 		Measure measure = new Measure();
 
-		try {
-			measure.addDynamicMeasure("dyn1", 5);
-			fail("Should fail here");
-		} catch (@SuppressWarnings("unused") NullPointerException e) {
-			// expected here
-		}
+		assertThrows(NullPointerException.class,
+				() -> measure.addDynamicMeasure("dyn1", 5));
 	}
 
 
@@ -76,11 +72,7 @@ public class MeasureTest {
 	public void testDynamicMeasureKeyRequired() {
 		Measure measure = new Measure("some");
 
-		try {
-			measure.addDynamicMeasure(null, 5);
-			fail("Should fail here");
-		} catch (@SuppressWarnings("unused") NullPointerException e) {
-			// expected here
-		}
+		assertThrows(NullPointerException.class,
+				() -> measure.addDynamicMeasure(null, 5));
 	}
 }
