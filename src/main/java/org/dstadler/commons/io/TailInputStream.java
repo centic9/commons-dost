@@ -56,7 +56,7 @@ public class TailInputStream extends InputStream {
 		if (len < 0) {
 			return len;
 		}
-		return b[0];
+		return b[0] & 0xFF;
 	}
 
 	@Override

@@ -203,6 +203,7 @@ public class TailInputStreamTest {
 			assertCount(file, 256, 1001);
 			assertCount(file, 256, 2001);
 
+			// verify we read the exact same data when reading full
 			try (InputStream stream = new TailInputStream(file, 1000)) {
 				try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 					IOUtils.copy(stream, out);
@@ -213,6 +214,14 @@ public class TailInputStreamTest {
 				}
 			}
 
+			// try again with reading one byte at a time
+			try (InputStream stream = new TailInputStream(file, 1000)) {
+				for (int i = 0; i < 256; i++) {
+					final int readInt = stream.read();
+					assertTrue(readInt >= 0,
+							"Had: " + readInt + " for " + i);
+				}
+			}
 		} finally {
 			assertTrue(file.delete());
 		}
