@@ -1,5 +1,6 @@
 package org.dstadler.commons.http;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -475,26 +476,14 @@ class NanoHTTPDTest {
         File tempDir = Files.createTempDirectory("nanohttpd-test").toFile();
         try {
             File f = new File(tempDir, "hello.txt");
-            String content = "Hello world!";
-            try (FileOutputStream fos = new FileOutputStream(f)) {
-                fos.write(content.getBytes(StandardCharsets.UTF_8));
-            }
+			final String content = "Hello world!";
+			FileUtils.writeStringToFile(f, content, StandardCharsets.UTF_8);
 
             NanoHTTPD nh = new NanoHTTPD(0);
             try {
-                Properties header = new Properties();
-                NanoHTTPD.Response r = nh.serveFile("hello.txt", header, tempDir, false);
-                assertNotNull(r);
-                assertEquals(NanoHTTPD.HTTP_OK, r.status);
-                assertNotNull(r.data);
-
-                byte[] got = IOUtils.toByteArray(r.data);
-                assertEquals(content, new String(got, StandardCharsets.UTF_8));
-
-                String contentLength = r.header.getProperty("Content-length");
-                assertNotNull(contentLength);
-                assertEquals(String.valueOf(f.length()), contentLength);
-            } finally {
+				serverFile(nh, tempDir, content, f);
+				serverFile(nh, tempDir, content, f);
+			} finally {
                 nh.stop();
             }
         } finally {
@@ -503,7 +492,22 @@ class NanoHTTPDTest {
         }
     }
 
-    @Test
+	private static void serverFile(NanoHTTPD nh, File tempDir, String content, File f) throws IOException {
+		Properties header = new Properties();
+		Response r = nh.serveFile("hello.txt", header, tempDir, false);
+		assertNotNull(r);
+		assertEquals(NanoHTTPD.HTTP_OK, r.status);
+		assertNotNull(r.data);
+
+		byte[] got = IOUtils.toByteArray(r.data);
+		assertEquals(content, new String(got, StandardCharsets.UTF_8));
+
+		String contentLength = r.header.getProperty("Content-length");
+		assertNotNull(contentLength);
+		assertEquals(String.valueOf(f.length()), contentLength);
+	}
+
+	@Test
     public void testServeFileWithRangeSkipsBytes() throws Exception {
         File tempDir = Files.createTempDirectory("nanohttpd-test").toFile();
         try {
@@ -579,7 +583,8 @@ class NanoHTTPDTest {
             }
         }
 
-        assertTrue(f.delete());
+        assertTrue(f.delete(),
+				"Failed for: " + f.getAbsolutePath());
     }
 
 

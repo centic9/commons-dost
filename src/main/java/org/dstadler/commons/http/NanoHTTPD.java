@@ -301,6 +301,9 @@ public class NanoHTTPD
 		try
 		{
 			stopping = true;
+			if (toClose != null) {
+				toClose.close();
+			}
 			myServerSocket.close();
 			myThread.join();
 		}
@@ -716,6 +719,7 @@ public class NanoHTTPD
 	private final Thread myThread;
 	// helper to not log exceptions during shutdown
 	private volatile boolean stopping = false;
+	private InputStream toClose = null;
 
 	// ==================================================
 	// File server code
@@ -802,9 +806,15 @@ public class NanoHTTPD
 			InputStream fis = null;
 			try {
 				fis = new FileInputStream( f );
+				if (toClose != null) {
+					toClose.close();
+				}
+				toClose = fis;
+
 				if(fis.skip( startFrom ) != startFrom) {
 					logger.info("Skipped less bytes than expected: " + startFrom);
 				}
+
 				Response r = new Response( HTTP_OK, mime, fis );
 				r.addHeader( "Content-length", "" + (f.length() - startFrom));
 				r.addHeader( "Content-range", "" + startFrom + "-" +
